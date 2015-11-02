@@ -1,6 +1,6 @@
 package ru.todoo.domain;
 
-import ru.todoo.dao.Identified;
+import ru.todoo.dao.generic.Identified;
 
 import java.sql.Timestamp;
 

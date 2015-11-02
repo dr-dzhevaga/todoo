@@ -1,4 +1,4 @@
-package ru.todoo.derby;
+package ru.todoo.dao.derby;
 
 import ru.todoo.dao.DAOFactory;
 import ru.todoo.dao.PersistException;

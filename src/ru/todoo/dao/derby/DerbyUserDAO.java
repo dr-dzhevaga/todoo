@@ -1,8 +1,8 @@
-package ru.todoo.derby;
+package ru.todoo.dao.derby;
 
-import ru.todoo.dao.AbstractJDBCDAO;
 import ru.todoo.dao.PersistException;
 import ru.todoo.dao.UserDAO;
+import ru.todoo.dao.generic.GenericDAOJDBCImpl;
 import ru.todoo.domain.User;
 
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by Dmitriy Dzhevaga on 01.11.2015.
  */
-public class DerbyUserDAO extends AbstractJDBCDAO<User, Integer> implements UserDAO {
+public class DerbyUserDAO extends GenericDAOJDBCImpl<User, Integer> implements UserDAO {
 
     public DerbyUserDAO(Connection connection) {
         super(connection);

@@ -1,4 +1,6 @@
-package ru.todoo.dao;
+package ru.todoo.dao.generic;
+
+import ru.todoo.dao.PersistException;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -7,10 +9,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
 
-public abstract class AbstractJDBCDAO<T extends Identified<PK>, PK extends Serializable> implements GenericDAO<T, PK> {
+public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Serializable> implements GenericDAO<T, PK> {
     protected Connection connection;
 
-    public AbstractJDBCDAO(Connection connection) {
+    public GenericDAOJDBCImpl(Connection connection) {
         this.connection = connection;
     }
 
@@ -29,12 +31,12 @@ public abstract class AbstractJDBCDAO<T extends Identified<PK>, PK extends Seria
     protected abstract void prepareStatementForUpdate(PreparedStatement statement, T object) throws PersistException;
 
     @Override
-    public T create(T object) throws PersistException {
-        T newInstance;
-        Object id;
+    @SuppressWarnings("unchecked")
+    public PK create(T newInstance) throws PersistException {
+        PK id;
         String sql = getCreateQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            prepareStatementForInsert(statement, object);
+            prepareStatementForInsert(statement, newInstance);
             int count = statement.executeUpdate();
             if (count != 1) {
                 throw new PersistException("More then one record modified on create: " + count);
@@ -43,7 +45,7 @@ public abstract class AbstractJDBCDAO<T extends Identified<PK>, PK extends Seria
             if (!generatedKeys.next()) {
                 throw new PersistException("No id generated on create");
             }
-            id = generatedKeys.getObject(1);
+            id = (PK) generatedKeys.getObject(1);
         } catch (Exception e) {
             throw new PersistException(e);
         }
@@ -62,11 +64,11 @@ public abstract class AbstractJDBCDAO<T extends Identified<PK>, PK extends Seria
         } catch (Exception e) {
             throw new PersistException(e);
         }
-        return newInstance;
+        return id;
     }
 
     @Override
-    public T get(PK id) throws PersistException {
+    public T read(PK id) throws PersistException {
         List<T> list;
         String sql = getSelectQuery() + " WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -86,10 +88,10 @@ public abstract class AbstractJDBCDAO<T extends Identified<PK>, PK extends Seria
     }
 
     @Override
-    public void update(T object) throws PersistException {
+    public void update(T transientObject) throws PersistException {
         String sql = getUpdateQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            prepareStatementForUpdate(statement, object);
+            prepareStatementForUpdate(statement, transientObject);
             int count = statement.executeUpdate();
             if (count != 1) {
                 throw new PersistException("More then one record modified on update: " + count);
@@ -100,10 +102,10 @@ public abstract class AbstractJDBCDAO<T extends Identified<PK>, PK extends Seria
     }
 
     @Override
-    public void delete(T object) throws PersistException {
+    public void delete(T persistentObject) throws PersistException {
         String sql = getDeleteQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setObject(1, object.getId());
+            statement.setObject(1, persistentObject.getId());
             int count = statement.executeUpdate();
             if (count != 1) {
                 throw new PersistException("More then one record modified on delete: " + count);
@@ -115,7 +117,7 @@ public abstract class AbstractJDBCDAO<T extends Identified<PK>, PK extends Seria
     }
 
     @Override
-    public List<T> getAll() throws PersistException {
+    public List<T> readAll() throws PersistException {
         List<T> list;
         String sql = getSelectQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

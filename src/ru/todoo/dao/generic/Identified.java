@@ -1,4 +1,4 @@
-package ru.todoo.dao;
+package ru.todoo.dao.generic;
 
 import java.io.Serializable;
 
