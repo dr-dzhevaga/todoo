@@ -1,7 +1,6 @@
 package ru.todoo.domain;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 /**
  * Created by Dmitriy Dzhevaga on 28.10.2015.

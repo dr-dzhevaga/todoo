@@ -1,7 +1,8 @@
 package ru.todoo.derby;
 
-import ru.todoo.dao.AbstractJDBCDao;
+import ru.todoo.dao.AbstractJDBCDAO;
 import ru.todoo.dao.PersistException;
+import ru.todoo.dao.UserDAO;
 import ru.todoo.domain.User;
 
 import java.sql.Connection;
@@ -14,9 +15,9 @@ import java.util.List;
 /**
  * Created by Dmitriy Dzhevaga on 01.11.2015.
  */
-public class UserDao extends AbstractJDBCDao<User, Integer> {
+public class DerbyUserDAO extends AbstractJDBCDAO<User, Integer> implements UserDAO {
 
-    public UserDao(Connection connection) {
+    public DerbyUserDAO(Connection connection) {
         super(connection);
     }
 
@@ -40,16 +41,6 @@ public class UserDao extends AbstractJDBCDao<User, Integer> {
         return "DELETE FROM users WHERE id= ?";
     }
 
-    private static class PersistUser extends User {
-        @Override
-        public void setId(Integer id) {
-            super.setId(id);
-        }
-        @Override
-        public void setCreated(Timestamp created) {
-            super.setCreated(created);
-        }
-    }
     @Override
     protected List<User> parseResultSet(ResultSet rs) throws PersistException {
         List<User> result = new LinkedList<>();
@@ -87,6 +78,32 @@ public class UserDao extends AbstractJDBCDao<User, Integer> {
             statement.setInt(3, object.getId());
         } catch (Exception e) {
             throw new PersistException(e);
+        }
+    }
+
+    @Override
+    public User getByLogin(String login) throws PersistException {
+        List<User> list;
+        String sql = getSelectQuery() + " WHERE login = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, login);
+            ResultSet rs = statement.executeQuery();
+            list = parseResultSet(rs);
+        } catch (Exception e) {
+            throw new PersistException(e);
+        }
+        return list.get(0);
+    }
+
+    private static class PersistUser extends User {
+        @Override
+        public void setId(Integer id) {
+            super.setId(id);
+        }
+
+        @Override
+        public void setCreated(Timestamp created) {
+            super.setCreated(created);
         }
     }
 }

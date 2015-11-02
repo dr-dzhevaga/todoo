@@ -1,9 +1,13 @@
 package ru.todoo.dao;
 
-import java.io.Serializable;
+import ru.todoo.derby.DerbyDAOFactory;
 
-public interface DaoFactory<C> {
-    C getContext() throws PersistException;
-    <T extends Identified<K>, K extends Serializable> GenericDao<T, K>
-        getDao(C context, Class<T> dtoClass) throws PersistException;
+public interface DAOFactory<T> {
+    static DAOFactory getDAOFactory() {
+        return new DerbyDAOFactory();
+    }
+
+    T getContext() throws PersistException;
+
+    UserDAO getUserDao(T context) throws PersistException;
 }
