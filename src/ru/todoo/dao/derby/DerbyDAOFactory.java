@@ -1,8 +1,6 @@
 package ru.todoo.dao.derby;
 
-import ru.todoo.dao.DAOFactory;
-import ru.todoo.dao.PersistException;
-import ru.todoo.dao.UserDAO;
+import ru.todoo.dao.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -28,5 +26,15 @@ public class DerbyDAOFactory implements DAOFactory<Connection> {
     @Override
     public UserDAO getUserDao(Connection context) throws PersistException {
         return new DerbyUserDAO(context);
+    }
+
+    @Override
+    public CategoryDAO getCategoryDAO(Connection context) throws PersistException {
+        return new DerbyCategoryDAO(context);
+    }
+
+    @Override
+    public TemplateDAO getTemplateDAO(Connection context) throws PersistException {
+        return new DerbyTemplateDAO(context);
     }
 }

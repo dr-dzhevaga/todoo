@@ -38,7 +38,7 @@ public class DerbyUserDAO extends GenericDAOJDBCImpl<User, Integer> implements U
 
     @Override
     public String getDeleteQuery() {
-        return "DELETE FROM users WHERE id= ?";
+        return "DELETE FROM users WHERE id = ?";
     }
 
     @Override
@@ -61,28 +61,27 @@ public class DerbyUserDAO extends GenericDAOJDBCImpl<User, Integer> implements U
     }
 
     @Override
-    protected void prepareStatementForInsert(PreparedStatement statement, User object) throws PersistException {
+    protected void prepareStatementForInsert(PreparedStatement statement, User user) throws PersistException {
         try {
-            statement.setString(1, object.getLogin());
-            statement.setString(2, object.getPassword());
+            statement.setString(1, user.getLogin());
+            statement.setString(2, user.getPassword());
         } catch (Exception e) {
             throw new PersistException(e);
         }
     }
 
     @Override
-    protected void prepareStatementForUpdate(PreparedStatement statement, User object) throws PersistException {
+    protected void prepareStatementForUpdate(PreparedStatement statement, User user) throws PersistException {
         try {
-            statement.setString(1, object.getLogin());
-            statement.setString(2, object.getPassword());
-            statement.setInt(3, object.getId());
+            prepareStatementForInsert(statement, user);
+            statement.setInt(3, user.getId());
         } catch (Exception e) {
             throw new PersistException(e);
         }
     }
 
     @Override
-    public User getByLogin(String login) throws PersistException {
+    public List<User> getByLogin(String login) throws PersistException {
         List<User> list;
         String sql = getSelectQuery() + " WHERE login = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -92,7 +91,7 @@ public class DerbyUserDAO extends GenericDAOJDBCImpl<User, Integer> implements U
         } catch (Exception e) {
             throw new PersistException(e);
         }
-        return list.get(0);
+        return list;
     }
 
     private static class PersistUser extends User {

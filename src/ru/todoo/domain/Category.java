@@ -1,17 +1,20 @@
 package ru.todoo.domain;
 
+import ru.todoo.dao.generic.Identified;
+
 /**
  * Created by Dmitriy Dzhevaga on 28.10.2015.
  */
-public class Category {
-    private Long id;
+public class Category implements Identified<Integer> {
+    private Integer id;
     private String name;
 
-    public Long getId() {
+    @Override
+    public Integer getId() {
         return id;
     }
 
-    protected void setId(Long id) {
+    protected void setId(Integer id) {
         this.id = id;
     }
 

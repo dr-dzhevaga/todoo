@@ -1,35 +1,38 @@
 package ru.todoo.domain;
 
+import ru.todoo.dao.generic.Identified;
+
 import java.util.Date;
 
 /**
  * Created by Dmitriy Dzhevaga on 28.10.2015.
  */
-public class Task {
-    private Long id;
-    private Long parentId;
+public class Task implements Identified<Integer> {
+    private Integer id;
+    private Integer parentId;
     private Integer order;
-    private Long userId;
-    private Long templateId;
+    private Integer userId;
+    private Integer templateId;
     private String name;
     private String description;
     private boolean status;
     private Date created;
     private Date modified;
 
-    public Long getId() {
+    @Override
+    public Integer getId() {
         return id;
     }
 
-    protected void setId(Long id) {
+    protected void setId(Integer id) {
         this.id = id;
     }
 
-    public Long getParentId() {
+    public Integer getParentId() {
         return parentId;
     }
 
-    public void setParentId(Long parentId) {
+    public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }
 
@@ -41,19 +44,19 @@ public class Task {
         this.order = order;
     }
 
-    public Long getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
-    public Long getTemplateId() {
+    public Integer getTemplateId() {
         return templateId;
     }
 
-    public void setTemplateId(Long templateId) {
+    public void setTemplateId(Integer templateId) {
         this.templateId = templateId;
     }
 

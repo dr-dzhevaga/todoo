@@ -1,5 +1,7 @@
 package ru.todoo.dao;
 
+import java.sql.SQLException;
+
 public class PersistException extends Exception {
 
     public PersistException() {
@@ -9,7 +11,7 @@ public class PersistException extends Exception {
         super(message);
     }
 
-    public PersistException(String message, Throwable cause) {
+    public PersistException(SQLException message, String cause) {
         super(message, cause);
     }
 

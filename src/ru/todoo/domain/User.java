@@ -14,6 +14,7 @@ public class User implements Identified<Integer> {
     private Timestamp created;
     private Timestamp modified;
 
+    @Override
     public Integer getId() {
         return id;
     }

@@ -1,33 +1,36 @@
 package ru.todoo.domain;
 
+import ru.todoo.dao.generic.Identified;
+
 import java.sql.Timestamp;
 
 /**
  * Created by Dmitriy Dzhevaga on 28.10.2015.
  */
-public class Template {
-    private Long id;
-    private Long parentId;
+public class Template implements Identified<Integer> {
+    private Integer id;
+    private Integer parentId;
     private Integer order;
     private String name;
     private String description;
-    private Long categoryId;
+    private Integer categoryId;
     private Timestamp created;
     private Timestamp modified;
 
-    public Long getId() {
+    @Override
+    public Integer getId() {
         return id;
     }
 
-    protected void setId(Long id) {
+    protected void setId(Integer id) {
         this.id = id;
     }
 
-    public Long getParentId() {
+    public Integer getParentId() {
         return parentId;
     }
 
-    public void setParentId(Long parentId) {
+    public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }
 
@@ -55,11 +58,11 @@ public class Template {
         this.description = description;
     }
 
-    public Long getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
 

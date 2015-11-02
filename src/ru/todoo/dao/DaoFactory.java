@@ -1,13 +1,11 @@
 package ru.todoo.dao;
 
-import ru.todoo.dao.derby.DerbyDAOFactory;
-
 public interface DAOFactory<T> {
-    static DAOFactory getDAOFactory() {
-        return new DerbyDAOFactory();
-    }
-
     T getContext() throws PersistException;
 
     UserDAO getUserDao(T context) throws PersistException;
+
+    CategoryDAO getCategoryDAO(T context) throws PersistException;
+
+    TemplateDAO getTemplateDAO(T context) throws PersistException;
 }
