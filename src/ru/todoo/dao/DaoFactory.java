@@ -1,6 +1,6 @@
 package ru.todoo.dao;
 
-import ru.todoo.derby.DerbyDAOFactory;
+import ru.todoo.dao.derby.DerbyDAOFactory;
 
 public interface DAOFactory<T> {
     static DAOFactory getDAOFactory() {

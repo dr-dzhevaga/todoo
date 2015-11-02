@@ -1,5 +1,6 @@
 package ru.todoo.dao;
 
+import ru.todoo.dao.generic.GenericDAO;
 import ru.todoo.domain.User;
 
 /**
