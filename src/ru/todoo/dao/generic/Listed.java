@@ -7,7 +7,10 @@ import java.io.Serializable;
  */
 public interface Listed<PK extends Serializable> {
     PK getParentId();
+
     void setParentId(PK parentId);
+
     Integer getOrder();
+
     void setOrder(Integer order);
 }

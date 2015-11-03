@@ -38,7 +38,7 @@ public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Se
 
     @Override
     @SuppressWarnings("unchecked")
-    public PK create(T newInstance) throws PersistException {
+    public T create(T newInstance) throws PersistException {
         PK id;
         String sql = getCreateQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -55,22 +55,22 @@ public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Se
         } catch (Exception e) {
             throw new PersistException(e);
         }
+        List<T> list;
         sql = getSelectQuery() + " WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, id);
             ResultSet rs = statement.executeQuery();
-            List<T> list = parseResultSet(rs);
-            if (list == null || (list.size() == 0)) {
+            list = parseResultSet(rs);
+            if (list.isEmpty()) {
                 throw new PersistException("Inserted record not found on create");
             }
             if (list.size() > 1) {
                 throw new PersistException("More then one record found for generated id on create: " + id);
             }
-            newInstance = list.iterator().next();
         } catch (Exception e) {
             throw new PersistException(e);
         }
-        return id;
+        return list.get(0);
     }
 
     @Override
@@ -84,7 +84,7 @@ public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Se
         } catch (Exception e) {
             throw new PersistException(e);
         }
-        if (list == null || list.size() == 0) {
+        if (list.isEmpty()) {
             throw new PersistException("Record with id " + id + " not found on get");
         }
         if (list.size() > 1) {

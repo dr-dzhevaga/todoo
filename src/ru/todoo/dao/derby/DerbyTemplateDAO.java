@@ -2,7 +2,6 @@ package ru.todoo.dao.derby;
 
 import ru.todoo.dao.PersistException;
 import ru.todoo.dao.TemplateDAO;
-import ru.todoo.dao.generic.GenericDAOJDBCImpl;
 import ru.todoo.dao.generic.GenericDAOJDBCListedImpl;
 import ru.todoo.domain.Template;
 
