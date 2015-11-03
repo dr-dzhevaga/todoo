@@ -32,7 +32,7 @@ public abstract class GenericDAOJDBCListedImpl<T extends Identified<PK> & Listed
     @Override
     public T create(T newInstance) throws PersistException {
         T persistObject = super.create(newInstance);
-        onCreate(persistObject);
+        onChildAdd(persistObject);
         return persistObject;
     }
 
@@ -41,19 +41,19 @@ public abstract class GenericDAOJDBCListedImpl<T extends Identified<PK> & Listed
         T persistObject = read(transientObject.getId());
         super.update(transientObject);
         if (!Objects.equals(transientObject.getParentId(), persistObject.getParentId())) {
-            onParentChanging(persistObject, transientObject);
+            onParentChange(persistObject, transientObject);
         } else if (!Objects.equals(transientObject.getOrder(), persistObject.getOrder())) {
-            onPositionChanging(persistObject, transientObject);
+            onOrderChange(persistObject, transientObject);
         }
     }
 
     @Override
     public void delete(T persistentObject) throws PersistException {
         super.delete(persistentObject);
-        onDelete(persistentObject);
+        onChildRemove(persistentObject);
     }
 
-    private void onCreate(T newInstance) throws PersistException {
+    private void onChildAdd(T newInstance) throws PersistException {
         String sql = "UPDATE " + table + " SET order_number = " +
                 "(SELECT MAX(order_number) + 1) FROM " + table + " WHERE parent_id = ?) WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -65,7 +65,7 @@ public abstract class GenericDAOJDBCListedImpl<T extends Identified<PK> & Listed
         }
     }
 
-    private void onDelete(T persistentObject) throws PersistException {
+    private void onChildRemove(T persistentObject) throws PersistException {
         String sql = "UPDATE " + table + " SET order_number = (order_number - 1) " +
                 "WHERE parent_id = ? AND order_number > ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -77,12 +77,12 @@ public abstract class GenericDAOJDBCListedImpl<T extends Identified<PK> & Listed
         }
     }
 
-    private void onParentChanging(T persistObject, T transientObject) throws PersistException {
-        onDelete(persistObject);
-        onCreate(transientObject);
+    private void onParentChange(T persistObject, T transientObject) throws PersistException {
+        onChildRemove(persistObject);
+        onChildAdd(transientObject);
     }
 
-    private void onPositionChanging(T persistObject, T transientObject) throws PersistException {
+    private void onOrderChange(T persistObject, T transientObject) throws PersistException {
         if (transientObject.getOrder() > persistObject.getOrder()) {
             // move down
             String sql = "UPDATE " + table + " SET order_number = (order_number - 1) " +
