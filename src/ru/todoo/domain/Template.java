@@ -1,13 +1,14 @@
 package ru.todoo.domain;
 
 import ru.todoo.dao.generic.Identified;
+import ru.todoo.dao.generic.Listed;
 
 import java.sql.Timestamp;
 
 /**
  * Created by Dmitriy Dzhevaga on 28.10.2015.
  */
-public class Template implements Identified<Integer> {
+public class Template implements Identified<Integer>, Listed<Integer> {
     private Integer id;
     private Integer parentId;
     private Integer order;
@@ -26,18 +27,22 @@ public class Template implements Identified<Integer> {
         this.id = id;
     }
 
+    @Override
     public Integer getParentId() {
         return parentId;
     }
 
+    @Override
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }
 
+    @Override
     public Integer getOrder() {
         return order;
     }
 
+    @Override
     public void setOrder(Integer order) {
         this.order = order;
     }

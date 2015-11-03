@@ -25,16 +25,16 @@ public class DerbyDAOFactory implements DAOFactory<Connection> {
 
     @Override
     public UserDAO getUserDao(Connection context) throws PersistException {
-        return new DerbyUserDAO(context);
+        return new DerbyUserDAO(context, "users");
     }
 
     @Override
     public CategoryDAO getCategoryDAO(Connection context) throws PersistException {
-        return new DerbyCategoryDAO(context);
+        return new DerbyCategoryDAO(context, "categories");
     }
 
     @Override
     public TemplateDAO getTemplateDAO(Connection context) throws PersistException {
-        return new DerbyTemplateDAO(context);
+        return new DerbyTemplateDAO(context, "templates");
     }
 }

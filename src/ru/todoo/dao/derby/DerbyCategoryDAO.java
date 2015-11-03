@@ -15,28 +15,18 @@ import java.util.List;
  * Created by Dmitriy Dzhevaga on 02.11.2015.
  */
 public class DerbyCategoryDAO extends GenericDAOJDBCImpl<Category, Integer> implements CategoryDAO {
-    public DerbyCategoryDAO(Connection connection) {
-        super(connection);
-    }
-
-    @Override
-    public String getSelectQuery() {
-        return "SELECT * FROM categories";
+    public DerbyCategoryDAO(Connection connection, String table) {
+        super(connection, table);
     }
 
     @Override
     public String getCreateQuery() {
-        return "INSERT INTO categories (name) VALUES (?)";
+        return "INSERT INTO " + table + " (name) VALUES (?)";
     }
 
     @Override
     public String getUpdateQuery() {
-        return "UPDATE categories SET name = ? WHERE id = ?";
-    }
-
-    @Override
-    public String getDeleteQuery() {
-        return "DELETE FROM categories WHERE id = ?";
+        return "UPDATE " + table + " SET name = ? WHERE id = ?";
     }
 
     @Override

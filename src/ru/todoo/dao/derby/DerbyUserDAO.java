@@ -17,28 +17,18 @@ import java.util.List;
  */
 public class DerbyUserDAO extends GenericDAOJDBCImpl<User, Integer> implements UserDAO {
 
-    public DerbyUserDAO(Connection connection) {
-        super(connection);
-    }
-
-    @Override
-    public String getSelectQuery() {
-        return "SELECT * FROM users";
+    public DerbyUserDAO(Connection connection, String table) {
+        super(connection, table);
     }
 
     @Override
     public String getCreateQuery() {
-        return "INSERT INTO users (login, password) VALUES (?, ?)";
+        return "INSERT INTO " + table + " (login, password) VALUES (?, ?)";
     }
 
     @Override
     public String getUpdateQuery() {
-        return "UPDATE users SET login = ?, password = ?, modified = CURRENT_TIMESTAMP WHERE id= ?";
-    }
-
-    @Override
-    public String getDeleteQuery() {
-        return "DELETE FROM users WHERE id = ?";
+        return "UPDATE " + table + " SET login = ?, password = ?, modified = CURRENT_TIMESTAMP WHERE id = ?";
     }
 
     @Override

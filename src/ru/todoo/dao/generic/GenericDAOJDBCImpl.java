@@ -11,24 +11,30 @@ import java.util.List;
 
 public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Serializable> implements GenericDAO<T, PK> {
     protected Connection connection;
+    protected String table;
 
-    public GenericDAOJDBCImpl(Connection connection) {
+    public GenericDAOJDBCImpl(Connection connection, String table) {
         this.connection = connection;
+        this.table = table;
     }
-
-    public abstract String getSelectQuery();
 
     public abstract String getCreateQuery();
 
     public abstract String getUpdateQuery();
-
-    public abstract String getDeleteQuery();
 
     protected abstract List<T> parseResultSet(ResultSet rs) throws PersistException;
 
     protected abstract void prepareStatementForInsert(PreparedStatement statement, T object) throws PersistException;
 
     protected abstract void prepareStatementForUpdate(PreparedStatement statement, T object) throws PersistException;
+
+    public String getSelectQuery() {
+        return "SELECT * FROM " + table;
+    }
+
+    public String getDeleteQuery() {
+        return "DELETE FROM " + table + " WHERE id = ?";
+    }
 
     @Override
     @SuppressWarnings("unchecked")
