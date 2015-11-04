@@ -3,10 +3,7 @@ package ru.todoo.dao.generic;
 import ru.todoo.dao.PersistException;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 
 public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Serializable> implements GenericDAO<T, PK> {
@@ -37,9 +34,8 @@ public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Se
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public T create(T newInstance) throws PersistException {
-        PK id;
+    public PK create(T newInstance) throws PersistException {
+        Object id;
         String sql = getCreateQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             prepareStatementForInsert(statement, newInstance);
@@ -51,7 +47,7 @@ public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Se
             if (!generatedKeys.next()) {
                 throw new PersistException("No id generated on create");
             }
-            id = (PK) generatedKeys.getObject(1);
+            id = generatedKeys.getObject(1); // Return BigInteger for INT. So we have to read created record from db to get id with correct type.
         } catch (Exception e) {
             throw new PersistException(e);
         }
@@ -67,10 +63,10 @@ public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Se
             if (list.size() > 1) {
                 throw new PersistException("More then one record found for generated id on create: " + id);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new PersistException(e);
         }
-        return list.get(0);
+        return list.get(0).getId();
     }
 
     @Override

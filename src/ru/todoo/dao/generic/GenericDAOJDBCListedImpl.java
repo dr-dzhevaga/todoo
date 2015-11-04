@@ -30,10 +30,11 @@ public abstract class GenericDAOJDBCListedImpl<T extends Identified<PK> & Listed
     protected abstract void prepareStatementForUpdate(PreparedStatement statement, T object) throws PersistException;
 
     @Override
-    public T create(T newInstance) throws PersistException {
-        T persistObject = super.create(newInstance);
+    public PK create(T newInstance) throws PersistException {
+        PK id = super.create(newInstance);
+        T persistObject = read(id);
         onChildAdd(persistObject);
-        return persistObject;
+        return id;
     }
 
     @Override
@@ -54,8 +55,11 @@ public abstract class GenericDAOJDBCListedImpl<T extends Identified<PK> & Listed
     }
 
     private void onChildAdd(T newInstance) throws PersistException {
-        String sql = "UPDATE " + table + " SET order_number = " +
-                "(SELECT MAX(order_number) + 1) FROM " + table + " WHERE parent_id = ?) WHERE id = ?";
+        String sql = "UPDATE " + table + "\n" +
+                "SET order_number = (SELECT CASE WHEN MAX(order_number) IS NULL THEN 0 ELSE (MAX(order_number) + 1) END\n" +
+                "                    FROM " + table + "\n" +
+                "                    WHERE parent_id = ?)\n" +
+                "WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, newInstance.getParentId());
             statement.setObject(2, newInstance.getId());
@@ -66,7 +70,8 @@ public abstract class GenericDAOJDBCListedImpl<T extends Identified<PK> & Listed
     }
 
     private void onChildRemove(T persistentObject) throws PersistException {
-        String sql = "UPDATE " + table + " SET order_number = (order_number - 1) " +
+        String sql = "UPDATE " + table + "\n" +
+                "SET order_number = (order_number - 1)\n" +
                 "WHERE parent_id = ? AND order_number > ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, persistentObject.getParentId());
@@ -85,24 +90,28 @@ public abstract class GenericDAOJDBCListedImpl<T extends Identified<PK> & Listed
     private void onOrderChange(T persistObject, T transientObject) throws PersistException {
         if (transientObject.getOrder() > persistObject.getOrder()) {
             // move down
-            String sql = "UPDATE " + table + " SET order_number = (order_number - 1) " +
-                    "WHERE parent_id = ? AND order_number > ? AND order_number < ?";
+            String sql = "UPDATE " + table + "\n" +
+                    "SET order_number = (order_number - 1)\n" +
+                    "WHERE parent_id = ? AND id <> ? AND order_number > ? AND order_number <= ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setObject(1, persistObject.getParentId());
-                statement.setInt(2, persistObject.getOrder());
-                statement.setInt(3, transientObject.getOrder());
+                statement.setObject(2, persistObject.getId());
+                statement.setInt(3, persistObject.getOrder());
+                statement.setInt(4, transientObject.getOrder());
                 statement.execute();
             } catch (SQLException e) {
                 throw new PersistException(e, e.getMessage());
             }
         } else {
             // move up
-            String sql = "UPDATE " + table + " SET order_number = (order_number + 1) " +
-                    "WHERE parent_id = ? AND order_number > ? AND order_number < ?";
+            String sql = "UPDATE " + table + "\n" +
+                    "SET order_number = (order_number + 1)\n" +
+                    "WHERE parent_id = ? AND id <> ? AND order_number >= ? AND order_number < ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setObject(1, persistObject.getParentId());
-                statement.setInt(2, transientObject.getOrder());
-                statement.setInt(3, persistObject.getOrder());
+                statement.setObject(2, persistObject.getId());
+                statement.setInt(3, transientObject.getOrder());
+                statement.setInt(4, persistObject.getOrder());
                 statement.execute();
             } catch (SQLException e) {
                 throw new PersistException(e, e.getMessage());

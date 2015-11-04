@@ -25,7 +25,8 @@ public class DerbyTemplateDAO extends GenericDAOJDBCListedImpl<Template, Integer
 
     @Override
     public String getUpdateQuery() {
-        return "UPDATE " + table + " SET parent_id = ?, name = ?, description = ?, category_id = ? WHERE id= ?";
+        return "UPDATE " + table + " SET parent_id = ?, name = ?, description = ?, category_id = ?, order_number = ? " +
+                "WHERE id= ?";
     }
 
     @Override
@@ -35,12 +36,13 @@ public class DerbyTemplateDAO extends GenericDAOJDBCListedImpl<Template, Integer
             while (rs.next()) {
                 PersistTemplate template = new PersistTemplate();
                 template.setId(rs.getInt("id"));
-                template.setParentId(rs.getInt("parent_id"));
+                template.setParentId(rs.getObject("parent_id", Integer.class));
                 template.setName(rs.getString("name"));
                 template.setDescription(rs.getString("description"));
-                template.setOrder(rs.getInt("order_number"));
-                template.setCategoryId(rs.getInt("category_id"));
+                template.setOrder(rs.getObject("order_number", Integer.class));
+                template.setCategoryId(rs.getObject("category_id", Integer.class));
                 template.setCreated(rs.getTimestamp("created"));
+                template.setModified(rs.getTimestamp("modified"));
                 result.add(template);
             }
         } catch (Exception e) {
@@ -52,10 +54,10 @@ public class DerbyTemplateDAO extends GenericDAOJDBCListedImpl<Template, Integer
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, Template template) throws PersistException {
         try {
-            statement.setInt(1, template.getParentId());
+            statement.setObject(1, template.getParentId());
             statement.setString(2, template.getName());
             statement.setString(3, template.getDescription());
-            statement.setInt(4, template.getCategoryId());
+            statement.setObject(4, template.getCategoryId());
         } catch (Exception e) {
             throw new PersistException(e);
         }
@@ -65,7 +67,8 @@ public class DerbyTemplateDAO extends GenericDAOJDBCListedImpl<Template, Integer
     protected void prepareStatementForUpdate(PreparedStatement statement, Template template) throws PersistException {
         try {
             prepareStatementForInsert(statement, template);
-            statement.setInt(5, template.getId());
+            statement.setInt(5, template.getOrder());
+            statement.setInt(6, template.getId());
         } catch (Exception e) {
             throw new PersistException(e);
         }
