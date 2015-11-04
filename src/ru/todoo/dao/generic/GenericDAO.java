@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface GenericDAO<T extends Identified<PK>, PK extends Serializable> {
-    PK create(T newInstance) throws PersistException;
+    T create(T newInstance) throws PersistException;
 
     T read(PK id) throws PersistException;
 

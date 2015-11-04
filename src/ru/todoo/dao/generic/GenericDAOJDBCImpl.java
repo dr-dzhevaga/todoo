@@ -34,7 +34,7 @@ public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Se
     }
 
     @Override
-    public PK create(T newInstance) throws PersistException {
+    public T create(T newInstance) throws PersistException {
         Object id;
         String sql = getCreateQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -66,7 +66,7 @@ public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Se
         } catch (SQLException e) {
             throw new PersistException(e);
         }
-        return list.get(0).getId();
+        return list.get(0);
     }
 
     @Override

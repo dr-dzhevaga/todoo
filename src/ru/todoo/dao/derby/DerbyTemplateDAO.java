@@ -2,18 +2,17 @@ package ru.todoo.dao.derby;
 
 import ru.todoo.dao.PersistException;
 import ru.todoo.dao.TemplateDAO;
-import ru.todoo.dao.generic.GenericDAOJDBCListedImpl;
+import ru.todoo.dao.generic.ListedDAOJDBCImpl;
 import ru.todoo.domain.Template;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by Dmitriy Dzhevaga on 02.11.2015.
  */
-public class DerbyTemplateDAO extends GenericDAOJDBCListedImpl<Template, Integer> implements TemplateDAO {
+public class DerbyTemplateDAO extends ListedDAOJDBCImpl<Template, Integer> implements TemplateDAO {
     public DerbyTemplateDAO(Connection connection, String table) {
         super(connection, table);
     }
@@ -75,25 +74,13 @@ public class DerbyTemplateDAO extends GenericDAOJDBCListedImpl<Template, Integer
     }
 
     @Override
-    public List<Template> readAllRoot() throws PersistException {
-        List<Template> list;
-        String sql = getSelectQuery() + " WHERE parent_id IS NULL";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            ResultSet rs = statement.executeQuery();
-            list = parseResultSet(rs);
-        } catch (SQLException e) {
-            throw new PersistException(e, e.getMessage());
-        }
-        return list;
-    }
-
-    @Override
-    public List<Template> readPopularRoot() throws PersistException {
+    public List<Template> readPopularRoots() throws PersistException {
+        // TODO
         return null;
     }
 
     @Override
-    public List<Template> readRootByCategory(Integer categoryId) throws PersistException {
+    public List<Template> readRootsByCategory(Integer categoryId) throws PersistException {
         List<Template> list;
         String sql = getSelectQuery() + " WHERE parent_id IS NULL AND category_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -104,11 +91,6 @@ public class DerbyTemplateDAO extends GenericDAOJDBCListedImpl<Template, Integer
             throw new PersistException(e, e.getMessage());
         }
         return list;
-    }
-
-    @Override
-    public List<Template> readWithChildren(Integer id) throws PersistException {
-        return null;
     }
 
     private static class PersistTemplate extends Template {
