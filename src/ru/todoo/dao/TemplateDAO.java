@@ -9,7 +9,8 @@ import java.util.List;
  * Created by Dmitriy Dzhevaga on 02.11.2015.
  */
 public interface TemplateDAO extends GenericDAO<Template, Integer> {
-    List<Template> getByCategoryId(Integer categoryId) throws PersistException;
-
-    List<Template> getPopular() throws PersistException;
+    List<Template> readAllRoot() throws PersistException;
+    List<Template> readPopularRoot() throws PersistException;
+    List<Template> readRootByCategory(Integer categoryId) throws PersistException;
+    List<Template> readWithChildren(Integer id) throws PersistException;
 }

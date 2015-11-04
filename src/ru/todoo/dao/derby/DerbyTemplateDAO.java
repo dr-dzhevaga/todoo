@@ -75,9 +75,27 @@ public class DerbyTemplateDAO extends GenericDAOJDBCListedImpl<Template, Integer
     }
 
     @Override
-    public List<Template> getByCategoryId(Integer categoryId) throws PersistException {
+    public List<Template> readAllRoot() throws PersistException {
         List<Template> list;
-        String sql = getSelectQuery() + " WHERE category_id = ?";
+        String sql = getSelectQuery() + " WHERE parent_id IS NULL";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet rs = statement.executeQuery();
+            list = parseResultSet(rs);
+        } catch (SQLException e) {
+            throw new PersistException(e, e.getMessage());
+        }
+        return list;
+    }
+
+    @Override
+    public List<Template> readPopularRoot() throws PersistException {
+        return null;
+    }
+
+    @Override
+    public List<Template> readRootByCategory(Integer categoryId) throws PersistException {
+        List<Template> list;
+        String sql = getSelectQuery() + " WHERE parent_id IS NULL AND category_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, categoryId);
             ResultSet rs = statement.executeQuery();
@@ -89,11 +107,8 @@ public class DerbyTemplateDAO extends GenericDAOJDBCListedImpl<Template, Integer
     }
 
     @Override
-    public List<Template> getPopular() throws PersistException {
-        List<Template> list;
-        // TODO
-        list = new ArrayList<>();
-        return list;
+    public List<Template> readWithChildren(Integer id) throws PersistException {
+        return null;
     }
 
     private static class PersistTemplate extends Template {
