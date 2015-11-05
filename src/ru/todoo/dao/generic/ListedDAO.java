@@ -9,11 +9,15 @@ import java.util.List;
  * Created by Dmitriy Dzhevaga on 04.11.2015.
  */
 public interface ListedDAO<T extends Identified<PK> & Listed<PK>, PK extends Serializable> {
-    List<T> readRoots() throws PersistException;
-    List<T> readChildren(T parent) throws PersistException;
-    T readLastChild(T parent) throws PersistException;
-    T readFirstChild(T parent) throws PersistException;
-    List<T> readChildrenRecursive(T parent) throws PersistException;
-    void moveChildrenUp(T parent, Integer firstChildOrder, Integer lastChildOrder) throws PersistException;
-    void moveChildrenDown(T parent, Integer firstChildOrder, Integer lastChildOrder) throws PersistException;
+    List<T> readChildren(PK parentId) throws PersistException;
+
+    T readLastChild(PK parentId) throws PersistException;
+
+    T readFirstChild(PK parentId) throws PersistException;
+
+    List<T> readChildrenRecursive(PK parentId) throws PersistException;
+
+    void moveChildrenUp(PK parentId, Integer firstChildOrder, Integer lastChildOrder) throws PersistException;
+
+    void moveChildrenDown(PK parentId, Integer firstChildOrder, Integer lastChildOrder) throws PersistException;
 }

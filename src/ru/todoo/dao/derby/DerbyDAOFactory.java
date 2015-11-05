@@ -34,7 +34,7 @@ public class DerbyDAOFactory implements DAOFactory<Connection> {
     }
 
     @Override
-    public TemplateDAO getTemplateDAO(Connection context) throws PersistException {
-        return new DerbyTemplateDAO(context, "templates");
+    public TaskDAO getTaskDAO(Connection context) throws PersistException {
+        return new DerbyTaskDAO(context, "tasks");
     }
 }

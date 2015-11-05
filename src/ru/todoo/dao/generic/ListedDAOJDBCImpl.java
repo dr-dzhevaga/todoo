@@ -18,26 +18,13 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
     }
 
     @Override
-    public List<T> readRoots() throws PersistException {
-        List<T> list;
-        String sql = getSelectQuery() + " WHERE parent_id IS NULL";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            ResultSet rs = statement.executeQuery();
-            list = parseResultSet(rs);
-        } catch (Exception e) {
-            throw new PersistException(e);
-        }
-        return list;
+    public List<T> readChildren(PK parentId) throws PersistException {
+        return readChildren(parentId, OrderDirection.ASC, SelectionLimit.ALL);
     }
 
     @Override
-    public List<T> readChildren(T parent) throws PersistException {
-        return readChildren(parent, OrderDirection.ASC, SelectionLimit.ALL);
-    }
-
-    @Override
-    public T readLastChild(T parent) throws PersistException {
-        List<T> list = readChildren(parent, OrderDirection.DESC, SelectionLimit.FIRST);
+    public T readLastChild(PK parentId) throws PersistException {
+        List<T> list = readChildren(parentId, OrderDirection.DESC, SelectionLimit.FIRST);
         if (list.isEmpty()) {
             return null;
         } else {
@@ -46,8 +33,8 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
     }
 
     @Override
-    public T readFirstChild(T parent) throws PersistException {
-        List<T> list = readChildren(parent, OrderDirection.ASC, SelectionLimit.FIRST);
+    public T readFirstChild(PK parentId) throws PersistException {
+        List<T> list = readChildren(parentId, OrderDirection.ASC, SelectionLimit.FIRST);
         if (list.isEmpty()) {
             return null;
         } else {
@@ -55,11 +42,11 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
         }
     }
 
-    private List<T> readChildren(T parent, OrderDirection order, SelectionLimit limit) throws PersistException {
+    private List<T> readChildren(PK parentId, OrderDirection order, SelectionLimit limit) throws PersistException {
         List<T> list;
         String sql = "SELECT * FROM (" + getSelectQuery() + " WHERE parent_id = ?) ordered_table" + order + limit;
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setObject(1, parent.getId());
+            statement.setObject(1, parentId);
             ResultSet rs = statement.executeQuery();
             list = parseResultSet(rs);
         } catch (Exception e) {
@@ -69,7 +56,7 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
     }
 
     @Override
-    public List<T> readChildrenRecursive(T parent) throws PersistException {
+    public List<T> readChildrenRecursive(PK parentId) throws PersistException {
         List<T> list;
         String sql = "SELECT *\n" +
                 "FROM TEMPLATES\n" +
@@ -81,8 +68,8 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
                 "                    FROM TEMPLATES\n" +
                 "                    WHERE PARENT_ID = ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setObject(1, parent.getId());
-            statement.setObject(2, parent.getId());
+            statement.setObject(1, parentId);
+            statement.setObject(2, parentId);
             ResultSet rs = statement.executeQuery();
             list = parseResultSet(rs);
         } catch (Exception e) {
@@ -92,21 +79,21 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
     }
 
     @Override
-    public void moveChildrenUp(T parent, Integer firstChildOrder, Integer lastChildOrder) throws PersistException {
-        moveChildren(parent, firstChildOrder, lastChildOrder, MoveDirection.DOWN);
+    public void moveChildrenUp(PK parentId, Integer firstChildOrder, Integer lastChildOrder) throws PersistException {
+        moveChildren(parentId, firstChildOrder, lastChildOrder, MoveDirection.DOWN);
     }
 
     @Override
-    public void moveChildrenDown(T parent, Integer firstChildOrder, Integer lastChildOrder) throws PersistException {
-        moveChildren(parent, firstChildOrder, lastChildOrder, MoveDirection.UP);
+    public void moveChildrenDown(PK parentId, Integer firstChildOrder, Integer lastChildOrder) throws PersistException {
+        moveChildren(parentId, firstChildOrder, lastChildOrder, MoveDirection.UP);
     }
 
-    private void moveChildren(T parent, Integer firstChildOrder, Integer lastChildOrder, MoveDirection direction) throws PersistException {
+    private void moveChildren(PK parentId, Integer firstChildOrder, Integer lastChildOrder, MoveDirection direction) throws PersistException {
         String sql = "UPDATE " + table + "\n" +
                 "SET order_number = " + direction + "\n" +
                 "WHERE parent_id = ? AND order_number >= ? AND order_number <= ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setObject(1, parent.getId());
+            statement.setObject(1, parentId);
             statement.setObject(2, firstChildOrder);
             statement.setInt(3, lastChildOrder);
             statement.execute();

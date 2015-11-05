@@ -23,12 +23,19 @@ public class DerbyUserDAO extends GenericDAOJDBCImpl<User, Integer> implements U
 
     @Override
     public String getCreateQuery() {
-        return "INSERT INTO " + table + " (login, password) VALUES (?, ?)";
+        return "INSERT INTO " + table + " (" +
+                "login, " +
+                "password) " +
+                "VALUES (?, ?)";
     }
 
     @Override
     public String getUpdateQuery() {
-        return "UPDATE " + table + " SET login = ?, password = ?, modified = CURRENT_TIMESTAMP WHERE id = ?";
+        return "UPDATE " + table + " SET " +
+                "login = ?, " +
+                "password = ?, " +
+                "modified = CURRENT_TIMESTAMP " +
+                "WHERE id = ?";
     }
 
     @Override

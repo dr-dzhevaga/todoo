@@ -3,7 +3,7 @@ package ru.todoo.domain;
 import ru.todoo.dao.generic.Identified;
 import ru.todoo.dao.generic.Listed;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 /**
  * Created by Dmitriy Dzhevaga on 28.10.2015.
@@ -12,13 +12,15 @@ public class Task implements Identified<Integer>, Listed<Integer> {
     private Integer id;
     private Integer parentId;
     private Integer order;
-    private Integer userId;
-    private Integer templateId;
     private String name;
     private String description;
-    private boolean status;
-    private Date created;
-    private Date modified;
+    private boolean template;
+    private Integer categoryId;
+    private Integer userId;
+    private Integer originId;
+    private boolean completed;
+    private Timestamp created;
+    private Timestamp modified;
 
     @Override
     public Integer getId() {
@@ -49,22 +51,6 @@ public class Task implements Identified<Integer>, Listed<Integer> {
         this.order = order;
     }
 
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getTemplateId() {
-        return templateId;
-    }
-
-    public void setTemplateId(Integer templateId) {
-        this.templateId = templateId;
-    }
-
     public String getName() {
         return name;
     }
@@ -81,27 +67,59 @@ public class Task implements Identified<Integer>, Listed<Integer> {
         this.description = description;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isTemplate() {
+        return template;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setTemplate(boolean template) {
+        this.template = template;
     }
 
-    public Date getCreated() {
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Integer getOriginId() {
+        return originId;
+    }
+
+    public void setOriginId(Integer originId) {
+        this.originId = originId;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Timestamp getCreated() {
         return created;
     }
 
-    protected void setCreated(Date created) {
+    protected void setCreated(Timestamp created) {
         this.created = created;
     }
 
-    public Date getModified() {
+    public Timestamp getModified() {
         return modified;
     }
 
-    public void setModified(Date modified) {
+    public void setModified(Timestamp modified) {
         this.modified = modified;
     }
 }

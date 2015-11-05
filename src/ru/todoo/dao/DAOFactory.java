@@ -10,5 +10,5 @@ public interface DAOFactory<T> {
 
     CategoryDAO getCategoryDAO(T context) throws PersistException;
 
-    TemplateDAO getTemplateDAO(T context) throws PersistException;
+    TaskDAO getTaskDAO(T context) throws PersistException;
 }
