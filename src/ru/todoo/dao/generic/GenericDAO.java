@@ -12,7 +12,7 @@ public interface GenericDAO<T extends Identified<PK>, PK extends Serializable> {
 
     void update(T transientObject) throws PersistException;
 
-    void delete(T persistentObject) throws PersistException;
+    void delete(PK id) throws PersistException;
 
     public List<T> readAll() throws PersistException;
 }

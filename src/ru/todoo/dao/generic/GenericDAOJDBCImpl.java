@@ -104,10 +104,10 @@ public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Se
     }
 
     @Override
-    public void delete(T persistentObject) throws PersistException {
+    public void delete(PK id) throws PersistException {
         String sql = getDeleteQuery();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setObject(1, persistentObject.getId());
+            statement.setObject(1, id);
             int count = statement.executeUpdate();
             if (count != 1) {
                 throw new PersistException("More then one record modified on delete: " + count);

@@ -1,90 +1,161 @@
 package ru.todoo.service;
 
+import ru.todoo.dao.PersistException;
+import ru.todoo.dao.TaskDAO;
+import ru.todoo.dao.derby.DerbyDAOFactory;
 import ru.todoo.domain.Task;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Created by Dmitriy Dzhevaga on 06.11.2015.
  */
 public class TaskService {
-    public void addTask(Task task) {
+    private static final DerbyDAOFactory daoFactory = new DerbyDAOFactory();
 
+    public void addTaskTemplate(String name, String description, Integer categoryId, Integer userId) throws PersistException, SQLException {
+        addTask(null, name, description, true, categoryId, userId);
     }
 
-    public Task getTask(Integer taskId) {
-        return null;
+    public void addTaskTemplate(Integer parentId, String name, String description, Integer categoryId, Integer userId) throws PersistException, SQLException {
+        addTask(parentId, name, description, true, categoryId, userId);
     }
 
-    public void deleteTask(Integer taskId) {
-
+    public void addTask(String name, String description, Integer categoryId, Integer userId) throws PersistException, SQLException {
+        addTask(null, name, description, false, categoryId, userId);
     }
 
-    public List<Task> getAllTasks() {
-        return null;
+    public void addTask(Integer parentId, String name, String description, Integer categoryId, Integer userId) throws PersistException, SQLException {
+        addTask(parentId, name, description, false, categoryId, userId);
     }
 
-    public void changeTaskStatus(Integer taskId, boolean completed) {
-
+    private void addTask(Integer parentId, String name, String description, boolean isTemplate, Integer categoryId, Integer userId) throws PersistException, SQLException {
+        Task task = new Task();
+        task.setTemplate(isTemplate);
+        task.setParentId(parentId);
+        task.setName(name);
+        task.setDescription(description);
+        task.setCategoryId(categoryId);
+        task.setUserId(userId);
+        addTask(task);
     }
 
-    public void changeTaskName(Integer taskId, String name) {
-
+    private void addTask(Task task) throws PersistException, SQLException {
+        try (Connection connection = daoFactory.getContext()) {
+            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+            Integer parentTaskId = task.getParentId();
+            if(parentTaskId != null) {
+                Task lastNeighbor = taskDAO.readLastChild(parentTaskId);
+                if(lastNeighbor != null) {
+                    task.setOrder(lastNeighbor.getOrder() + 1);
+                } else {
+                    task.setOrder(0);
+                }
+            }
+            taskDAO.create(task);
+        }
     }
 
-    public void changeTaskDescription(Integer taskId, String name) {
-
+    public Task getTask(Integer taskId) throws PersistException, SQLException {
+        try (Connection connection = daoFactory.getContext()) {
+            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+            return taskDAO.read(taskId);
+        }
     }
 
-    public void changeTaskOrder(Integer taskId, Integer order) {
-
+    public List<Task> getTasksByUser(Integer userId) throws PersistException, SQLException {
+        try (Connection connection = daoFactory.getContext()) {
+            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+            return taskDAO.readTasksByUser(userId);
+        }
     }
 
-    public void changeTaskParent(Integer taskId, Integer parentId) {
-
+    public List<Task> getTaskTemplatesByCategory(Integer categoryId) throws PersistException, SQLException {
+        try (Connection connection = daoFactory.getContext()) {
+            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+            return taskDAO.readTaskTemplatesByCategory(categoryId);
+        }
     }
 
-    public List<Task> getTasksByUser(Integer userId) {
-        return null;
+    public List<Task> getPopularTaskTemplates() throws PersistException, SQLException {
+        try (Connection connection = daoFactory.getContext()) {
+            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+            return taskDAO.readPopularTaskTemplates();
+        }
     }
 
-    public void addTaskTemplate(Task task) {
-
+    public void deleteTask(Integer taskId) throws PersistException, SQLException {
+        try (Connection connection = daoFactory.getContext()) {
+            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+            Task task = taskDAO.read(taskId);
+            Integer parentTaskId = task.getParentId();
+            if (parentTaskId != null) {
+                Task lastNeighbor = taskDAO.readLastChild(parentTaskId);
+                if (lastNeighbor != null && !Objects.equals(lastNeighbor.getId(), taskId)) {
+                    taskDAO.moveChildrenUp(task.getParentId(), task.getOrder() + 1, lastNeighbor.getOrder());
+                }
+            }
+            taskDAO.delete(taskId);
+        }
     }
 
-    public Task getTaskTemplate(Integer taskId) {
-        return null;
+    private void changeTask(Integer taskId, Consumer<Task> changer) throws PersistException, SQLException {
+        try (Connection connection = daoFactory.getContext()) {
+            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+            Task task = taskDAO.read(taskId);
+            changer.accept(task);
+            taskDAO.update(task);
+        }
+    }
+    public void changeTaskStatus(Integer taskId, boolean completed) throws PersistException, SQLException {
+        changeTask(taskId, task -> task.setCompleted(completed));
     }
 
-    public void deleteTaskTemplate(Integer taskId) {
-
+    public void changeTaskName(Integer taskId, String name) throws PersistException, SQLException {
+        changeTask(taskId, task -> task.setName(name));
     }
 
-    public List<Task> getAllTaskTemplates() {
-        return null;
+    public void changeTaskDescription(Integer taskId, String description) throws PersistException, SQLException {
+        changeTask(taskId, task -> task.setDescription(description));
     }
 
-    public List<Task> getTaskTemplatesByCategory(Integer categoryId) {
-        return null;
+    public void changeTaskOrder(Integer taskId, Integer order) throws PersistException, SQLException {
+        try (Connection connection = daoFactory.getContext()) {
+            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+            Task task = taskDAO.read(taskId);
+            if (order > task.getOrder()) {
+                taskDAO.moveChildrenUp(task.getParentId(), task.getOrder() + 1, order);
+            } else if (order < task.getOrder()) {
+                taskDAO.moveChildrenDown(task.getParentId(), order, task.getOrder() - 1);
+            }
+            task.setOrder(order);
+            taskDAO.update(task);
+        }
     }
 
-    public List<Task> getPopularTaskTemplates() {
-        return null;
-    }
-
-    public void changeTaskTemplateName(Integer taskId, String name) {
-
-    }
-
-    public void changeTaskTemplateDescription(Integer taskId, String name) {
-
-    }
-
-    public void changeTaskTemplateOrder(Integer taskId, Integer order) {
-
-    }
-
-    public void changeTaskTemplateParent(Integer taskId, Integer parentId) {
-
+    public void changeTaskParent(Integer taskId, Integer parentId) throws PersistException, SQLException {
+        try (Connection connection = daoFactory.getContext()) {
+            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+            Task task = taskDAO.read(taskId);
+            Integer oldParentTaskId = task.getParentId();
+            if(oldParentTaskId != null) {
+                Task oldLastNeighbor = taskDAO.readLastChild(oldParentTaskId);
+                if(oldLastNeighbor != null) {
+                    taskDAO.moveChildrenUp(oldParentTaskId, task.getOrder() + 1, oldLastNeighbor.getOrder());
+                }
+            }
+            Task lastNeighbor = taskDAO.readLastChild(parentId);
+            if(lastNeighbor != null) {
+                task.setOrder(lastNeighbor.getOrder() + 1);
+            } else {
+                task.setOrder(0);
+            }
+            task.setParentId(parentId);
+            taskDAO.update(task);
+        }
     }
 }
