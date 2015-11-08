@@ -6,10 +6,9 @@ import ru.todoo.dao.generic.GenericDAOJDBCImpl;
 import ru.todoo.domain.User;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -17,12 +16,12 @@ import java.util.List;
  */
 public class DerbyUserDAO extends GenericDAOJDBCImpl<User, Integer> implements UserDAO {
 
-    public DerbyUserDAO(Connection connection, String table) {
-        super(connection, table);
+    public DerbyUserDAO(Connection connection) {
+        super(connection, "user");
     }
 
     @Override
-    public String getCreateQuery() {
+    protected String getCreateQuery() {
         return "INSERT INTO " + table + " (" +
                 "login, " +
                 "password) " +
@@ -30,7 +29,7 @@ public class DerbyUserDAO extends GenericDAOJDBCImpl<User, Integer> implements U
     }
 
     @Override
-    public String getUpdateQuery() {
+    protected String getUpdateQuery() {
         return "UPDATE " + table + " SET " +
                 "login = ?, " +
                 "password = ?, " +
@@ -39,56 +38,37 @@ public class DerbyUserDAO extends GenericDAOJDBCImpl<User, Integer> implements U
     }
 
     @Override
-    protected List<User> parseResultSet(ResultSet rs) throws PersistException {
-        List<User> result = new LinkedList<>();
-        try {
-            while (rs.next()) {
-                PersistUser user = new PersistUser();
-                user.setId(rs.getInt("id"));
-                user.setCreated(rs.getTimestamp("created"));
-                user.setModified(rs.getTimestamp("modified"));
-                user.setLogin(rs.getString("login"));
-                user.setPassword(rs.getString("password"));
-                result.add(user);
-            }
-        } catch (Exception e) {
-            throw new PersistException(e);
-        }
-        return result;
+    protected User parseResultSet(ResultSet rs) throws SQLException {
+        PersistUser user = new PersistUser();
+        user.setId(rs.getInt("id"));
+        user.setCreated(rs.getTimestamp("created"));
+        user.setModified(rs.getTimestamp("modified"));
+        user.setLogin(rs.getString("login"));
+        user.setPassword(rs.getString("password"));
+        return user;
     }
 
     @Override
-    protected void prepareStatementForInsert(PreparedStatement statement, User user) throws PersistException {
-        try {
-            statement.setString(1, user.getLogin());
-            statement.setString(2, user.getPassword());
-        } catch (Exception e) {
-            throw new PersistException(e);
-        }
+    protected Object[] getParametersForInsert(User user) {
+        return new Object[]{
+                user.getLogin(),
+                user.getPassword()
+        };
     }
 
     @Override
-    protected void prepareStatementForUpdate(PreparedStatement statement, User user) throws PersistException {
-        try {
-            prepareStatementForInsert(statement, user);
-            statement.setInt(3, user.getId());
-        } catch (Exception e) {
-            throw new PersistException(e);
-        }
+    protected Object[] getParametersForUpdate(User user) {
+        return new Object[]{
+                user.getLogin(),
+                user.getPassword(),
+                user.getId()
+        };
     }
 
     @Override
     public List<User> getByLogin(String login) throws PersistException {
-        List<User> list;
         String sql = getSelectQuery() + " WHERE login = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, login);
-            ResultSet rs = statement.executeQuery();
-            list = parseResultSet(rs);
-        } catch (Exception e) {
-            throw new PersistException(e);
-        }
-        return list;
+        return jdbcHelper.select(sql, new Object[]{login}, this::parseResultSet);
     }
 
     private static class PersistUser extends User {

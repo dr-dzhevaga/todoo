@@ -6,9 +6,5 @@ package ru.todoo.dao;
 public interface DAOFactory<T> {
     T getContext() throws PersistException;
 
-    UserDAO getUserDao(T context) throws PersistException;
-
-    CategoryDAO getCategoryDAO(T context) throws PersistException;
-
-    TaskDAO getTaskDAO(T context) throws PersistException;
+    <R> R getDao(T context, Class<R> daoClass) throws PersistException;
 }

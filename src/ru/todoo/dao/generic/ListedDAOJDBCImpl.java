@@ -4,9 +4,6 @@ import ru.todoo.dao.PersistException;
 
 import java.io.Serializable;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -43,21 +40,12 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
     }
 
     private List<T> readChildren(PK parentId, OrderDirection order, SelectionLimit limit) throws PersistException {
-        List<T> list;
         String sql = "SELECT * FROM (" + getSelectQuery() + " WHERE parent_id = ?) ordered_table" + order + limit;
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setObject(1, parentId);
-            ResultSet rs = statement.executeQuery();
-            list = parseResultSet(rs);
-        } catch (Exception e) {
-            throw new PersistException(e);
-        }
-        return list;
+        return jdbcHelper.select(sql, new Object[]{parentId}, this::parseResultSet);
     }
 
     @Override
     public List<T> readChildrenRecursive(PK parentId) throws PersistException {
-        List<T> list;
         String sql = "SELECT *\n" +
                 "FROM TEMPLATES\n" +
                 "WHERE PARENT_ID = ?\n" +
@@ -67,15 +55,7 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
                 "WHERE PARENT_ID IN (SELECT ID\n" +
                 "                    FROM TEMPLATES\n" +
                 "                    WHERE PARENT_ID = ?)";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setObject(1, parentId);
-            statement.setObject(2, parentId);
-            ResultSet rs = statement.executeQuery();
-            list = parseResultSet(rs);
-        } catch (Exception e) {
-            throw new PersistException(e);
-        }
-        return list;
+        return jdbcHelper.select(sql, new Object[]{parentId, parentId}, this::parseResultSet);
     }
 
     @Override
@@ -92,14 +72,7 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
         String sql = "UPDATE " + table + "\n" +
                 "SET order_number = " + direction + "\n" +
                 "WHERE parent_id = ? AND order_number >= ? AND order_number <= ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setObject(1, parentId);
-            statement.setObject(2, firstChildOrder);
-            statement.setInt(3, lastChildOrder);
-            statement.execute();
-        } catch (SQLException e) {
-            throw new PersistException(e, e.getMessage());
-        }
+        jdbcHelper.update(sql, new Object[]{parentId, firstChildOrder, lastChildOrder});
     }
 
     private enum OrderDirection {

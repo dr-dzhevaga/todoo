@@ -2,10 +2,8 @@ package ru.todoo.service;
 
 import ru.todoo.dao.PersistException;
 import ru.todoo.dao.TaskDAO;
-import ru.todoo.dao.derby.DerbyDAOFactory;
 import ru.todoo.domain.Task;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +13,7 @@ import java.util.function.Consumer;
  * Created by Dmitriy Dzhevaga on 06.11.2015.
  */
 public class TaskService {
-    private static final DerbyDAOFactory daoFactory = new DerbyDAOFactory();
+    private final DerbyDAOHelper<TaskDAO> daoHelper = new DerbyDAOHelper<>(TaskDAO.class);
 
     public void addTaskTemplate(String name, String description, Integer categoryId, Integer userId) throws PersistException, SQLException {
         addTask(null, name, description, true, categoryId, userId);
@@ -45,52 +43,38 @@ public class TaskService {
     }
 
     private void addTask(Task task) throws PersistException, SQLException {
-        try (Connection connection = daoFactory.getContext()) {
-            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+        daoHelper.execute(taskDAO -> {
             Integer parentTaskId = task.getParentId();
-            if(parentTaskId != null) {
+            if (parentTaskId != null) {
                 Task lastNeighbor = taskDAO.readLastChild(parentTaskId);
-                if(lastNeighbor != null) {
+                if (lastNeighbor != null) {
                     task.setOrder(lastNeighbor.getOrder() + 1);
                 } else {
                     task.setOrder(0);
                 }
             }
             taskDAO.create(task);
-        }
+        });
     }
 
     public Task getTask(Integer taskId) throws PersistException, SQLException {
-        try (Connection connection = daoFactory.getContext()) {
-            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
-            return taskDAO.read(taskId);
-        }
+        return daoHelper.read(taskDAO -> taskDAO.read(taskId));
     }
 
     public List<Task> getTasksByUser(Integer userId) throws PersistException, SQLException {
-        try (Connection connection = daoFactory.getContext()) {
-            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
-            return taskDAO.readTasksByUser(userId);
-        }
+        return daoHelper.read(taskDAO -> taskDAO.readTasksByUser(userId));
     }
 
     public List<Task> getTaskTemplatesByCategory(Integer categoryId) throws PersistException, SQLException {
-        try (Connection connection = daoFactory.getContext()) {
-            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
-            return taskDAO.readTaskTemplatesByCategory(categoryId);
-        }
+        return daoHelper.read(taskDAO -> taskDAO.readTaskTemplatesByCategory(categoryId));
     }
 
     public List<Task> getPopularTaskTemplates() throws PersistException, SQLException {
-        try (Connection connection = daoFactory.getContext()) {
-            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
-            return taskDAO.readPopularTaskTemplates();
-        }
+        return daoHelper.read(TaskDAO::readPopularTaskTemplates);
     }
 
     public void deleteTask(Integer taskId) throws PersistException, SQLException {
-        try (Connection connection = daoFactory.getContext()) {
-            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+        daoHelper.execute(taskDAO -> {
             Task task = taskDAO.read(taskId);
             Integer parentTaskId = task.getParentId();
             if (parentTaskId != null) {
@@ -100,17 +84,17 @@ public class TaskService {
                 }
             }
             taskDAO.delete(taskId);
-        }
+        });
     }
 
     private void changeTask(Integer taskId, Consumer<Task> changer) throws PersistException, SQLException {
-        try (Connection connection = daoFactory.getContext()) {
-            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+        daoHelper.execute(taskDAO -> {
             Task task = taskDAO.read(taskId);
             changer.accept(task);
             taskDAO.update(task);
-        }
+        });
     }
+
     public void changeTaskStatus(Integer taskId, boolean completed) throws PersistException, SQLException {
         changeTask(taskId, task -> task.setCompleted(completed));
     }
@@ -124,8 +108,7 @@ public class TaskService {
     }
 
     public void changeTaskOrder(Integer taskId, Integer order) throws PersistException, SQLException {
-        try (Connection connection = daoFactory.getContext()) {
-            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+        daoHelper.execute(taskDAO -> {
             Task task = taskDAO.read(taskId);
             if (order > task.getOrder()) {
                 taskDAO.moveChildrenUp(task.getParentId(), task.getOrder() + 1, order);
@@ -134,28 +117,27 @@ public class TaskService {
             }
             task.setOrder(order);
             taskDAO.update(task);
-        }
+        });
     }
 
     public void changeTaskParent(Integer taskId, Integer parentId) throws PersistException, SQLException {
-        try (Connection connection = daoFactory.getContext()) {
-            TaskDAO taskDAO = daoFactory.getTaskDAO(connection);
+        daoHelper.execute(taskDAO -> {
             Task task = taskDAO.read(taskId);
             Integer oldParentTaskId = task.getParentId();
-            if(oldParentTaskId != null) {
+            if (oldParentTaskId != null) {
                 Task oldLastNeighbor = taskDAO.readLastChild(oldParentTaskId);
-                if(oldLastNeighbor != null) {
+                if (oldLastNeighbor != null) {
                     taskDAO.moveChildrenUp(oldParentTaskId, task.getOrder() + 1, oldLastNeighbor.getOrder());
                 }
             }
             Task lastNeighbor = taskDAO.readLastChild(parentId);
-            if(lastNeighbor != null) {
+            if (lastNeighbor != null) {
                 task.setOrder(lastNeighbor.getOrder() + 1);
             } else {
                 task.setOrder(0);
             }
             task.setParentId(parentId);
             taskDAO.update(task);
-        }
+        });
     }
 }

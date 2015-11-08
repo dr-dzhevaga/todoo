@@ -1,67 +1,47 @@
 package ru.todoo.dao.derby;
 
 import ru.todoo.dao.CategoryDAO;
-import ru.todoo.dao.PersistException;
 import ru.todoo.dao.generic.GenericDAOJDBCImpl;
 import ru.todoo.domain.Category;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.sql.SQLException;
 
 /**
  * Created by Dmitriy Dzhevaga on 02.11.2015.
  */
 public class DerbyCategoryDAO extends GenericDAOJDBCImpl<Category, Integer> implements CategoryDAO {
-    public DerbyCategoryDAO(Connection connection, String table) {
-        super(connection, table);
+    public DerbyCategoryDAO(Connection connection) {
+        super(connection, "category");
     }
 
     @Override
-    public String getCreateQuery() {
+    protected String getCreateQuery() {
         return "INSERT INTO " + table + " (name) VALUES (?)";
     }
 
     @Override
-    public String getUpdateQuery() {
+    protected String getUpdateQuery() {
         return "UPDATE " + table + " SET name = ? WHERE id = ?";
     }
 
     @Override
-    protected List<Category> parseResultSet(ResultSet rs) throws PersistException {
-        List<Category> result = new LinkedList<>();
-        try {
-            while (rs.next()) {
-                PersistCategory category = new PersistCategory();
-                category.setId(rs.getInt("id"));
-                category.setName(rs.getString("name"));
-                result.add(category);
-            }
-        } catch (Exception e) {
-            throw new PersistException(e);
-        }
-        return result;
+    protected Category parseResultSet(ResultSet rs) throws SQLException {
+        PersistCategory category = new PersistCategory();
+        category.setId(rs.getInt("id"));
+        category.setName(rs.getString("name"));
+        return category;
     }
 
     @Override
-    protected void prepareStatementForInsert(PreparedStatement statement, Category category) throws PersistException {
-        try {
-            statement.setString(1, category.getName());
-        } catch (Exception e) {
-            throw new PersistException(e);
-        }
+    protected Object[] getParametersForInsert(Category category) {
+        return new Object[]{category.getName()};
     }
 
     @Override
-    protected void prepareStatementForUpdate(PreparedStatement statement, Category category) throws PersistException {
-        try {
-            prepareStatementForInsert(statement, category);
-            statement.setInt(2, category.getId());
-        } catch (Exception e) {
-            throw new PersistException(e);
-        }
+    protected Object[] getParametersForUpdate(Category category) {
+        return new Object[]{category.getName(), category.getId()};
     }
 
     private static class PersistCategory extends Category {
