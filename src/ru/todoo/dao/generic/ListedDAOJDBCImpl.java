@@ -111,15 +111,15 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
         UP(" order_number - 1"),
         DOWN(" order_number + 1");
 
-        private final String updatedOrder;
+        private final String orderValue;
 
-        MoveDirection(String updatedOrder) {
-            this.updatedOrder = updatedOrder;
+        MoveDirection(String orderValue) {
+            this.orderValue = orderValue;
         }
 
         @Override
         public String toString() {
-            return updatedOrder;
+            return orderValue;
         }
     }
 }

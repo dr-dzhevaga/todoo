@@ -20,20 +20,17 @@ public class JDBCHelper {
 
     public int update(String sql, Object[] parameters) throws PersistException {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            for (int i = 0; i < parameters.length; i++) {
-                statement.setObject(i + 1, parameters[i]);
-            }
+            setParameters(statement, parameters);
             return statement.executeUpdate();
         } catch (SQLException e) {
             throw new PersistException(e, e.getMessage());
         }
     }
 
-    public Object executeUpdateAndReturnGeneratedKey(String sql, Object[] parameters) throws PersistException {
+    public Object updateAndReturnGeneratedKey(String sql, Object[] parameters) throws PersistException {
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            for (int i = 0; i < parameters.length; i++) {
-                statement.setObject(i + 1, parameters[i]);
-            }
+            setParameters(statement, parameters);
+            statement.executeUpdate();
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (!generatedKeys.next()) {
                 throw new PersistException("No id generated on create");
@@ -49,9 +46,7 @@ public class JDBCHelper {
                               ThrowingFunction<ResultSet, T, SQLException> resultSetParser)
             throws PersistException {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            for (int i = 0; i < parameters.length; i++) {
-                statement.setObject(i + 1, parameters[i]);
-            }
+            setParameters(statement, parameters);
             ResultSet rs = statement.executeQuery();
             List<T> result = new LinkedList<>();
             while (rs.next()) {
@@ -60,6 +55,12 @@ public class JDBCHelper {
             return result;
         } catch (Exception e) {
             throw new PersistException(e);
+        }
+    }
+
+    private static void setParameters(PreparedStatement statement, Object[] parameters) throws SQLException {
+        for (int i = 0; i < parameters.length; i++) {
+            statement.setObject(i + 1, parameters[i]);
         }
     }
 }
