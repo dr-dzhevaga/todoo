@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" href="common/header-basic.css">
+    <link href='http://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="common/webix/skins/terrace.css" type="text/css" media="screen" charset="utf-8">
+    <script src="common/webix/webix.js" type="text/javascript" charset="utf-8"></script>
+
+    <script type="text/javascript" src='mytasks/data.js'></script>
+	<script type="text/javascript" src='mytasks/logic.js'></script>    
+    <script type="text/javascript" src='mytasks/ui.js'></script>
+
+    <header class="header-basic">
+        <div class="header-limiter">
+            <h1><a>Tod<span>oo</span></a></h1>
+            <nav>
+                <a href="templates.html">Templates</a>
+                <a href="mytasks.html" class="selected">My todo</a>
+            </nav>
+        </div>
+    </header>
+</head>
+
+<body>
+    <style type="text/css">
+        .selected .webix_tree_item.webix_selected {
+            background: #fff3a1;
+        }
+        .selected .webix_tree_item.webix_selected span {
+            background: transparent !important;
+        }
+        .selected .webix_tree_img {
+            background-color: transparent;
+        }
+        .delete {
+            float: right;
+            padding: 6px;
+        }
+        .description {
+            font-style: italic;
+            font-size: small;
+        }
+        .completed {
+            text-decoration: line-through;
+        }
+        .created {
+            font-size: small;
+            text-align: right;
+        }
+    </style>
+    <script>
+        webix.ready(function() {
+			logic.attachEvents();
+            ui.init();
+        });
+    </script>
+</body>
+
+</html>
