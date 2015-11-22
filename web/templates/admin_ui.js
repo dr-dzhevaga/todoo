@@ -76,7 +76,12 @@ var adminToolBar = {
 
 var admin_ui = {
     init: function () {
-        scheme.rows.splice(1, 0, adminToolBar);
+        scheme = {
+            rows: [
+                adminToolBar,
+                scheme
+            ]
+        };
         tasksTree.drag = "order";
     }
 };
