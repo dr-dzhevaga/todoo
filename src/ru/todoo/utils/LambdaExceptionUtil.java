@@ -3,9 +3,6 @@ package ru.todoo.utils;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-/**
- * Created by Альфия on 08.11.2015.
- */
 public class LambdaExceptionUtil {
     public static <T, E extends Exception> Consumer<T> rethrowConsumer(ThrowingConsumer<T, E> consumer) throws E {
         return t -> {

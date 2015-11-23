@@ -8,7 +8,7 @@ var templatesList = {
     view: "list",
     select: true,
     template: "#name#",
-    data: templatesData
+    url: "/templates"
 };
 
 var tasksTree = {
