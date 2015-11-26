@@ -13,10 +13,10 @@ import java.util.List;
 public class CategoryService {
     private final DerbyDAOHelper<CategoryDAO> daoHelper = new DerbyDAOHelper<>(CategoryDAO.class);
 
-    public void addCategory(String name) throws PersistException {
+    public Category addCategory(String name) throws PersistException {
         Category category = new Category();
         category.setName(name);
-        daoHelper.execute(categoryDAO -> categoryDAO.create(category));
+        return daoHelper.executeFunction(categoryDAO -> categoryDAO.create(category));
     }
 
     public Category getCategory(Integer categoryId) throws PersistException {
@@ -28,6 +28,6 @@ public class CategoryService {
     }
 
     public void deleteCategory(Integer categoryId) throws PersistException {
-        daoHelper.execute(categoryDAO -> categoryDAO.delete(categoryId));
+        daoHelper.executeProcedure(categoryDAO -> categoryDAO.delete(categoryId));
     }
 }

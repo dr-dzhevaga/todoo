@@ -22,7 +22,7 @@ public class UserService {
     }
 
     public void deleteUser(Integer userId) throws PersistException, SQLException {
-        daoHelper.execute(userDAO -> userDAO.delete(userId));
+        daoHelper.executeProcedure(userDAO -> userDAO.delete(userId));
     }
 
     public void changePassword(Integer userId, String newPassword, String oldPassword) {

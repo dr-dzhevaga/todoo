@@ -43,7 +43,7 @@ public class TaskService {
     }
 
     private void addTask(Task task) throws PersistException, SQLException {
-        daoHelper.execute(taskDAO -> {
+        daoHelper.executeProcedure(taskDAO -> {
             Integer parentTaskId = task.getParentId();
             if (parentTaskId != null) {
                 Task lastNeighbor = taskDAO.readLastChild(parentTaskId);
@@ -74,7 +74,7 @@ public class TaskService {
     }
 
     public void deleteTask(Integer taskId) throws PersistException, SQLException {
-        daoHelper.execute(taskDAO -> {
+        daoHelper.executeProcedure(taskDAO -> {
             Task task = taskDAO.read(taskId);
             Integer parentTaskId = task.getParentId();
             if (parentTaskId != null) {
@@ -88,7 +88,7 @@ public class TaskService {
     }
 
     private void changeTask(Integer taskId, Consumer<Task> changer) throws PersistException, SQLException {
-        daoHelper.execute(taskDAO -> {
+        daoHelper.executeProcedure(taskDAO -> {
             Task task = taskDAO.read(taskId);
             changer.accept(task);
             taskDAO.update(task);
@@ -108,7 +108,7 @@ public class TaskService {
     }
 
     public void changeTaskOrder(Integer taskId, Integer order) throws PersistException, SQLException {
-        daoHelper.execute(taskDAO -> {
+        daoHelper.executeProcedure(taskDAO -> {
             Task task = taskDAO.read(taskId);
             if (order > task.getOrder()) {
                 taskDAO.moveChildrenUp(task.getParentId(), task.getOrder() + 1, order);
@@ -121,7 +121,7 @@ public class TaskService {
     }
 
     public void changeTaskParent(Integer taskId, Integer parentId) throws PersistException, SQLException {
-        daoHelper.execute(taskDAO -> {
+        daoHelper.executeProcedure(taskDAO -> {
             Task task = taskDAO.read(taskId);
             Integer oldParentTaskId = task.getParentId();
             if (oldParentTaskId != null) {

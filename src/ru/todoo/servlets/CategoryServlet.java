@@ -41,8 +41,8 @@ public class CategoryServlet extends HttpServlet {
         resp.setContentType("application/json;charset=utf-8");
         JsonObject result = new JsonObject();
         try {
-            serviceProvider.getCategoryService().addCategory(name);
-            result.addProperty("message", "Category is created");
+            Category category = serviceProvider.getCategoryService().addCategory(name);
+            result.add("data", new Gson().toJsonTree(category));
         } catch (PersistException e) {
             result.addProperty("message", e.getMessage());
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

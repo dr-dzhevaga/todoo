@@ -29,10 +29,19 @@ public class DerbyDAOHelper<T> {
         }
     }
 
-    public void execute(ThrowingConsumer<T, PersistException> consumer) throws PersistException {
+    public void executeProcedure(ThrowingConsumer<T, PersistException> consumer) throws PersistException {
         try (Connection connection = daoFactory.getContext()) {
             T dao = daoFactory.getDao(connection, daoClass);
             consumer.accept(dao);
+        } catch (SQLException e) {
+            throw new PersistException(e, e.getMessage());
+        }
+    }
+
+    public <R> R executeFunction(ThrowingFunction<T, R, PersistException> function) throws PersistException {
+        try (Connection connection = daoFactory.getContext()) {
+            T dao = daoFactory.getDao(connection, daoClass);
+            return function.apply(dao);
         } catch (SQLException e) {
             throw new PersistException(e, e.getMessage());
         }
