@@ -12,8 +12,14 @@ var getFormValues = function (button) {
 var onCreateCategoryConfirmButtonClick = function () {
     var values = getFormValues(this);
     if (values) {
-        webix.ajax().header({"Content-Type": "application/x-www-form-urlencoded; charset=utf-8"}).post("/category", values, function (text, data) {
-            webix.message(text);
+        webix.ajax().header({"Content-Type": "application/x-www-form-urlencoded; charset=utf-8"}).
+        post("/category", values, {
+            error: function (text, data) {
+                webix.message(data.json().message);
+            },
+            success: function (text, data) {
+
+            }
         });
     }
 };
