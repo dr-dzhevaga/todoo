@@ -49,6 +49,7 @@ var onEditCategoryButtonClick = function () {
 
 var onEditCategoryConfirmButtonClick = function () {
     var categoryRichSelect = $$("categoryRichSelect");
+    var categoryList = categoryRichSelect.getList();
     var category = categoryRichSelect.getList().getSelectedItem();
     var updatedCategory = processPopup(this);
     updatedCategory.id = category.id;
@@ -61,6 +62,7 @@ var onEditCategoryConfirmButtonClick = function () {
             success: function () {
                 category.name = updatedCategory.name;
                 categoryRichSelect.refresh();
+                categoryList.refresh();
             }
         });
     }
