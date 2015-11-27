@@ -26,9 +26,8 @@ var onCreateCategoryConfirmButtonClick = function () {
     }
 };
 
-var onDeleteCategoryButton = function () {
-    var categoryRichSelect = $$("categoryRichSelect");
-    var categoryList = categoryRichSelect.getList();
+var onDeleteCategoryButtonClick = function () {
+    var categoryList = $$("categoryRichSelect").getList();
     var category = categoryList.getSelectedItem();
     if (category.filter === "category") {
         webix.ajax().del("/category/" + category.id, {
@@ -42,13 +41,44 @@ var onDeleteCategoryButton = function () {
     }
 };
 
+var onEditCategoryButtonClick = function () {
+    var categoryList = $$("categoryRichSelect").getList();
+    var category = categoryList.getSelectedItem();
+    $$("categoryNameText").setValue(category.name);
+};
+
+var onEditCategoryConfirmButtonClick = function () {
+    var categoryRichSelect = $$("categoryRichSelect");
+    var category = categoryRichSelect.getList().getSelectedItem();
+    var updatedCategory = processPopup(this);
+    updatedCategory.id = category.id;
+    if (category.filter === "category") {
+        webix.ajax().header({"Content-Type": " application/json;charset=utf-8"}).
+        put("/category", JSON.stringify(updatedCategory), {
+            error: function (text, data) {
+                webix.message(data.json().message);
+            },
+            success: function () {
+                category.name = updatedCategory.name;
+                categoryRichSelect.refresh();
+            }
+        });
+    }
+};
+
 var admin_logic = {
     attachEvents: function () {
         addCategoryButton.popup.body.elements[1].on = {
             onItemClick: onCreateCategoryConfirmButtonClick
         };
         deleteCategoryButton.on = {
-            onItemClick: onDeleteCategoryButton
+            onItemClick: onDeleteCategoryButtonClick
+        };
+        editCategoryButton.popup.body.elements[1].on = {
+            onItemClick: onEditCategoryConfirmButtonClick
+        };
+        editCategoryButton.on = {
+            onItemClick: onEditCategoryButtonClick
         };
     }
 };

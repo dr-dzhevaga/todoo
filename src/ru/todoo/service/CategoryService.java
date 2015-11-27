@@ -30,4 +30,8 @@ public class CategoryService {
     public void deleteCategory(Integer categoryId) throws PersistException {
         daoHelper.executeProcedure(categoryDAO -> categoryDAO.delete(categoryId));
     }
+
+    public void updateCategory(Category category) throws PersistException {
+        daoHelper.executeProcedure(categoryDAO -> categoryDAO.update(category));
+    }
 }

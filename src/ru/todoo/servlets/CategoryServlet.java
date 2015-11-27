@@ -85,4 +85,19 @@ public class CategoryServlet extends HttpServlet {
         }
         resp.getWriter().print(result.toString());
     }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        JsonObject result = new JsonObject();
+        try {
+            String json = req.getReader().lines().reduce("", (s1, s2) -> s1 + s2);
+            Category category = new Gson().fromJson(json, Category.class);
+            serviceProvider.getCategoryService().updateCategory(category);
+            result.addProperty("message", "Category is updated");
+        } catch (PersistException e) {
+            result.addProperty("message", e.getMessage());
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+        resp.getWriter().print(result.toString());
+    }
 }

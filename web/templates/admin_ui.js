@@ -77,6 +77,7 @@ addCategoryButton.popup.body.elements = [{
 var editCategoryButton = webix.copy(addCategoryButton);
 editCategoryButton.tooltip = "Rename category";
 editCategoryButton.icon = "edit";
+editCategoryButton.popup.body.elements[0].id = "categoryNameText";
 editCategoryButton.popup.body.elements[1].value = "Update";
 
 var deleteCategoryButton = webix.copy(deleteTodoButton);
