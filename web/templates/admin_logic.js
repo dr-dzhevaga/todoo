@@ -1,4 +1,4 @@
-var getFormValues = function (button) {
+var processPopup = function (button) {
     var form = button.getParentView();
     if (form.validate()) {
         var values = form.getValues();
@@ -10,15 +10,33 @@ var getFormValues = function (button) {
 };
 
 var onCreateCategoryConfirmButtonClick = function () {
-    var values = getFormValues(this);
-    if (values) {
+    var category = processPopup(this);
+    if (category) {
         webix.ajax().header({"Content-Type": "application/x-www-form-urlencoded; charset=utf-8"}).
-        post("/category", values, {
+        post("/category", category, {
             error: function (text, data) {
                 webix.message(data.json().message);
             },
             success: function (text, data) {
+                var categoryRichSelect = $$("categoryRichSelect");
+                var categoryList = categoryRichSelect.getList();
+                categoryList.add(data.json().data);
+            }
+        });
+    }
+};
 
+var onDeleteCategoryButton = function () {
+    var categoryRichSelect = $$("categoryRichSelect");
+    var categoryList = categoryRichSelect.getList();
+    var category = categoryList.getSelectedItem();
+    if (category.filter === "category") {
+        webix.ajax().del("/category/" + category.id, {
+            error: function (text, data) {
+                webix.message(data.json().message);
+            },
+            success: function () {
+                categoryList.remove(category.id);
             }
         });
     }
@@ -28,6 +46,9 @@ var admin_logic = {
     attachEvents: function () {
         addCategoryButton.popup.body.elements[1].on = {
             onItemClick: onCreateCategoryConfirmButtonClick
+        };
+        deleteCategoryButton.on = {
+            onItemClick: onDeleteCategoryButton
         };
     }
 };

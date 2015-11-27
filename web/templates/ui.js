@@ -1,7 +1,14 @@
-var categorySelect = {
-    view: "select",
+var categoryRichSelect = {
+    id: "categoryRichSelect",
+    view: "richselect",
     label: "Category:",
-    options: categoryData
+    options: {
+        template: "#name#",
+        url: "/category",
+        body: {
+            template: "#name#"
+        }
+    }
 };
 
 var templatesList = {
@@ -31,7 +38,7 @@ var scheme = {
     cols: [
         {
             rows: [
-                categorySelect,
+                categoryRichSelect,
                 templatesList
             ],
             width: 250

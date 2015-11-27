@@ -14,7 +14,7 @@ import java.util.function.Function;
  */
 public class DerbyDAOFactory implements DAOFactory<Connection> {
     private final static Map<Class, Function<Connection, ?>> creators = new HashMap<>();
-    private static final String CONNECTION_STRING = "jdbc:derby://localhost:1527/D:/Dmitriy/Java/db-derby-10.12.1.1-bin/db/todoo";
+    private static final String CONNECTION_STRING = "jdbc:derby://localhost:1527/../db/todoo";
     private static final String DRIVER_NAME = "org.apache.derby.jdbc.ClientDriver";
 
     static {
