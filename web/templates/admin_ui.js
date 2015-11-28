@@ -1,4 +1,4 @@
-var addTodoButton = {
+var createTodoButton = {
     view: "button",
     tooltip: "Add todo",
     type: "icon",
@@ -36,7 +36,7 @@ var addTodoButton = {
     }
 };
 
-var editTodoButton = webix.copy(addTodoButton);
+var editTodoButton = webix.copy(createTodoButton);
 editTodoButton.tooltip = "Edit todo";
 editTodoButton.icon = "edit";
 editTodoButton.popup.body.elements[2].value = "Update";
@@ -49,8 +49,8 @@ var deleteTodoButton = {
     width: 30
 };
 
-var addTaskButton = webix.copy(addTodoButton);
-addTaskButton.tooltip = "Add task";
+var createTaskButton = webix.copy(createTodoButton);
+createTaskButton.tooltip = "Add task";
 
 var editTaskButton = webix.copy(editTodoButton);
 editTaskButton.tooltip = "Edit task";
@@ -58,8 +58,9 @@ editTaskButton.tooltip = "Edit task";
 var deleteTaskButton = webix.copy(deleteTodoButton);
 deleteTaskButton.tooltip = "Delete task";
 
-var addCategoryButton = webix.copy(addTodoButton);
-addCategoryButton.popup.body.elements = [{
+var createCategoryButton = webix.copy(createTodoButton);
+createCategoryButton.popup.body.id = "createCategoryForm";
+createCategoryButton.popup.body.elements = [{
     view: "text",
     name: "name",
     label: "Name",
@@ -74,10 +75,10 @@ addCategoryButton.popup.body.elements = [{
 }
 ];
 
-var editCategoryButton = webix.copy(addCategoryButton);
+var editCategoryButton = webix.copy(createCategoryButton);
 editCategoryButton.tooltip = "Rename category";
 editCategoryButton.icon = "edit";
-editCategoryButton.popup.body.elements[0].id = "categoryNameText";
+editCategoryButton.popup.body.id = "editCategoryForm";
 editCategoryButton.popup.body.elements[1].value = "Update";
 
 var deleteCategoryButton = webix.copy(deleteTodoButton);
@@ -101,17 +102,17 @@ var adminToolBar = {
     view: "toolbar",
     cols: [
         categoryLabel,
-        addCategoryButton,
+        createCategoryButton,
         deleteCategoryButton,
         editCategoryButton,
         separatorLabel,
         todoLabel,
-        addTodoButton,
+        createTodoButton,
         deleteTodoButton,
         editTodoButton,
         separatorLabel,
         taskLabel,
-        addTaskButton,
+        createTaskButton,
         deleteTaskButton,
         editTaskButton
     ]
