@@ -1,4 +1,4 @@
-var onTaskTreeLoad = function() {
+var onTaskTreeLoad = function () {
     this.openAll();
 };
 

@@ -67,7 +67,7 @@ var onCreateTaskConfirmButtonClick = function () {
     }
 };
 
-var onTaskTreeLoad = function() {
+var onTaskTreeLoad = function () {
     this.openAll();
 };
 

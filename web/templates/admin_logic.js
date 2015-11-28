@@ -1,4 +1,16 @@
-var processPopup = function (button) {
+var getUIComponent = function (id) {
+    return $$(id);
+};
+
+var getUIComponentList = function (id) {
+    return getUIComponent(id).getList();
+};
+
+var getSelectedItem = function (id) {
+    return getUIComponentList(id).getSelectedItem();
+};
+
+var getValueFromButtonForm = function (button) {
     var form = button.getParentView();
     if (form.validate()) {
         var values = form.getValues();
@@ -10,59 +22,55 @@ var processPopup = function (button) {
 };
 
 var onCreateCategoryConfirmButtonClick = function () {
-    var category = processPopup(this);
+    var category = getValueFromButtonForm(this);
     if (category) {
-        webix.ajax().header({"Content-Type": "application/x-www-form-urlencoded; charset=utf-8"}).
-        post("/category", category, {
+        webix.ajax().
+        header({"Content-Type": "application/json;charset=utf-8"}).
+        post("/category", JSON.stringify(category), {
+            success: function (text, data) {
+                getUIComponentList("categoryRichSelect").add(data.json().data);
+            },
             error: function (text, data) {
                 webix.message(data.json().message);
-            },
-            success: function (text, data) {
-                var categoryRichSelect = $$("categoryRichSelect");
-                var categoryList = categoryRichSelect.getList();
-                categoryList.add(data.json().data);
             }
         });
     }
 };
 
 var onDeleteCategoryButtonClick = function () {
-    var categoryList = $$("categoryRichSelect").getList();
-    var category = categoryList.getSelectedItem();
+    var category = getSelectedItem("categoryRichSelect");
     if (category.filter === "category") {
-        webix.ajax().del("/category/" + category.id, {
+        webix.ajax().
+        del("/category/" + category.id, {
+            success: function () {
+                getUIComponentList("categoryRichSelect").remove(category.id);
+            },
             error: function (text, data) {
                 webix.message(data.json().message);
-            },
-            success: function () {
-                categoryList.remove(category.id);
             }
         });
     }
 };
 
 var onEditCategoryButtonClick = function () {
-    var categoryList = $$("categoryRichSelect").getList();
-    var category = categoryList.getSelectedItem();
-    $$("categoryNameText").setValue(category.name);
+    getUIComponent("categoryNameText").setValue(getSelectedItem("categoryRichSelect").name);
 };
 
 var onEditCategoryConfirmButtonClick = function () {
-    var categoryRichSelect = $$("categoryRichSelect");
-    var categoryList = categoryRichSelect.getList();
-    var category = categoryRichSelect.getList().getSelectedItem();
-    var updatedCategory = processPopup(this);
+    var category = getSelectedItem("categoryRichSelect");
+    var updatedCategory = getValueFromButtonForm(this);
     updatedCategory.id = category.id;
     if (category.filter === "category") {
-        webix.ajax().header({"Content-Type": " application/json;charset=utf-8"}).
+        webix.ajax().
+        header({"Content-Type": " application/json;charset=utf-8"}).
         put("/category", JSON.stringify(updatedCategory), {
-            error: function (text, data) {
-                webix.message(data.json().message);
-            },
             success: function () {
                 category.name = updatedCategory.name;
-                categoryRichSelect.refresh();
-                categoryList.refresh();
+                getUIComponent("categoryRichSelect").refresh();
+                getUIComponentList("categoryRichSelect").refresh();
+            },
+            error: function (text, data) {
+                webix.message(data.json().message);
             }
         });
     }

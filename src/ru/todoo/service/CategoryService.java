@@ -13,9 +13,7 @@ import java.util.List;
 public class CategoryService {
     private final DerbyDAOHelper<CategoryDAO> daoHelper = new DerbyDAOHelper<>(CategoryDAO.class);
 
-    public Category addCategory(String name) throws PersistException {
-        Category category = new Category();
-        category.setName(name);
+    public Category addCategory(Category category) throws PersistException {
         return daoHelper.executeFunction(categoryDAO -> categoryDAO.create(category));
     }
 

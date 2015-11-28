@@ -1,5 +1,6 @@
 package ru.todoo.utils;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -28,6 +29,11 @@ public class LambdaExceptionUtil {
     @SuppressWarnings("unchecked")
     private static <E extends Exception> void throwActualException(Exception exception) throws E {
         throw (E) exception;
+    }
+
+    @FunctionalInterface
+    public interface ThrowingCallable<T, E extends Exception> {
+        T call() throws E, IOException;
     }
 
     @FunctionalInterface

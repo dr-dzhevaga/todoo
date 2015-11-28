@@ -1,11 +1,11 @@
 package ru.todoo.servlets;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import ru.todoo.dao.PersistException;
 import ru.todoo.domain.Category;
 import ru.todoo.service.ServiceProvider;
+import ru.todoo.utils.JsonUtil;
+import ru.todoo.utils.ServletUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,81 +23,59 @@ public class CategoryServlet extends HttpServlet {
     private static final ServiceProvider serviceProvider = new ServiceProvider();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json;charset=utf-8");
-        JsonObject result = new JsonObject();
-        try {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json;charset=utf-8");
+        ServletUtil.process(response, () -> {
             JsonArray categoriesArray = new JsonArray();
-            {
-                JsonObject categoryObject = new JsonObject();
-                categoryObject.addProperty("id", 0);
-                categoryObject.addProperty("name", "All");
-                categoryObject.addProperty("filter", "all");
-                categoriesArray.add(categoryObject);
-            }
-            {
-                JsonObject categoryObject = new JsonObject();
-                categoryObject.addProperty("id", 1);
-                categoryObject.addProperty("name", "Popular");
-                categoryObject.addProperty("filter", "popular");
-                categoriesArray.add(categoryObject);
-            }
+            categoriesArray.add(JsonUtil.getBuilder().
+                    addProperty("id", 0).
+                    addProperty("name", "All").
+                    addProperty("filter", "all").
+                    build()
+            );
+            categoriesArray.add(JsonUtil.getBuilder().
+                    addProperty("id", 1).
+                    addProperty("name", "Popular").
+                    addProperty("filter", "popular").
+                    build()
+            );
             List<Category> categoriesList = serviceProvider.getCategoryService().getAllCategories();
-            new Gson().toJsonTree(categoriesList).getAsJsonArray().forEach(category -> {
-                category.getAsJsonObject().addProperty("filter", "category");
-                categoriesArray.add(category);
-            });
-            result.add("data", categoriesArray);
-        } catch (PersistException e) {
-            result.addProperty("message", e.getMessage());
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-        resp.getWriter().print(result.toString());
+            categoriesList.forEach(category -> categoriesArray.add(JsonUtil.getBuilder(category).
+                    addProperty("filter", "category").
+                    build())
+            );
+            return JsonUtil.getBuilder().add("data", categoriesArray).build();
+        });
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json;charset=utf-8");
-        JsonObject result = new JsonObject();
-        try {
-            String name = req.getParameter("name");
-            Category category = serviceProvider.getCategoryService().addCategory(name);
-            JsonObject categoryObject = new Gson().toJsonTree(category).getAsJsonObject();
-            categoryObject.addProperty("filter", "category");
-            result.add("data", categoryObject);
-        } catch (PersistException e) {
-            result.addProperty("message", e.getMessage());
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-        resp.getWriter().print(result.toString());
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json;charset=utf-8");
+        ServletUtil.process(response, () -> {
+            String json = ServletUtil.readContent(request);
+            Category category = JsonUtil.toObject(json, Category.class);
+            category = serviceProvider.getCategoryService().addCategory(category);
+            JsonObject categoryObject = JsonUtil.getBuilder(category).addProperty("filter", "category").build();
+            return JsonUtil.getBuilder().add("data", categoryObject).build();
+        });
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        JsonObject result = new JsonObject();
-        try {
-            String id = req.getPathInfo().replaceAll("/", "");
-            serviceProvider.getCategoryService().deleteCategory(Integer.valueOf(id));
-            result.addProperty("message", "Category is deleted");
-        } catch (PersistException e) {
-            result.addProperty("message", e.getMessage());
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-        resp.getWriter().print(result.toString());
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ServletUtil.process(response, () -> {
+            int id = ServletUtil.getIdFromUri(request);
+            serviceProvider.getCategoryService().deleteCategory(id);
+            return JsonUtil.getBuilder().addProperty("message", "Category is deleted").build();
+        });
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        JsonObject result = new JsonObject();
-        try {
-            String json = req.getReader().lines().reduce("", (s1, s2) -> s1 + s2);
-            Category category = new Gson().fromJson(json, Category.class);
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ServletUtil.process(response, () -> {
+            String json = ServletUtil.readContent(request);
+            Category category = JsonUtil.toObject(json, Category.class);
             serviceProvider.getCategoryService().updateCategory(category);
-            result.addProperty("message", "Category is updated");
-        } catch (PersistException e) {
-            result.addProperty("message", e.getMessage());
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-        resp.getWriter().print(result.toString());
+            return JsonUtil.getBuilder().addProperty("message", "Category is updated").build();
+        });
     }
 }
