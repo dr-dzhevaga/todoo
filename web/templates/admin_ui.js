@@ -1,5 +1,5 @@
-var createTodoButton = {
-    id: "createTodoButton",
+var createTemplateButton = {
+    id: "createTemplateButton",
     view: "button",
     tooltip: "Add todo",
     type: "icon",
@@ -7,8 +7,8 @@ var createTodoButton = {
     width: 30
 };
 
-var createTodoPopup = {
-    id: "createTodoPopup",
+var createTemplatePopup = {
+    id: "createTemplatePopup",
     view: "popup",
     body: {
         view: "form",
@@ -26,7 +26,7 @@ var createTodoPopup = {
             labelPosition: "top",
             height: 100
         }, {
-            id: "createTodoConfirmButton",
+            id: "createTemplateConfirmButton",
             view: "button",
             value: "Create",
             type: "form",
@@ -39,26 +39,26 @@ var createTodoPopup = {
     }
 };
 
-var editTodoButton = webix.copy(createTodoButton);
+var editTodoButton = webix.copy(createTemplateButton);
 editTodoButton.id = "editTodoButton";
 editTodoButton.tooltip = "Edit todo";
 editTodoButton.icon = "edit";
 
-var editTodoPopup = webix.copy(createTodoPopup);
+var editTodoPopup = webix.copy(createTemplatePopup);
 editTodoPopup.id = "editTodoPopup";
 editTodoPopup.body.elements[editTodoPopup.body.elements.length - 1].id = "editTodoConfirmButton";
 editTodoPopup.body.elements[editTodoPopup.body.elements.length - 1].value = "Update";
 
-var deleteTodoButton = webix.copy(createTodoButton);
+var deleteTodoButton = webix.copy(createTemplateButton);
 deleteTodoButton.id = "deleteTodoButton";
 deleteTodoButton.tooltip = "Delete todo";
 deleteTodoButton.icon = "remove";
 
-var createTaskButton = webix.copy(createTodoButton);
+var createTaskButton = webix.copy(createTemplateButton);
 createTaskButton.id = "createTaskButton";
 createTaskButton.tooltip = "Add task";
 
-var createTaskPopup = webix.copy(createTodoPopup);
+var createTaskPopup = webix.copy(createTemplatePopup);
 createTaskPopup.id = "createTaskPopup";
 createTaskPopup.body.elements[createTaskPopup.body.elements.length - 1].id = "createTaskConfirmButton";
 
@@ -74,11 +74,11 @@ var deleteTaskButton = webix.copy(deleteTodoButton);
 deleteTaskButton.id = "deleteTaskButton";
 deleteTaskButton.tooltip = "Delete task";
 
-var createCategoryButton = webix.copy(createTodoButton);
+var createCategoryButton = webix.copy(createTemplateButton);
 createCategoryButton.id = "createCategoryButton";
 createCategoryButton.tooltip = "Add category";
 
-var createCategoryPopup = webix.copy(createTodoPopup);
+var createCategoryPopup = webix.copy(createTemplatePopup);
 createCategoryPopup.id = "createCategoryPopup";
 createCategoryPopup.body.elements = [{
     view: "text",
@@ -132,7 +132,7 @@ var adminToolBar = {
         editCategoryButton,
         separatorLabel,
         todoLabel,
-        createTodoButton,
+        createTemplateButton,
         deleteTodoButton,
         editTodoButton,
         separatorLabel,
@@ -152,7 +152,7 @@ var admin_ui = {
             ]
         };
         tasksTree.drag = "order";
-        webix.ui(createTodoPopup);
+        webix.ui(createTemplatePopup);
         webix.ui(editTodoPopup);
         webix.ui(createTaskPopup);
         webix.ui(editTaskPopup);

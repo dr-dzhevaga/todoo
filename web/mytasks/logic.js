@@ -14,11 +14,11 @@ var getPopupValue = function (id) {
 };
 
 var onCreateTodoButtonClick = function () {
-    showPopup("createTodoPopup", this);
+    showPopup("createTemplatePopup", this);
 };
 
 var onCreateTodoConfirmButtonClick = function () {
-    getPopupValue("createTodoPopup");
+    getPopupValue("createTemplatePopup");
 };
 
 var onDeleteTodoButtonClick = function () {
@@ -119,7 +119,7 @@ var onTaskDescriptionChange = function (newv, oldv) {
 
 var logic = {
     init: function () {
-        $$("createTodoButton").attachEvent("onItemClick", onCreateTodoButtonClick);
+        $$("createTemplateButton").attachEvent("onItemClick", onCreateTodoButtonClick);
         $$("createTodoConfirmButton").attachEvent("onItemClick", onCreateTodoConfirmButtonClick);
         $$("deleteTodoButton").attachEvent("onItemClick", onDeleteTodoButtonClick);
         $$("todoList").attachEvent("onSelectChange", onTodoListSelectChange);

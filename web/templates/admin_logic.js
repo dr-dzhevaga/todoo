@@ -13,6 +13,51 @@ var getPopupValue = function (id) {
     }
 };
 
+var ajax = {
+    postJson: function (url, obj, onSuccess) {
+        webix.ajax().
+        header({
+            "Content-Type": "application/json;charset=utf-8"
+        }).
+        post(url, JSON.stringify(obj), {
+            success: function (text, data) {
+                onSuccess(data);
+            },
+            error: function (text, data) {
+                ajax.showError(data);
+            }
+        })
+    },
+    putJson: function (url, obj, onSuccess) {
+        webix.ajax().
+        header({
+            "Content-Type": "application/json;charset=utf-8"
+        }).
+        put(url, JSON.stringify(obj), {
+            success: function (text, data) {
+                onSuccess(data);
+            },
+            error: function (text, data) {
+                ajax.showError(data);
+            }
+        })
+    },
+    deleteId: function (url, id, onSuccess) {
+        webix.ajax().
+        del(url + "/" + id, {
+            success: function (text, data) {
+                onSuccess(data);
+            },
+            error: function (text, data) {
+                ajax.showError(data);
+            }
+        });
+    },
+    showError: function (data) {
+        webix.message({type: "error", text: data.json().message, expire: 10000});
+    }
+};
+
 var onCreateCategoryButtonClick = function () {
     showPopup("createCategoryPopup", this);
 };
@@ -20,17 +65,8 @@ var onCreateCategoryButtonClick = function () {
 var onCreateCategoryConfirmButtonClick = function () {
     var category = getPopupValue("createCategoryPopup");
     if (category) {
-        webix.ajax().
-        header({
-            "Content-Type": "application/json;charset=utf-8"
-        }).
-        post("/category", JSON.stringify(category), {
-            success: function (text, data) {
-                $$("categoryRichSelect").getList().add(data.json().data);
-            },
-            error: function (text, data) {
-                webix.message(data.json().message);
-            }
+        ajax.postJson("/api/categories", category, function (data) {
+            $$("categoryRichSelect").getList().add(data.json().data);
         });
     }
 };
@@ -38,14 +74,8 @@ var onCreateCategoryConfirmButtonClick = function () {
 var onDeleteCategoryButtonClick = function () {
     var category = $$("categoryRichSelect").getList().getSelectedItem();
     if (category.filter === "category") {
-        webix.ajax().
-        del("/category/" + category.id, {
-            success: function () {
-                $$("categoryRichSelect").getList().remove(category.id);
-            },
-            error: function (text, data) {
-                webix.message(data.json().message);
-            }
+        ajax.deleteId("/api/categories", category.id, function () {
+            $$("categoryRichSelect").getList().remove(category.id);
         });
     }
 };
@@ -59,19 +89,29 @@ var onEditCategoryButtonClick = function () {
 
 var onEditCategoryConfirmButtonClick = function () {
     var category = getPopupValue("editCategoryPopup");
-    webix.ajax().
-    header({
-        "Content-Type": " application/json;charset=utf-8"
-    }).
-    put("/category", JSON.stringify(category), {
-        success: function () {
-            $$("categoryRichSelect").getList().updateItem(category.id, category);
-            $$("categoryRichSelect").refresh();
-        },
-        error: function (text, data) {
-            webix.message(data.json().message);
-        }
+    ajax.putJson("/api/categories", category, function () {
+        $$("categoryRichSelect").getList().updateItem(category.id, category);
+        $$("categoryRichSelect").refresh();
     });
+};
+
+var onCreateTemplateButtonClick = function () {
+    var category = $$("categoryRichSelect").getList().getSelectedItem();
+    if (category && category.filter === "category") {
+        $$("createTemplatePopup").getBody().setValues({categoryId: category.id});
+        showPopup("createTemplatePopup", this);
+    } else {
+        webix.message("Select category first");
+    }
+};
+
+var onCreateTemplateConfirmButtonClick = function () {
+    var template = getPopupValue("createTemplatePopup");
+    if (template) {
+        ajax.postJson("/api/templates", template, function (data) {
+            $$("templatesList").add(data.json().data);
+        });
+    }
 };
 
 var admin_logic = {
@@ -82,5 +122,8 @@ var admin_logic = {
         $$("editCategoryConfirmButton").attachEvent("onItemClick", onEditCategoryConfirmButtonClick);
         $$("editCategoryPopup").getBody().bind($$("categoryRichSelect").getList());
         $$("deleteCategoryButton").attachEvent("onItemClick", onDeleteCategoryButtonClick);
+
+        $$("createTemplateButton").attachEvent("onItemClick", onCreateTemplateButtonClick);
+        $$("createTemplateConfirmButton").attachEvent("onItemClick", onCreateTemplateConfirmButtonClick);
     }
 };

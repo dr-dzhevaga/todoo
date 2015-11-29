@@ -100,6 +100,12 @@ public class DerbyTaskDAO extends ListedDAOJDBCImpl<Task, Integer> implements Ta
     }
 
     @Override
+    public List<Task> readAllTaskTemplates() throws PersistException {
+        String sql = getSelectQuery() + " WHERE is_template = TRUE AND parent_id IS NULL";
+        return jdbcHelper.select(sql, new Object[0], this::parseResultSet);
+    }
+
+    @Override
     public List<Task> readTaskTemplatesByCategory(Integer categoryId) throws PersistException {
         String sql = getSelectQuery() + " WHERE is_template = TRUE AND parent_id IS NULL AND category_id = ?";
         return jdbcHelper.select(sql, new Object[]{categoryId}, this::parseResultSet);

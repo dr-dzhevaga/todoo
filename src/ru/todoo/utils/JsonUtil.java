@@ -1,6 +1,7 @@
 package ru.todoo.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -10,6 +11,14 @@ import com.google.gson.JsonObject;
 public class JsonUtil {
     public static <T> T toObject(String json, Class<T> type) {
         return new Gson().fromJson(json, type);
+    }
+
+    public static JsonArray toJsonArray(Object object) {
+        return new Gson().toJsonTree(object).getAsJsonArray();
+    }
+
+    public static JsonObject toJsonObject(Object object) {
+        return new Gson().toJsonTree(object).getAsJsonObject();
     }
 
     public static JsonBuilder getBuilder() {

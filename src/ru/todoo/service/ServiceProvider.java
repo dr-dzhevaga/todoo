@@ -15,4 +15,8 @@ public class ServiceProvider {
     public TaskService getTaskService() {
         return new TaskService();
     }
+
+    public TemplateService getTemplateService() {
+        return new TemplateService();
+    }
 }

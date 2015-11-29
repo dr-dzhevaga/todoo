@@ -2,6 +2,7 @@ package ru.todoo.utils;
 
 import com.google.gson.JsonObject;
 import ru.todoo.dao.PersistException;
+import ru.todoo.domain.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,5 +35,14 @@ public class ServletUtil {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
         response.getWriter().print(result.toString());
+    }
+
+    public static User getUser() {
+        return new User() {
+            @Override
+            public Integer getId() {
+                return 1;
+            }
+        };
     }
 }

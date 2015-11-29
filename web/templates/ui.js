@@ -4,7 +4,7 @@ var categoryRichSelect = {
     label: "Category:",
     options: {
         template: "#name#",
-        url: "/category",
+        url: "/api/categories",
         body: {
             template: "#name#"
         }
@@ -12,9 +12,11 @@ var categoryRichSelect = {
 };
 
 var templatesList = {
+    id: "templatesList",
     view: "list",
     select: true,
-    template: "#name#"
+    template: "#name#",
+    url: "/api/templates"
 };
 
 var tasksTree = {

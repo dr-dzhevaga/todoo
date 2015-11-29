@@ -1,5 +1,5 @@
 var createTodoButton = {
-    id: "createTodoButton",
+    id: "createTemplateButton",
     view: "button",
     type: "icon",
     icon: "plus",
@@ -9,7 +9,7 @@ var createTodoButton = {
 };
 
 var createTodoPopup = {
-    id: "createTodoPopup",
+    id: "createTemplatePopup",
     view: "popup",
     body: {
         view: "form",

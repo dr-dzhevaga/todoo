@@ -13,23 +13,23 @@ import java.util.List;
 public class CategoryService {
     private final DerbyDAOHelper<CategoryDAO> daoHelper = new DerbyDAOHelper<>(CategoryDAO.class);
 
-    public Category addCategory(Category category) throws PersistException {
+    public Category create(Category category) throws PersistException {
         return daoHelper.executeFunction(categoryDAO -> categoryDAO.create(category));
     }
 
-    public Category getCategory(Integer categoryId) throws PersistException {
+    public Category read(Integer categoryId) throws PersistException {
         return daoHelper.read(categoryDAO -> categoryDAO.read(categoryId));
     }
 
-    public List<Category> getAllCategories() throws PersistException {
+    public List<Category> readAll() throws PersistException {
         return daoHelper.read(GenericDAO::readAll);
     }
 
-    public void deleteCategory(Integer categoryId) throws PersistException {
+    public void delete(Integer categoryId) throws PersistException {
         daoHelper.executeProcedure(categoryDAO -> categoryDAO.delete(categoryId));
     }
 
-    public void updateCategory(Category category) throws PersistException {
+    public void update(Category category) throws PersistException {
         daoHelper.executeProcedure(categoryDAO -> categoryDAO.update(category));
     }
 }
