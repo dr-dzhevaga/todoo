@@ -14,11 +14,11 @@ var categoryRichSelect = {
 var templatesList = {
     view: "list",
     select: true,
-    template: "#name#",
-    url: "/templates"
+    template: "#name#"
 };
 
 var tasksTree = {
+    id: "tasksTree",
     view: "tree",
     template: "{common.checkbox()}#name# <span class='description'>#description#</span>",
     data: tasksData
@@ -35,22 +35,19 @@ var useTodoButton = {
 
 var scheme = {
     view: "layout",
-    cols: [
-        {
-            rows: [
-                categoryRichSelect,
-                templatesList
-            ],
-            width: 250
-        }, {
-            rows: [
-                useTodoButton,
-                tasksTree
-            ],
-            width: "auto"
-        }
-    ]
-
+    cols: [{
+        rows: [
+            categoryRichSelect,
+            templatesList
+        ],
+        width: 250
+    }, {
+        rows: [
+            useTodoButton,
+            tasksTree
+        ],
+        width: "auto"
+    }]
 };
 
 var ui = {

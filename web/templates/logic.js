@@ -3,10 +3,8 @@ var onTaskTreeLoad = function () {
 };
 
 var logic = {
-    attachEvents: function () {
-        tasksTree.on = {
-            onAfterLoad: onTaskTreeLoad
-        };
+    init: function () {
+        $$("tasksTree").attachEvent("onAfterLoad", onTaskTreeLoad);
+        $$("tasksTree").openAll();
     }
 };
-

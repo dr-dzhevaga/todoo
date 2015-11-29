@@ -10,8 +10,8 @@
     <script src="common/webix/webix.js" type="text/javascript" charset="utf-8"></script>
 
     <script type="text/javascript" src='templates/data.js'></script>
-    <script type="text/javascript" src='templates/logic.js'></script>
     <script type="text/javascript" src='templates/ui.js'></script>
+    <script type="text/javascript" src='templates/logic.js'></script>
 
     <script type="text/javascript" src='templates/admin_ui.js'></script>
     <script type="text/javascript" src='templates/admin_logic.js'></script>
@@ -36,8 +36,10 @@
 </style>
 <script>
     webix.ready(function () {
-        logic.attachEvents();
+        admin_ui.init();
         ui.init();
+        admin_logic.init();
+        logic.init();
     });
 </script>
 </body>

@@ -1,18 +1,29 @@
-var processPopupForm = function (form) {
+function showPopup(id, parent) {
+    $$(id).show(parent.$view);
+    $$(id).getBody().focus();
+}
+
+var getPopupValue = function (id) {
+    var form = $$(id).getBody();
     if (form.validate()) {
-        var values = form.getValues();
+        $$(id).hide();
+        var value = form.getValues();
         form.clear();
-        var popup = form.getParentView();
-        popup.hide();
-        return values;
+        return value;
     }
 };
 
+var onCreateCategoryButtonClick = function () {
+    showPopup("createCategoryPopup", this);
+};
+
 var onCreateCategoryConfirmButtonClick = function () {
-    var category = processPopupForm($$("createCategoryForm"));
+    var category = getPopupValue("createCategoryPopup");
     if (category) {
         webix.ajax().
-        header({"Content-Type": "application/json;charset=utf-8"}).
+        header({
+            "Content-Type": "application/json;charset=utf-8"
+        }).
         post("/category", JSON.stringify(category), {
             success: function (text, data) {
                 $$("categoryRichSelect").getList().add(data.json().data);
@@ -40,41 +51,36 @@ var onDeleteCategoryButtonClick = function () {
 };
 
 var onEditCategoryButtonClick = function () {
-    $$("editCategoryForm").setValues($$("categoryRichSelect").getList().getSelectedItem());
+    var category = $$("categoryRichSelect").getList().getSelectedItem();
+    if (category.filter === "category") {
+        showPopup("editCategoryPopup", this);
+    }
 };
 
 var onEditCategoryConfirmButtonClick = function () {
-    var category = processPopupForm($$("editCategoryForm"));
-    if (category.filter === "category") {
-        webix.ajax().
-        header({"Content-Type": " application/json;charset=utf-8"}).
-        put("/category", JSON.stringify(category), {
-            success: function () {
-                $$("categoryRichSelect").getList().updateItem(category.id, category);
-                $$("categoryRichSelect").refresh();
-            },
-            error: function (text, data) {
-                webix.message(data.json().message);
-            }
-        });
-    }
+    var category = getPopupValue("editCategoryPopup");
+    webix.ajax().
+    header({
+        "Content-Type": " application/json;charset=utf-8"
+    }).
+    put("/category", JSON.stringify(category), {
+        success: function () {
+            $$("categoryRichSelect").getList().updateItem(category.id, category);
+            $$("categoryRichSelect").refresh();
+        },
+        error: function (text, data) {
+            webix.message(data.json().message);
+        }
+    });
 };
 
 var admin_logic = {
-    attachEvents: function () {
-        createCategoryButton.popup.body.elements[1].on = {
-            onItemClick: onCreateCategoryConfirmButtonClick
-        };
-        deleteCategoryButton.on = {
-            onItemClick: onDeleteCategoryButtonClick
-        };
-        editCategoryButton.popup.body.elements[1].on = {
-            onItemClick: onEditCategoryConfirmButtonClick
-        };
-        editCategoryButton.on = {
-            onItemClick: onEditCategoryButtonClick
-        };
+    init: function () {
+        $$("createCategoryButton").attachEvent("onItemClick", onCreateCategoryButtonClick);
+        $$("createCategoryConfirmButton").attachEvent("onItemClick", onCreateCategoryConfirmButtonClick);
+        $$("editCategoryButton").attachEvent("onItemClick", onEditCategoryButtonClick);
+        $$("editCategoryConfirmButton").attachEvent("onItemClick", onEditCategoryConfirmButtonClick);
+        $$("editCategoryPopup").getBody().bind($$("categoryRichSelect").getList());
+        $$("deleteCategoryButton").attachEvent("onItemClick", onDeleteCategoryButtonClick);
     }
 };
-
-admin_logic.attachEvents();

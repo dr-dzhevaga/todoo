@@ -1,50 +1,49 @@
 var createTodoButton = {
+    id: "createTodoButton",
     view: "button",
     type: "icon",
     icon: "plus",
     tooltip: "Create todo",
     align: "left",
-    width: 30,
-    popup: {
-        view: "popup",
-        body: {
-            view: "form",
-            width: 300,
-            elements: [{
-                view: "text",
-                name: "name",
-                label: "Name",
-                labelPosition: "top",
-                invalidMessage: "Name can not be empty"
-            }, {
-                view: "textarea",
-                name: "description",
-                label: "Description",
-                labelPosition: "top",
-                height: 100
-            }, {
-                view: "button",
-                type: "form",
-                value: "Create",
-                inputWidth: 80,
-                align: "right"
-            }
-            ],
-            rules: {
-                "name": webix.rules.isNotEmpty
-            }
+    width: 30
+};
+
+var createTodoPopup = {
+    id: "createTodoPopup",
+    view: "popup",
+    body: {
+        view: "form",
+        width: 300,
+        elements: [{
+            view: "text",
+            name: "name",
+            label: "Name",
+            labelPosition: "top",
+            invalidMessage: "Name can not be empty"
+        }, {
+            view: "textarea",
+            name: "description",
+            label: "Description",
+            labelPosition: "top",
+            height: 100
+        }, {
+            id: "createTodoConfirmButton",
+            view: "button",
+            type: "form",
+            value: "Create",
+            inputWidth: 80,
+            align: "right"
+        }],
+        rules: {
+            "name": webix.rules.isNotEmpty
         }
     }
 };
 
-var deleteTodoButton = {
-    view: "button",
-    type: "icon",
-    icon: "remove",
-    tooltip: "Delete todo",
-    align: "left",
-    width: 30
-};
+var deleteTodoButton = webix.copy(createTodoButton);
+deleteTodoButton.id = "deleteTodoButton";
+deleteTodoButton.icon = "remove";
+deleteTodoButton.tooltip = "Delete todo";
 
 var todoList = {
     id: "todoList",
@@ -74,7 +73,12 @@ var todoDescription = {
 };
 
 var createTaskButton = webix.copy(createTodoButton);
+createTaskButton.id = "createTaskButton";
 createTaskButton.tooltip = "Create task";
+
+var createTaskPopup = webix.copy(createTodoPopup);
+createTaskPopup.id = "createTaskPopup";
+createTaskPopup.body.elements[createTaskPopup.body.elements.length - 1].id = "createTaskConfirmButton";
 
 var tasksTree = {
     id: "tasksTree",
@@ -143,6 +147,8 @@ var scheme = {
 
 var ui = {
     init: function () {
+        webix.ui(createTodoPopup);
+        webix.ui(createTaskPopup);
         webix.ui(scheme);
     }
 };
