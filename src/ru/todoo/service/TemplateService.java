@@ -14,16 +14,16 @@ public class TemplateService extends TaskServiceAbstract {
         return daoHelper.read(TaskDAO::readAllTaskTemplates);
     }
 
-    public Task create(Task task) throws PersistException {
-        task.setTemplate(true);
-        return super.create(task);
-    }
-
     public List<Task> readByCategory(Integer categoryId) throws PersistException {
         return daoHelper.read(taskDAO -> taskDAO.readTaskTemplatesByCategory(categoryId));
     }
 
     public List<Task> readPopular() throws PersistException {
         return daoHelper.read(TaskDAO::readPopularTaskTemplates);
+    }
+
+    public Task create(Task task) throws PersistException {
+        task.setTemplate(true);
+        return super.create(task);
     }
 }

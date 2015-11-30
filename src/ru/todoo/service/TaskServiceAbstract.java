@@ -33,8 +33,8 @@ public abstract class TaskServiceAbstract {
         return daoHelper.read(taskDAO -> taskDAO.read(taskId));
     }
 
-    public List<Task> readByUser(Integer userId) throws PersistException {
-        return daoHelper.read(taskDAO -> taskDAO.readTasksByUser(userId));
+    public List<Task> readChildren(Integer parentId) throws PersistException {
+        return daoHelper.read(taskDAO -> taskDAO.readChildrenRecursive(parentId));
     }
 
     public void delete(Integer taskId) throws PersistException {

@@ -19,14 +19,20 @@ var templatesList = {
     url: "/api/templates"
 };
 
+var templateDescription = {
+    id: "templateDescription",
+    view: "textarea",
+    height: 60,
+    readonly: true
+};
+
 var tasksTree = {
     id: "tasksTree",
     view: "tree",
-    template: "{common.checkbox()}#name# <span class='description'>#description#</span>",
-    data: tasksData
+    template: "{common.checkbox()}#name# <span class='description'>#description#</span>"
 };
 
-var useTodoButton = {
+var useTemplateButton = {
     view: "button",
     tooltip: "Use this todo",
     type: "icon",
@@ -45,7 +51,8 @@ var scheme = {
         width: 250
     }, {
         rows: [
-            useTodoButton,
+            useTemplateButton,
+            templateDescription,
             tasksTree
         ],
         width: "auto"
