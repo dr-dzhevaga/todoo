@@ -26,7 +26,16 @@ public class TemplateServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json;charset=utf-8");
         ServletUtil.process(response, () -> {
-            List<Task> templates = serviceProvider.getTemplateService().readAll();
+            String filter = request.getParameter("filter");
+            String id = request.getParameter("id");
+            List<Task> templates;
+            if ("category".equals(filter)) {
+                templates = serviceProvider.getTemplateService().readByCategory(Integer.valueOf(id));
+            } else if ("popular".equals(filter)) {
+                templates = serviceProvider.getTemplateService().readPopular();
+            } else {
+                templates = serviceProvider.getTemplateService().readAll();
+            }
             JsonArray templatesArray = JsonUtil.toJsonArray(templates);
             return JsonUtil.getBuilder().add("data", templatesArray).build();
         });
