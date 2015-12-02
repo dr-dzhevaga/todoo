@@ -6,7 +6,6 @@ import ru.todoo.domain.Task;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 /**
  * Created by Dmitriy Dzhevaga on 29.11.2015.
@@ -51,20 +50,10 @@ public abstract class TaskServiceAbstract {
         });
     }
 
-    protected void update(Integer taskId, Consumer<Task> updater) throws PersistException {
+    public void update(Task task) throws PersistException {
         daoHelper.executeProcedure(taskDAO -> {
-            Task task = taskDAO.read(taskId);
-            updater.accept(task);
             taskDAO.update(task);
         });
-    }
-
-    public void updateName(Integer taskId, String name) throws PersistException {
-        update(taskId, task -> task.setName(name));
-    }
-
-    public void updateDescription(Integer taskId, String description) throws PersistException {
-        update(taskId, task -> task.setDescription(description));
     }
 
     public void updateOrder(Integer taskId, Integer order) throws PersistException {

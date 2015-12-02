@@ -47,13 +47,13 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
     @Override
     public List<T> readChildrenRecursive(PK parentId) throws PersistException {
         String sql = "SELECT *\n" +
-                "FROM TEMPLATES\n" +
+                "FROM " + table + "\n" +
                 "WHERE PARENT_ID = ?\n" +
                 "UNION\n" +
                 "SELECT *\n" +
-                "FROM TEMPLATES\n" +
+                "FROM " + table + "\n" +
                 "WHERE PARENT_ID IN (SELECT ID\n" +
-                "                    FROM TEMPLATES\n" +
+                "                    FROM " + table + "\n" +
                 "                    WHERE PARENT_ID = ?)";
         return jdbcHelper.select(sql, new Object[]{parentId, parentId}, this::parseResultSet);
     }

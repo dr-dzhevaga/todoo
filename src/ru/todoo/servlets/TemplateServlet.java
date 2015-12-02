@@ -28,15 +28,26 @@ public class TemplateServlet extends HttpServlet {
         ServletUtil.process(response, () -> {
             String filter = request.getParameter("filter");
             String id = request.getParameter("id");
-            List<Task> templates;
-            if ("category".equals(filter)) {
-                templates = serviceProvider.getTemplateService().readByCategory(Integer.valueOf(id));
-            } else if ("popular".equals(filter)) {
-                templates = serviceProvider.getTemplateService().readPopular();
-            } else {
-                templates = serviceProvider.getTemplateService().readAll();
+            List<Task> templatesList;
+            JsonArray templatesArray;
+            switch (filter) {
+                case "parent":
+                    templatesList = serviceProvider.getTemplateService().readChildren(Integer.valueOf(id));
+                    templatesArray = JsonUtil.toJsonArray(templatesList, Integer.valueOf(id));
+                    break;
+                case "category":
+                    templatesList = serviceProvider.getTemplateService().readByCategory(Integer.valueOf(id));
+                    templatesArray = JsonUtil.toJsonArray(templatesList);
+                    break;
+                case "popular":
+                    templatesList = serviceProvider.getTemplateService().readPopular();
+                    templatesArray = JsonUtil.toJsonArray(templatesList);
+                    break;
+                default:
+                    templatesList = serviceProvider.getTemplateService().readAll();
+                    templatesArray = JsonUtil.toJsonArray(templatesList);
+                    break;
             }
-            JsonArray templatesArray = JsonUtil.toJsonArray(templates);
             return JsonUtil.getBuilder().add("data", templatesArray).build();
         });
     }
@@ -60,6 +71,16 @@ public class TemplateServlet extends HttpServlet {
             int id = ServletUtil.getIdFromUri(request);
             serviceProvider.getTemplateService().delete(id);
             return JsonUtil.getBuilder().addProperty("message", "Template is deleted").build();
+        });
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ServletUtil.process(response, () -> {
+            String json = ServletUtil.readContent(request);
+            Task task = JsonUtil.toObject(json, Task.class);
+            serviceProvider.getTemplateService().update(task);
+            return JsonUtil.getBuilder().addProperty("message", "Template is updated").build();
         });
     }
 }

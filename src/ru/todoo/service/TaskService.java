@@ -19,6 +19,10 @@ public class TaskService extends TaskServiceAbstract {
     }
 
     public void updateStatus(Integer taskId, boolean completed) throws PersistException {
-        update(taskId, task -> task.setCompleted(completed));
+        daoHelper.executeProcedure(taskDAO -> {
+            Task task = taskDAO.read(taskId);
+            task.setCompleted(completed);
+            taskDAO.update(task);
+        });
     }
 }

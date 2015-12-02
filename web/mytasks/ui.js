@@ -93,7 +93,9 @@ var tasksTree = {
             content += "<span class='completed'>";
         }
         content += obj.name;
-        content += "<span class='description'>" + " " + obj.description + "</span>";
+        if (obj.description) {
+            content += "<span class='description'>" + " " + obj.description + "</span>";
+        }
         if (obj.completed) {
             content += "</span>";
         }

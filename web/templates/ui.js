@@ -29,7 +29,13 @@ var templateDescription = {
 var tasksTree = {
     id: "tasksTree",
     view: "tree",
-    template: "{common.checkbox()}#name# <span class='description'>#description#</span>"
+    template: function (obj, common) {
+        var content = common.checkbox(obj, common) + obj.name;
+        if (obj.description) {
+            content += "<span class='description'>" + " " + obj.description + "</span>";
+        }
+        return content;
+    }
 };
 
 var useTemplateButton = {

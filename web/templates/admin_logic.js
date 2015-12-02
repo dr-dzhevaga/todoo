@@ -63,6 +63,22 @@ var onDeleteTemplateButtonClick = function () {
     }
 };
 
+var onEditTemplateButtonClick = function () {
+    var template = $$("templatesList").getSelectedItem();
+    if (template) {
+        popup.show("editTemplatePopup", this);
+    }
+};
+
+var onEditTemplateConfirmButtonClick = function () {
+    var template = popup.getValue("editTemplatePopup");
+    ajax.putJson("/api/templates", template, function () {
+        $$("templatesList").updateItem(template.id, template);
+        $$("templatesList").refresh();
+        $$("templateDescription").setValue(template.description);
+    });
+};
+
 var admin_logic = {
     init: function () {
         $$("createCategoryButton").attachEvent("onItemClick", onCreateCategoryButtonClick);
@@ -74,7 +90,9 @@ var admin_logic = {
 
         $$("createTemplateButton").attachEvent("onItemClick", onCreateTemplateButtonClick);
         $$("createTemplateConfirmButton").attachEvent("onItemClick", onCreateTemplateConfirmButtonClick);
-
+        $$("editTemplateButton").attachEvent("onItemClick", onEditTemplateButtonClick);
+        $$("editTemplateConfirmButton").attachEvent("onItemClick", onEditTemplateConfirmButtonClick);
+        $$("editTemplatePopup").getBody().bind($$("templatesList"));
         $$("deleteTemplateButton").attachEvent("onItemClick", onDeleteTemplateButtonClick);
     }
 };

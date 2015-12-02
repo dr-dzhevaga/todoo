@@ -3,9 +3,9 @@ var onTaskTreeLoad = function () {
 };
 
 var onCategoryRichSelectSelectChange = function (id) {
-    var category = $$("categoryRichSelect").getList().getItem(id);
-    if (category) {
-        webix.ajax("/api/templates", category, function (text) {
+    var filter = $$("categoryRichSelect").getList().getItem(id);
+    if (filter) {
+        webix.ajax("/api/templates", filter, function (text) {
             $$("templatesList").clearAll();
             $$("templatesList").parse(text);
         });
@@ -15,6 +15,11 @@ var onCategoryRichSelectSelectChange = function (id) {
 var onTemplatesListSelectChange = function () {
     var template = $$("templatesList").getSelectedItem();
     $$("templateDescription").setValue(template.description);
+    var filter = {filter: "parent", id: template.id};
+    webix.ajax("/api/templates", filter, function (text) {
+        $$("tasksTree").clearAll();
+        $$("tasksTree").parse(text);
+    });
 };
 
 var logic = {

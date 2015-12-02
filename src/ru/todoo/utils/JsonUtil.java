@@ -4,6 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import ru.todoo.dao.generic.Identified;
+import ru.todoo.dao.generic.Listed;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Dmitriy Dzhevaga on 28.11.2015.
@@ -27,6 +32,19 @@ public class JsonUtil {
 
     public static JsonBuilder getBuilder(Object object) {
         return new JsonBuilder(object);
+    }
+
+    public static <T extends Identified<Integer> & Listed<Integer>> JsonArray toJsonArray(List<T> objects, Integer root) {
+        JsonArray result = new JsonArray();
+        getChildren(objects, root).forEach(firstLevelChild -> {
+            List<T> secondLevelChildren = getChildren(objects, firstLevelChild.getId());
+            result.add(getBuilder(firstLevelChild).add("data", toJsonArray(secondLevelChildren)).build());
+        });
+        return result;
+    }
+
+    private static <T extends Identified<Integer> & Listed<Integer>> List<T> getChildren(List<T> objects, Integer rootId) {
+        return objects.stream().filter(object -> rootId.equals(object.getParentId())).collect(Collectors.toList());
     }
 
     public static class JsonBuilder {
