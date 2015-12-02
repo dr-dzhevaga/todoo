@@ -53,4 +53,13 @@ public class TemplateServlet extends HttpServlet {
             return JsonUtil.getBuilder().add("data", templateObject).build();
         });
     }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ServletUtil.process(response, () -> {
+            int id = ServletUtil.getIdFromUri(request);
+            serviceProvider.getTemplateService().delete(id);
+            return JsonUtil.getBuilder().addProperty("message", "Template is deleted").build();
+        });
+    }
 }

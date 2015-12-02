@@ -121,7 +121,7 @@ var logic = {
     init: function () {
         $$("createTemplateButton").attachEvent("onItemClick", onCreateTodoButtonClick);
         $$("createTodoConfirmButton").attachEvent("onItemClick", onCreateTodoConfirmButtonClick);
-        $$("deleteTodoButton").attachEvent("onItemClick", onDeleteTodoButtonClick);
+        $$("deleteTemplateButton").attachEvent("onItemClick", onDeleteTodoButtonClick);
         $$("todoList").attachEvent("onSelectChange", onTodoListSelectChange);
         $$("todoName").attachEvent("onChange", onTodoNameChange);
         $$("todoDescription").attachEvent("onChange", onTodoDescriptionChange);

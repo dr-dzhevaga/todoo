@@ -41,7 +41,7 @@ var createTodoPopup = {
 };
 
 var deleteTodoButton = webix.copy(createTodoButton);
-deleteTodoButton.id = "deleteTodoButton";
+deleteTodoButton.id = "deleteTemplateButton";
 deleteTodoButton.icon = "remove";
 deleteTodoButton.tooltip = "Delete todo";
 

@@ -2,10 +2,6 @@ var onTaskTreeLoad = function () {
     this.openAll();
 };
 
-var onTemplatesListSelectChange = function () {
-
-};
-
 var onCategoryRichSelectSelectChange = function (id) {
     var category = $$("categoryRichSelect").getList().getItem(id);
     if (category) {
@@ -14,6 +10,11 @@ var onCategoryRichSelectSelectChange = function (id) {
             $$("templatesList").parse(text);
         });
     }
+};
+
+var onTemplatesListSelectChange = function () {
+    var template = $$("templatesList").getSelectedItem();
+    $$("templateDescription").setValue(template.description);
 };
 
 var logic = {
