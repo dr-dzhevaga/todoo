@@ -5,28 +5,28 @@ var onTaskTreeLoad = function () {
 var onCategoryRichSelectSelectChange = function (id) {
     var filter = $$("categoryRichSelect").getList().getItem(id);
     if (filter) {
-        webix.ajax("/api/templates", filter, function (text) {
-            $$("templatesList").clearAll();
-            $$("templatesList").parse(text);
+        ajax.getJson("/api/templates", filter, function (text) {
+            $$("templateList").clearAll();
+            $$("templateList").parse(text);
         });
     }
 };
 
 var onTemplatesListSelectChange = function () {
-    var template = $$("templatesList").getSelectedItem();
+    var template = $$("templateList").getSelectedItem();
     $$("templateDescription").setValue(template.description);
     var filter = {filter: "parent", id: template.id};
-    webix.ajax("/api/templates", filter, function (text) {
-        $$("tasksTree").clearAll();
-        $$("tasksTree").parse(text);
+    ajax.getJson("/api/templates", filter, function (text) {
+        $$("stepTree").clearAll();
+        $$("stepTree").parse(text);
     });
 };
 
 var logic = {
     init: function () {
         $$("categoryRichSelect").attachEvent("onChange", onCategoryRichSelectSelectChange);
-        $$("templatesList").attachEvent("onSelectChange", onTemplatesListSelectChange);
-        $$("tasksTree").attachEvent("onAfterLoad", onTaskTreeLoad);
-        $$("tasksTree").openAll();
+        $$("templateList").attachEvent("onSelectChange", onTemplatesListSelectChange);
+        $$("stepTree").attachEvent("onAfterLoad", onTaskTreeLoad);
+        $$("stepTree").openAll();
     }
 };

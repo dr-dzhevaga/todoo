@@ -15,9 +15,17 @@ public abstract class TaskServiceAbstract {
 
     protected Task create(Task task) throws PersistException {
         return daoHelper.executeFunction(taskDAO -> {
-            Integer parentTaskId = task.getParentId();
-            if (parentTaskId != null) {
-                Task lastNeighbor = taskDAO.readLastChild(parentTaskId);
+            if (task.getParentId() != null) {
+                // limit hierarchy level by 2
+                Task parent = taskDAO.read(task.getParentId());
+                if (parent.getParentId() != null) {
+                    Task grandParent = taskDAO.read(parent.getParentId());
+                    if (grandParent.getParentId() != null) {
+                        task.setParentId(parent.getParentId());
+                    }
+                }
+                // set new task to the end of the list of children
+                Task lastNeighbor = taskDAO.readLastChild(task.getParentId());
                 if (lastNeighbor != null) {
                     task.setOrder(lastNeighbor.getOrder() + 1);
                 } else {
@@ -39,9 +47,8 @@ public abstract class TaskServiceAbstract {
     public void delete(Integer taskId) throws PersistException {
         daoHelper.executeProcedure(taskDAO -> {
             Task task = taskDAO.read(taskId);
-            Integer parentTaskId = task.getParentId();
-            if (parentTaskId != null) {
-                Task lastNeighbor = taskDAO.readLastChild(parentTaskId);
+            if (task.getParentId() != null) {
+                Task lastNeighbor = taskDAO.readLastChild(task.getParentId());
                 if (lastNeighbor != null && !Objects.equals(lastNeighbor.getId(), taskId)) {
                     taskDAO.moveChildrenUp(task.getParentId(), task.getOrder() + 1, lastNeighbor.getOrder());
                 }
@@ -51,9 +58,7 @@ public abstract class TaskServiceAbstract {
     }
 
     public void update(Task task) throws PersistException {
-        daoHelper.executeProcedure(taskDAO -> {
-            taskDAO.update(task);
-        });
+        daoHelper.executeProcedure(taskDAO -> taskDAO.update(task));
     }
 
     public void updateOrder(Integer taskId, Integer order) throws PersistException {

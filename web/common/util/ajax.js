@@ -1,4 +1,14 @@
 var ajax = {
+    getJson: function (url, obj, onSuccess) {
+        webix.ajax(url, obj, {
+            success: function (text) {
+                onSuccess(text);
+            },
+            error: function (text, data) {
+                ajax.showError(data);
+            }
+        });
+    },
     postJson: function (url, obj, onSuccess) {
         webix.ajax().
         header({

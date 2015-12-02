@@ -68,11 +68,11 @@ var onTodoDescriptionChange = function (newv, oldv) {
 };
 
 var onCreateTaskButtonClick = function () {
-    showPopup("createTaskPopup", this);
+    showPopup("createStepPopup", this);
 };
 
 var onCreateTaskConfirmButtonClick = function () {
-    getPopupValue("createTaskPopup");
+    getPopupValue("createStepPopup");
 };
 
 var onTaskTreeLoad = function () {
@@ -106,15 +106,15 @@ var onTaskTreeItemDeleteIconClick = function (e, id) {
 };
 
 var onTaskNameChange = function (newv, oldv) {
-    var task = $$("tasksTree").getSelectedItem();
+    var task = $$("stepTree").getSelectedItem();
     task.name = newv;
-    $$("tasksTree").refresh();
+    $$("stepTree").refresh();
 };
 
 var onTaskDescriptionChange = function (newv, oldv) {
-    var task = $$("tasksTree").getSelectedItem();
+    var task = $$("stepTree").getSelectedItem();
     task.description = newv;
-    $$("tasksTree").refresh();
+    $$("stepTree").refresh();
 };
 
 var logic = {
@@ -125,13 +125,13 @@ var logic = {
         $$("todoList").attachEvent("onSelectChange", onTodoListSelectChange);
         $$("todoName").attachEvent("onChange", onTodoNameChange);
         $$("todoDescription").attachEvent("onChange", onTodoDescriptionChange);
-        $$("createTaskButton").attachEvent("onItemClick", onCreateTaskButtonClick);
+        $$("createStepButton").attachEvent("onItemClick", onCreateTaskButtonClick);
         $$("createTaskConfirmButton").attachEvent("onItemClick", onCreateTaskConfirmButtonClick);
-        $$("tasksTree").attachEvent("onAfterLoad", onTaskTreeLoad);
-        $$("tasksTree").openAll();
-        $$("tasksTree").attachEvent("onSelectChange", onTaskTreeSelectChange);
-        $$("tasksTree").attachEvent("onItemCheck", onTaskTreeItemCheck);
-        $$("tasksTree").on_click.delete = onTaskTreeItemDeleteIconClick;
+        $$("stepTree").attachEvent("onAfterLoad", onTaskTreeLoad);
+        $$("stepTree").openAll();
+        $$("stepTree").attachEvent("onSelectChange", onTaskTreeSelectChange);
+        $$("stepTree").attachEvent("onItemCheck", onTaskTreeItemCheck);
+        $$("stepTree").on_click.delete = onTaskTreeItemDeleteIconClick;
         $$("taskName").attachEvent("onChange", onTaskNameChange);
         $$("taskDescription").attachEvent("onChange", onTaskDescriptionChange);
     }

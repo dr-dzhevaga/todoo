@@ -59,6 +59,12 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
     }
 
     @Override
+    public void delete(PK id) throws PersistException {
+        String sql = "DELETE FROM " + table + " WHERE id = ? OR parent_id = ?";
+        jdbcHelper.update(sql, new Object[]{id, id});
+    }
+
+    @Override
     public void moveChildrenUp(PK parentId, Integer firstChildOrder, Integer lastChildOrder) throws PersistException {
         moveChildren(parentId, firstChildOrder, lastChildOrder, MoveDirection.DOWN);
     }

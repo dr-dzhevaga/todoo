@@ -54,7 +54,7 @@ public abstract class GenericDAOJDBCImpl<T extends Identified<PK>, PK extends Se
         String sql = getSelectQuery() + " WHERE id = ?";
         List<T> list = jdbcHelper.select(sql, new Object[]{id}, this::parseResultSet);
         if (list.size() != 1) {
-            throw new PersistException("Single record must be found on read: " + id);
+            return null;
         }
         return list.get(0);
     }

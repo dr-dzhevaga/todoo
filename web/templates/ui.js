@@ -11,8 +11,8 @@ var categoryRichSelect = {
     }
 };
 
-var templatesList = {
-    id: "templatesList",
+var templateList = {
+    id: "templateList",
     view: "list",
     select: true,
     template: "#name#",
@@ -26,8 +26,8 @@ var templateDescription = {
     readonly: true
 };
 
-var tasksTree = {
-    id: "tasksTree",
+var stepTree = {
+    id: "stepTree",
     view: "tree",
     template: function (obj, common) {
         var content = common.checkbox(obj, common) + obj.name;
@@ -52,14 +52,14 @@ var scheme = {
     cols: [{
         rows: [
             categoryRichSelect,
-            templatesList
+            templateList
         ],
         width: 250
     }, {
         rows: [
             useTemplateButton,
             templateDescription,
-            tasksTree
+            stepTree
         ],
         width: "auto"
     }]

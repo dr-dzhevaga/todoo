@@ -49,22 +49,22 @@ var onCreateTemplateConfirmButtonClick = function () {
     var template = popup.getValue("createTemplatePopup");
     if (template) {
         ajax.postJson("/api/templates", template, function (data) {
-            $$("templatesList").add(data.json().data);
+            $$("templateList").add(data.json().data);
         });
     }
 };
 
 var onDeleteTemplateButtonClick = function () {
-    var template = $$("templatesList").getSelectedItem();
+    var template = $$("templateList").getSelectedItem();
     if (template) {
         ajax.deleteId("/api/templates", template.id, function () {
-            $$("templatesList").remove(template.id);
+            $$("templateList").remove(template.id);
         });
     }
 };
 
 var onEditTemplateButtonClick = function () {
-    var template = $$("templatesList").getSelectedItem();
+    var template = $$("templateList").getSelectedItem();
     if (template) {
         popup.show("editTemplatePopup", this);
     }
@@ -73,10 +73,61 @@ var onEditTemplateButtonClick = function () {
 var onEditTemplateConfirmButtonClick = function () {
     var template = popup.getValue("editTemplatePopup");
     ajax.putJson("/api/templates", template, function () {
-        $$("templatesList").updateItem(template.id, template);
-        $$("templatesList").refresh();
+        $$("templateList").updateItem(template.id, template);
+        $$("templateList").refresh();
         $$("templateDescription").setValue(template.description);
     });
+};
+
+var onCreateStepButtonClick = function () {
+    var template = $$("templateList").getSelectedItem();
+    var step = $$("stepTree").getSelectedItem();
+    var parent = step ? step : template;
+    if (parent) {
+        $$("createStepPopup").getBody().setValues({parentId: parent.id, rootId: template.id});
+        popup.show("createStepPopup", this);
+    } else {
+        webix.message("Select parent template first");
+    }
+};
+
+var onCreateStepConfirmButtonClick = function () {
+    var step = popup.getValue("createStepPopup");
+    if (step) {
+        ajax.postJson("/api/templates", step, function () {
+            var filter = {filter: "parent", id: step.rootId};
+            ajax.getJson("/api/templates", filter, function (text) {
+                $$("stepTree").clearAll();
+                $$("stepTree").parse(text);
+            });
+        });
+    }
+};
+
+var onEditStepButtonClick = function () {
+    var step = $$("stepTree").getSelectedItem();
+    if (step) {
+        popup.show("editStepPopup", this);
+    } else {
+        webix.message("Select step first");
+    }
+};
+
+var onEditStepConfirmButtonClick = function () {
+    var step = popup.getValue("editStepPopup");
+    ajax.putJson("/api/templates", step, function () {
+        $$("stepTree").updateItem(step.id, step);
+        $$("stepTree").refresh();
+    });
+};
+
+var onDeleteStepButtonClick = function () {
+    var step = $$("stepTree").getSelectedItem();
+    if (step) {
+        ajax.deleteId("/api/templates", step.id, function () {
+            $$("stepTree").remove(step.id);
+        });
+    }
 };
 
 var admin_logic = {
@@ -92,7 +143,14 @@ var admin_logic = {
         $$("createTemplateConfirmButton").attachEvent("onItemClick", onCreateTemplateConfirmButtonClick);
         $$("editTemplateButton").attachEvent("onItemClick", onEditTemplateButtonClick);
         $$("editTemplateConfirmButton").attachEvent("onItemClick", onEditTemplateConfirmButtonClick);
-        $$("editTemplatePopup").getBody().bind($$("templatesList"));
+        $$("editTemplatePopup").getBody().bind($$("templateList"));
         $$("deleteTemplateButton").attachEvent("onItemClick", onDeleteTemplateButtonClick);
+
+        $$("createStepButton").attachEvent("onItemClick", onCreateStepButtonClick);
+        $$("createStepConfirmButton").attachEvent("onItemClick", onCreateStepConfirmButtonClick);
+        $$("editStepButton").attachEvent("onItemClick", onEditStepButtonClick);
+        $$("editStepConfirmButton").attachEvent("onItemClick", onEditStepConfirmButtonClick);
+        $$("editStepPopup").getBody().bind($$("stepTree"));
+        $$("deleteStepButton").attachEvent("onItemClick", onDeleteStepButtonClick);
     }
 };

@@ -73,15 +73,15 @@ var todoDescription = {
 };
 
 var createTaskButton = webix.copy(createTodoButton);
-createTaskButton.id = "createTaskButton";
+createTaskButton.id = "createStepButton";
 createTaskButton.tooltip = "Create task";
 
 var createTaskPopup = webix.copy(createTodoPopup);
-createTaskPopup.id = "createTaskPopup";
+createTaskPopup.id = "createStepPopup";
 createTaskPopup.body.elements[createTaskPopup.body.elements.length - 1].id = "createTaskConfirmButton";
 
 var tasksTree = {
-    id: "tasksTree",
+    id: "stepTree",
     view: "tree",
     css: "selected",
     drag: "order",

@@ -54,25 +54,25 @@ deleteTemplateButton.id = "deleteTemplateButton";
 deleteTemplateButton.tooltip = "Delete template";
 deleteTemplateButton.icon = "remove";
 
-var createTaskButton = webix.copy(createTemplateButton);
-createTaskButton.id = "createTaskButton";
-createTaskButton.tooltip = "Add task";
+var createStepButton = webix.copy(createTemplateButton);
+createStepButton.id = "createStepButton";
+createStepButton.tooltip = "Add task";
 
-var createTaskPopup = webix.copy(createTemplatePopup);
-createTaskPopup.id = "createTaskPopup";
-createTaskPopup.body.elements[createTaskPopup.body.elements.length - 1].id = "createTaskConfirmButton";
+var createStepPopup = webix.copy(createTemplatePopup);
+createStepPopup.id = "createStepPopup";
+createStepPopup.body.elements[createStepPopup.body.elements.length - 1].id = "createStepConfirmButton";
 
-var editTaskButton = webix.copy(editTemplateButton);
-editTaskButton.id = "editTaskButton";
-editTaskButton.tooltip = "Edit task";
+var editStepButton = webix.copy(editTemplateButton);
+editStepButton.id = "editStepButton";
+editStepButton.tooltip = "Edit task";
 
-var editTaskPopup = webix.copy(editTemplatePopup);
-editTaskPopup.id = "editTaskPopup";
-editTaskPopup.body.elements[editTaskPopup.body.elements.length - 1].id = "editTaskConfirmButton";
+var editStepPopup = webix.copy(editTemplatePopup);
+editStepPopup.id = "editStepPopup";
+editStepPopup.body.elements[editStepPopup.body.elements.length - 1].id = "editStepConfirmButton";
 
-var deleteTaskButton = webix.copy(deleteTemplateButton);
-deleteTaskButton.id = "deleteTaskButton";
-deleteTaskButton.tooltip = "Delete task";
+var deleteStepButton = webix.copy(deleteTemplateButton);
+deleteStepButton.id = "deleteStepButton";
+deleteStepButton.tooltip = "Delete task";
 
 var createCategoryButton = webix.copy(createTemplateButton);
 createCategoryButton.id = "createCategoryButton";
@@ -114,11 +114,11 @@ var categoryLabel = {
     width: "auto"
 };
 
-var todoLabel = webix.copy(categoryLabel);
-todoLabel.label = "Todo:";
+var templateLabel = webix.copy(categoryLabel);
+templateLabel.label = "Template:";
 
-var taskLabel = webix.copy(categoryLabel);
-taskLabel.label = "Task:";
+var stepLabel = webix.copy(categoryLabel);
+stepLabel.label = "Step:";
 
 var separatorLabel = webix.copy(categoryLabel);
 separatorLabel.label = "|";
@@ -131,15 +131,15 @@ var adminToolBar = {
         deleteCategoryButton,
         editCategoryButton,
         separatorLabel,
-        todoLabel,
+        templateLabel,
         createTemplateButton,
         deleteTemplateButton,
         editTemplateButton,
         separatorLabel,
-        taskLabel,
-        createTaskButton,
-        deleteTaskButton,
-        editTaskButton
+        stepLabel,
+        createStepButton,
+        deleteStepButton,
+        editStepButton
     ]
 };
 
@@ -151,11 +151,13 @@ var admin_ui = {
                 scheme
             ]
         };
-        tasksTree.drag = "order";
+        stepTree.drag = "order";
+        stepTree.select = true;
+        stepTree.css = "selected";
         webix.ui(createTemplatePopup);
         webix.ui(editTemplatePopup);
-        webix.ui(createTaskPopup);
-        webix.ui(editTaskPopup);
+        webix.ui(createStepPopup);
+        webix.ui(editStepPopup);
         webix.ui(createCategoryPopup);
         webix.ui(editCategoryPopup);
     }
