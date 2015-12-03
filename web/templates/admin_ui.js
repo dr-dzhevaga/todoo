@@ -151,7 +151,7 @@ var admin_ui = {
                 scheme
             ]
         };
-        stepTree.drag = "order";
+        stepTree.drag = true;
         stepTree.select = true;
         stepTree.css = "selected";
         webix.ui(createTemplatePopup);

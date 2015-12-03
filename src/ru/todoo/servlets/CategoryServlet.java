@@ -28,13 +28,13 @@ public class CategoryServlet extends HttpServlet {
         ServletUtil.process(response, () -> {
             JsonArray categoriesArray = new JsonArray();
             categoriesArray.add(JsonUtil.getBuilder().
-                    addProperty("id", 0).
+                    addProperty("id", 1).
                     addProperty("name", "All").
                     addProperty("filter", "all").
                     build()
             );
             categoriesArray.add(JsonUtil.getBuilder().
-                    addProperty("id", 1).
+                    addProperty("id", 2).
                     addProperty("name", "Popular").
                     addProperty("filter", "popular").
                     build()

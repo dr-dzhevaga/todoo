@@ -40,7 +40,7 @@ var stepTree = {
 
 var useTemplateButton = {
     view: "button",
-    tooltip: "Use this todo",
+    tooltip: "Use this template",
     type: "icon",
     icon: "hand-o-right",
     align: "left",
