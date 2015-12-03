@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Created by Dmitriy Dzhevaga on 29.11.2015.
+ * Created by Dmitriy Dzhevaga on 03.12.2015.
  */
-@WebServlet("/api/templates/*")
-public class TemplateServlet extends HttpServlet {
+@WebServlet("/api/tasks/*")
+public class TaskServlet extends HttpServlet {
     private static final ServiceProvider serviceProvider = new ServiceProvider();
 
     @Override
@@ -28,27 +28,19 @@ public class TemplateServlet extends HttpServlet {
         ServletUtil.process(response, () -> {
             String filter = Objects.toString(request.getParameter("filter"), "");
             String id = request.getParameter("id");
-            List<Task> templatesList;
-            JsonArray templatesArray;
+            List<Task> taskList;
+            JsonArray taskArray;
             switch (filter) {
                 case "parent":
-                    templatesList = serviceProvider.getTemplateService().readChildren(Integer.valueOf(id));
-                    templatesArray = JsonUtil.toJsonArray(templatesList, Integer.valueOf(id));
-                    break;
-                case "category":
-                    templatesList = serviceProvider.getTemplateService().readByCategory(Integer.valueOf(id));
-                    templatesArray = JsonUtil.toJsonArray(templatesList);
-                    break;
-                case "popular":
-                    templatesList = serviceProvider.getTemplateService().readPopular();
-                    templatesArray = JsonUtil.toJsonArray(templatesList);
+                    taskList = serviceProvider.getTaskService().readChildren(Integer.valueOf(id));
+                    taskArray = JsonUtil.toJsonArray(taskList, Integer.valueOf(id));
                     break;
                 default:
-                    templatesList = serviceProvider.getTemplateService().readAll();
-                    templatesArray = JsonUtil.toJsonArray(templatesList);
+                    taskList = serviceProvider.getTaskService().readByUser(ServletUtil.getUser().getId());
+                    taskArray = JsonUtil.toJsonArray(taskList);
                     break;
             }
-            return JsonUtil.getBuilder().add("data", templatesArray).build();
+            return JsonUtil.getBuilder().add("data", taskArray).build();
         });
     }
 
@@ -56,11 +48,11 @@ public class TemplateServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
-            Task template = JsonUtil.toObject(json, Task.class);
-            template.setUserId(ServletUtil.getUser().getId());
-            template = serviceProvider.getTemplateService().create(template);
-            JsonObject templateObject = JsonUtil.toJsonObject(template);
-            return JsonUtil.getBuilder().add("data", templateObject).build();
+            Task task = JsonUtil.toObject(json, Task.class);
+            task.setUserId(ServletUtil.getUser().getId());
+            task = serviceProvider.getTaskService().create(task);
+            JsonObject taskObject = JsonUtil.toJsonObject(task);
+            return JsonUtil.getBuilder().add("data", taskObject).build();
         });
     }
 
@@ -68,8 +60,8 @@ public class TemplateServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
             int id = ServletUtil.getIdFromUri(request);
-            serviceProvider.getTemplateService().delete(id);
-            return JsonUtil.getBuilder().addProperty("message", "Template is deleted").build();
+            serviceProvider.getTaskService().delete(id);
+            return JsonUtil.getBuilder().addProperty("message", "Task is deleted").build();
         });
     }
 
@@ -78,8 +70,8 @@ public class TemplateServlet extends HttpServlet {
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
             Task task = JsonUtil.toObject(json, Task.class);
-            serviceProvider.getTemplateService().update(task);
-            return JsonUtil.getBuilder().addProperty("message", "Template is updated").build();
+            serviceProvider.getTaskService().update(task);
+            return JsonUtil.getBuilder().addProperty("message", "Task is updated").build();
         });
     }
 }

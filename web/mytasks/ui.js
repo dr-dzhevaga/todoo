@@ -1,5 +1,5 @@
-var createTodoButton = {
-    id: "createTemplateButton",
+var createTaskButton = {
+    id: "createTaskButton",
     view: "button",
     type: "icon",
     icon: "plus",
@@ -8,8 +8,8 @@ var createTodoButton = {
     width: 30
 };
 
-var createTodoPopup = {
-    id: "createTemplatePopup",
+var createTaskPopup = {
+    id: "createTaskPopup",
     view: "popup",
     body: {
         view: "form",
@@ -27,7 +27,7 @@ var createTodoPopup = {
             labelPosition: "top",
             height: 100
         }, {
-            id: "createTodoConfirmButton",
+            id: "createTaskConfirmButton",
             view: "button",
             type: "form",
             value: "Create",
@@ -40,51 +40,51 @@ var createTodoPopup = {
     }
 };
 
-var deleteTodoButton = webix.copy(createTodoButton);
-deleteTodoButton.id = "deleteTemplateButton";
-deleteTodoButton.icon = "remove";
-deleteTodoButton.tooltip = "Delete todo";
+var deleteTaskButton = webix.copy(createTaskButton);
+deleteTaskButton.id = "deleteTaskButton";
+deleteTaskButton.icon = "remove";
+deleteTaskButton.tooltip = "Delete todo";
 
-var todoList = {
-    id: "todoList",
+var taskList = {
+    id: "taskList",
     view: "list",
-    template: "#name#<div class='created'>created: #created#</div>",
+    template: "#name#<div class='created'>#created#</div>",
     defaultData: {
         description: ""
     },
     type: {
         height: 62
     },
-    data: listData,
+    url: TASK_API_ENDPOINT,
     select: true
 };
 
-var todoName = {
-    id: "todoName",
+var taskName = {
+    id: "taskName",
     view: "text",
     readonly: true
 };
 
-var todoDescription = {
-    id: "todoDescription",
+var taskDescription = {
+    id: "taskDescription",
     view: "textarea",
     height: 60,
     readonly: true
 };
 
-var createTaskButton = webix.copy(createTodoButton);
-createTaskButton.id = "createStepButton";
-createTaskButton.tooltip = "Create task";
+var createStepButton = webix.copy(createTaskButton);
+createStepButton.id = "createStepButton";
+createStepButton.tooltip = "Create task";
 
-var createTaskPopup = webix.copy(createTodoPopup);
-createTaskPopup.id = "createStepPopup";
-createTaskPopup.body.elements[createTaskPopup.body.elements.length - 1].id = "createTaskConfirmButton";
+var createStepPopup = webix.copy(createTaskPopup);
+createStepPopup.id = "createStepPopup";
+createStepPopup.body.elements[createStepPopup.body.elements.length - 1].id = "createStepConfirmButton";
 
-var tasksTree = {
+var stepTree = {
     id: "stepTree",
     view: "tree",
     css: "selected",
-    drag: "order",
+    drag: true,
     select: true,
     template: function (obj, common) {
         var content = "<span>";
@@ -102,18 +102,17 @@ var tasksTree = {
         content += "<i class='delete fa fa-trash-o fa-fw'></i>";
         content += "</span>";
         return content;
-    },
-    data: treeData
+    }
 };
 
-var taskDescription = {
-    id: "taskDescription",
+var stepDescription = {
+    id: "stepDescription",
     view: "textarea",
     readonly: true
 };
 
-var taskName = {
-    id: "taskName",
+var stepName = {
+    id: "stepName",
     view: "text",
     readonly: true
 };
@@ -123,25 +122,25 @@ var scheme = {
     cols: [{
         rows: [{
             cols: [
-                createTodoButton,
-                deleteTodoButton
+                createTaskButton,
+                deleteTaskButton
             ]
         },
-            todoList
+            taskList
         ],
         width: 250
     }, {
         rows: [
-            todoName,
-            todoDescription,
-            createTaskButton,
-            tasksTree
+            taskName,
+            taskDescription,
+            createStepButton,
+            stepTree
         ],
         width: "auto"
     }, {
         rows: [
-            taskName,
-            taskDescription
+            stepName,
+            stepDescription
         ],
         width: 200
     }]
@@ -149,8 +148,8 @@ var scheme = {
 
 var ui = {
     init: function () {
-        webix.ui(createTodoPopup);
         webix.ui(createTaskPopup);
+        webix.ui(createStepPopup);
         webix.ui(scheme);
     }
 };

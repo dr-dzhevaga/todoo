@@ -27,6 +27,7 @@ public class ServletUtil {
 
     public static void process(HttpServletResponse response, ThrowingCallable<JsonObject, PersistException> callable)
             throws IOException {
+        response.setContentType("application/json;charset=utf-8");
         JsonObject result;
         try {
             result = callable.call();

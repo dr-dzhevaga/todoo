@@ -7,8 +7,8 @@ var createTemplateButton = {
     width: 30
 };
 
-var createTemplatePopup = {
-    id: "createTemplatePopup",
+var createTaskPopup = {
+    id: "createTaskPopup",
     view: "popup",
     body: {
         view: "form",
@@ -44,7 +44,7 @@ editTemplateButton.id = "editTemplateButton";
 editTemplateButton.tooltip = "Edit template";
 editTemplateButton.icon = "edit";
 
-var editTemplatePopup = webix.copy(createTemplatePopup);
+var editTemplatePopup = webix.copy(createTaskPopup);
 editTemplatePopup.id = "editTemplatePopup";
 editTemplatePopup.body.elements[editTemplatePopup.body.elements.length - 1].id = "editTemplateConfirmButton";
 editTemplatePopup.body.elements[editTemplatePopup.body.elements.length - 1].value = "Update";
@@ -58,7 +58,7 @@ var createStepButton = webix.copy(createTemplateButton);
 createStepButton.id = "createStepButton";
 createStepButton.tooltip = "Add task";
 
-var createStepPopup = webix.copy(createTemplatePopup);
+var createStepPopup = webix.copy(createTaskPopup);
 createStepPopup.id = "createStepPopup";
 createStepPopup.body.elements[createStepPopup.body.elements.length - 1].id = "createStepConfirmButton";
 
@@ -78,7 +78,7 @@ var createCategoryButton = webix.copy(createTemplateButton);
 createCategoryButton.id = "createCategoryButton";
 createCategoryButton.tooltip = "Add category";
 
-var createCategoryPopup = webix.copy(createTemplatePopup);
+var createCategoryPopup = webix.copy(createTaskPopup);
 createCategoryPopup.id = "createCategoryPopup";
 createCategoryPopup.body.elements = [{
     view: "text",
@@ -154,7 +154,7 @@ var admin_ui = {
         stepTree.drag = true;
         stepTree.select = true;
         stepTree.css = "selected";
-        webix.ui(createTemplatePopup);
+        webix.ui(createTaskPopup);
         webix.ui(editTemplatePopup);
         webix.ui(createStepPopup);
         webix.ui(editStepPopup);

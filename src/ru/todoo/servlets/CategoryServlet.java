@@ -24,7 +24,6 @@ public class CategoryServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("application/json;charset=utf-8");
         ServletUtil.process(response, () -> {
             JsonArray categoriesArray = new JsonArray();
             categoriesArray.add(JsonUtil.getBuilder().
@@ -50,7 +49,6 @@ public class CategoryServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("application/json;charset=utf-8");
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
             Category category = JsonUtil.toObject(json, Category.class);

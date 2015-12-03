@@ -38,15 +38,15 @@ var onEditCategoryConfirmButtonClick = function () {
 var onCreateTemplateButtonClick = function () {
     var category = $$("categoryRichSelect").getList().getSelectedItem();
     if (category && category.filter === "category") {
-        $$("createTemplatePopup").getBody().setValues({categoryId: category.id});
-        popup.show("createTemplatePopup", this);
+        $$("createTaskPopup").getBody().setValues({categoryId: category.id});
+        popup.show("createTaskPopup", this);
     } else {
         webix.message("Select category first");
     }
 };
 
 var onCreateTemplateConfirmButtonClick = function () {
-    var template = popup.getValue("createTemplatePopup");
+    var template = popup.getValue("createTaskPopup");
     if (template) {
         ajax.postJson(TEMPLATE_API_ENDPOINT, template, function (data) {
             $$("templateList").add(data.json().data);
@@ -96,8 +96,7 @@ var onCreateStepConfirmButtonClick = function () {
     var step = popup.getValue("createStepPopup");
     if (step) {
         ajax.postJson(TEMPLATE_API_ENDPOINT, step, function () {
-            var filter = {filter: "parent", id: step.rootId};
-            ajax.getJson(TEMPLATE_API_ENDPOINT, filter, function (text) {
+            ajax.getJson(TEMPLATE_API_ENDPOINT, {filter: "parent", id: step.rootId}, function (text) {
                 $$("stepTree").clearAll();
                 $$("stepTree").parse(text);
             });
@@ -131,6 +130,17 @@ var onDeleteStepButtonClick = function () {
     }
 };
 
+var onStepTreeAfterDrop = function (context) {
+    var source = this.getItem(context.source);
+    var target = this.getItem(context.target);
+    source.order = target.order;
+    source.parentId = target.parentId;
+    ajax.putJson(TEMPLATE_API_ENDPOINT, source, function () {
+        var template = $$("templateList").getSelectedItem();
+        uiComponent.reload("stepTree", {filter: "parent", id: template.id}, TEMPLATE_API_ENDPOINT);
+    });
+};
+
 var admin_logic = {
     init: function () {
         $$("createCategoryButton").attachEvent("onItemClick", onCreateCategoryButtonClick);
@@ -153,5 +163,6 @@ var admin_logic = {
         $$("editStepConfirmButton").attachEvent("onItemClick", onEditStepConfirmButtonClick);
         $$("editStepPopup").getBody().bind($$("stepTree"));
         $$("deleteStepButton").attachEvent("onItemClick", onDeleteStepButtonClick);
+        $$("stepTree").attachEvent("onAfterDrop", onStepTreeAfterDrop);
     }
 };

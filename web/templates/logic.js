@@ -1,14 +1,7 @@
-var reloadTemplates = function (id, filter) {
-    ajax.getJson(TEMPLATE_API_ENDPOINT, filter, function (text) {
-        $$(id).clearAll();
-        $$(id).parse(text);
-    });
-};
-
 var onCategoryRichSelectSelectChange = function (id) {
     var category = $$("categoryRichSelect").getList().getItem(id);
     if (category) {
-        reloadTemplates("templateList", category);
+        uiComponent.reload("templateList", category, TEMPLATE_API_ENDPOINT);
         $$("stepTree").clearAll();
     }
 };
@@ -20,18 +13,7 @@ var onCategoryRichSelectSelectLoad = function () {
 var onTemplatesListSelectChange = function () {
     var template = $$("templateList").getSelectedItem();
     $$("templateDescription").setValue(template.description);
-    reloadTemplates("stepTree", {filter: "parent", id: template.id});
-};
-
-var onStepTreeAfterDrop = function (context) {
-    var source = this.getItem(context.source);
-    var target = this.getItem(context.target);
-    source.order = target.order;
-    source.parentId = target.parentId;
-    ajax.putJson(TEMPLATE_API_ENDPOINT, source, function () {
-        var template = $$("templateList").getSelectedItem();
-        reloadTemplates("stepTree", {filter: "parent", id: template.id});
-    });
+    uiComponent.reload("stepTree", {filter: "parent", id: template.id}, TEMPLATE_API_ENDPOINT);
 };
 
 var onTaskTreeLoad = function () {
@@ -44,6 +26,5 @@ var logic = {
         $$("categoryRichSelect").getList().attachEvent("onAfterLoad", onCategoryRichSelectSelectLoad);
         $$("templateList").attachEvent("onSelectChange", onTemplatesListSelectChange);
         $$("stepTree").attachEvent("onAfterLoad", onTaskTreeLoad);
-        $$("stepTree").attachEvent("onAfterDrop", onStepTreeAfterDrop);
     }
 };
