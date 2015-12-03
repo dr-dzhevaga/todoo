@@ -5,10 +5,6 @@ var reloadTemplates = function (id, filter) {
     });
 };
 
-var onTaskTreeLoad = function () {
-    this.openAll();
-};
-
 var onCategoryRichSelectSelectChange = function (id) {
     var category = $$("categoryRichSelect").getList().getItem(id);
     if (category) {
@@ -38,12 +34,14 @@ var onStepTreeAfterDrop = function (context) {
     });
 };
 
+var onTaskTreeLoad = function () {
+    this.openAll();
+};
+
 var logic = {
     init: function () {
         $$("categoryRichSelect").attachEvent("onChange", onCategoryRichSelectSelectChange);
-
         $$("categoryRichSelect").getList().attachEvent("onAfterLoad", onCategoryRichSelectSelectLoad);
-
         $$("templateList").attachEvent("onSelectChange", onTemplatesListSelectChange);
         $$("stepTree").attachEvent("onAfterLoad", onTaskTreeLoad);
         $$("stepTree").attachEvent("onAfterDrop", onStepTreeAfterDrop);

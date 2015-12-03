@@ -41,7 +41,7 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
                     newInstance.setParentId(parent.getParentId());
                 }
             }
-            // set new task to the end of the list of children
+            // set the new child to the end of the new parent list
             T lastNeighbor = readLastChild(newInstance.getParentId());
             if (lastNeighbor != null) {
                 newInstance.setOrder(lastNeighbor.getOrder() + 1);
@@ -55,7 +55,7 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
     @Override
     public void delete(PK id) throws PersistException {
         T deletedInstance = read(id);
-        // move neighbors
+        // move up children after the deleted child
         if (deletedInstance.getParentId() != null) {
             T lastNeighbor = readLastChild(deletedInstance.getParentId());
             if (lastNeighbor != null && !Objects.equals(lastNeighbor.getId(), deletedInstance.getId())) {
@@ -84,35 +84,36 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
         T originInstance = read(updatedInstance.getId());
         // update parent
         if (!Objects.equals(originInstance.getParentId(), updatedInstance.getParentId())) {
-            updateParent(updatedInstance.getId(), updatedInstance.getParentId());
+            updateParent(originInstance, updatedInstance.getParentId());
             // or update order
         } else if (!Objects.equals(originInstance.getOrder(), updatedInstance.getOrder())) {
-            updateOrder(updatedInstance.getId(), updatedInstance.getOrder());
+            updateOrder(originInstance, updatedInstance.getOrder());
             // or update parameters
         } else {
             super.update(updatedInstance);
         }
     }
 
-    private void updateOrder(PK id, Integer newOrder) throws PersistException {
-        T originInstance = read(id);
-        if (newOrder > originInstance.getOrder()) {
-            moveChildrenUp(originInstance.getParentId(), originInstance.getOrder() + 1, newOrder);
-        } else if (newOrder < originInstance.getOrder()) {
-            moveChildrenDown(originInstance.getParentId(), newOrder, originInstance.getOrder() - 1);
+    private void updateOrder(T originInstance, Integer newOrder) throws PersistException {
+        Integer oldOrder = originInstance.getOrder();
+        if (newOrder > oldOrder) {
+            moveChildrenUp(originInstance.getParentId(), oldOrder + 1, newOrder);
+        } else if (newOrder < oldOrder) {
+            moveChildrenDown(originInstance.getParentId(), newOrder, oldOrder - 1);
         }
         originInstance.setOrder(newOrder);
         super.update(originInstance);
     }
 
-    private void updateParent(PK id, PK newParentId) throws PersistException {
-        T originInstance = read(id);
+    private void updateParent(T originInstance, PK newParentId) throws PersistException {
+        // move up children after the moved child
         if (originInstance.getParentId() != null) {
             T oldLastNeighbor = readLastChild(originInstance.getParentId());
             if (oldLastNeighbor != null) {
                 moveChildrenUp(originInstance.getParentId(), originInstance.getOrder() + 1, oldLastNeighbor.getOrder());
             }
         }
+        // set the moved child to the end of the new parent list
         T lastNeighbor = readLastChild(newParentId);
         if (lastNeighbor != null) {
             originInstance.setOrder(lastNeighbor.getOrder() + 1);
@@ -124,21 +125,15 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
     }
 
     private T readFirstChild(PK parentId) throws PersistException {
-        List<T> list = readChildren(parentId, OrderDirection.ASC, SelectionLimit.FIRST);
-        if (list.isEmpty()) {
-            return null;
-        } else {
-            return list.get(0);
-        }
+        return readChild(parentId, OrderDirection.ASC);
     }
 
     private T readLastChild(PK parentId) throws PersistException {
-        List<T> list = readChildren(parentId, OrderDirection.DESC, SelectionLimit.FIRST);
-        if (list.isEmpty()) {
-            return null;
-        } else {
-            return list.get(0);
-        }
+        return readChild(parentId, OrderDirection.DESC);
+    }
+
+    private T readChild(PK parentId, OrderDirection order) throws PersistException {
+        return readChildren(parentId, order, SelectionLimit.FIRST).stream().findFirst().orElse(null);
     }
 
     private List<T> readChildren(PK parentId, OrderDirection order, SelectionLimit limit) throws PersistException {
@@ -146,19 +141,19 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
         return jdbcHelper.select(sql, new Object[]{parentId}, this::parseResultSet);
     }
 
-    private void moveChildrenUp(PK parentId, Integer firstChildOrder, Integer lastChildOrder) throws PersistException {
-        moveChildren(parentId, firstChildOrder, lastChildOrder, MoveDirection.UP);
+    private void moveChildrenUp(PK parentId, Integer first, Integer last) throws PersistException {
+        moveChildren(parentId, first, last, MoveDirection.UP);
     }
 
-    private void moveChildrenDown(PK parentId, Integer firstChildOrder, Integer lastChildOrder) throws PersistException {
-        moveChildren(parentId, firstChildOrder, lastChildOrder, MoveDirection.DOWN);
+    private void moveChildrenDown(PK parentId, Integer first, Integer last) throws PersistException {
+        moveChildren(parentId, first, last, MoveDirection.DOWN);
     }
 
-    private void moveChildren(PK parentId, Integer firstChildOrder, Integer lastChildOrder, MoveDirection direction) throws PersistException {
+    private void moveChildren(PK parentId, Integer first, Integer last, MoveDirection direction) throws PersistException {
         String sql = "UPDATE " + table + "\n" +
                 "SET order_number = " + direction + "\n" +
                 "WHERE parent_id = ? AND order_number >= ? AND order_number <= ?";
-        jdbcHelper.update(sql, new Object[]{parentId, firstChildOrder, lastChildOrder});
+        jdbcHelper.update(sql, new Object[]{parentId, first, last});
     }
 
     private enum OrderDirection {
