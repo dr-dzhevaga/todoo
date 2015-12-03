@@ -1,5 +1,5 @@
 var reloadTemplates = function (id, filter) {
-    ajax.getJson("/api/templates", filter, function (text) {
+    ajax.getJson(TEMPLATE_API_ENDPOINT, filter, function (text) {
         $$(id).clearAll();
         $$(id).parse(text);
     });
@@ -28,7 +28,7 @@ var onStepTreeAfterDrop = function (context) {
     var target = this.getItem(context.target);
     source.order = target.order;
     source.parentId = target.parentId;
-    ajax.putJson("/api/templates", source, function () {
+    ajax.putJson(TEMPLATE_API_ENDPOINT, source, function () {
         var template = $$("templateList").getSelectedItem();
         reloadTemplates("stepTree", {filter: "parent", id: template.id});
     });

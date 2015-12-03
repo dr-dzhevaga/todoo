@@ -4,7 +4,7 @@ var categoryRichSelect = {
     label: "Category:",
     options: {
         template: "#name#",
-        url: "/api/categories",
+        url: CATEGORY_API_ENDPOINT,
         body: {
             template: "#name#"
         }
@@ -16,7 +16,7 @@ var templateList = {
     view: "list",
     select: true,
     template: "#name#",
-    url: "/api/templates"
+    url: TEMPLATE_API_ENDPOINT
 };
 
 var templateDescription = {
