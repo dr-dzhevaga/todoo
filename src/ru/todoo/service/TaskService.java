@@ -26,16 +26,16 @@ public class TaskService extends TaskServiceAbstract {
         if (templates.isEmpty()) {
             throw new PersistException("Template " + templateId + " is not found");
         }
-        return createRecursive(templates, null, userId, null);
+        return createRecursive(templates, userId, null, null);
     }
 
-    private Task createRecursive(List<Task> templates, Integer templateParentId, Integer userId, Integer taskParentId) throws PersistException {
+    private Task createRecursive(List<Task> templates, Integer userId, Integer templateParentId, Integer taskParentId) throws PersistException {
         Task task = null;
         for (Task template : filterByParent(templates, templateParentId)) {
             template.setUserId(userId);
             template.setParentId(taskParentId);
             task = create(template);
-            createRecursive(templates, template.getId(), task.getId(), userId);
+            createRecursive(templates, userId, template.getId(), task.getId());
         }
         return task;
     }

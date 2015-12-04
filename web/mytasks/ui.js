@@ -49,11 +49,8 @@ var taskList = {
     id: "taskList",
     view: "list",
     template: "#name#<div class='created'>#created#</div>",
-    defaultData: {
-        description: ""
-    },
     type: {
-        height: 62
+        height: 50
     },
     url: TASK_API_ENDPOINT,
     select: true

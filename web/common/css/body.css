@@ -18,6 +18,7 @@
 .description {
     font-style: italic;
     font-size: small;
+    text-align: right;
 }
 
 .completed {

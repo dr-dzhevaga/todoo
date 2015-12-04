@@ -15,7 +15,10 @@ var templateList = {
     id: "templateList",
     view: "list",
     select: true,
-    template: "#name#",
+    template: "#name#<div class='description'>#description#</div>",
+    type: {
+        height: 50
+    },
     url: TEMPLATE_API_ENDPOINT
 };
 
