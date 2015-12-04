@@ -39,6 +39,7 @@ var stepTree = {
 };
 
 var useTemplateButton = {
+    id: "useTemplateButton",
     view: "button",
     tooltip: "Use this template",
     type: "icon",

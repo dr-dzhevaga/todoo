@@ -20,7 +20,7 @@ public abstract class TaskServiceAbstract {
         return daoHelper.read(taskDAO -> taskDAO.read(taskId));
     }
 
-    public List<Task> readChildren(Integer parentId) throws PersistException {
+    public List<Task> readHierarchy(Integer parentId) throws PersistException {
         return daoHelper.read(taskDAO -> taskDAO.readHierarchy(parentId));
     }
 

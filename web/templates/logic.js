@@ -20,11 +20,21 @@ var onTaskTreeLoad = function () {
     this.openAll();
 };
 
+var onUseTemplateButtonClick = function () {
+    var template = $$("templateList").getSelectedItem();
+    if (template) {
+        ajax.postJson(TASK_API_ENDPOINT + "?templateId=" + template.id, {}, function () {
+            window.location = ("/mytasks.html");
+        });
+    }
+};
+
 var logic = {
     init: function () {
         $$("categoryRichSelect").attachEvent("onChange", onCategoryRichSelectSelectChange);
         $$("categoryRichSelect").getList().attachEvent("onAfterLoad", onCategoryRichSelectSelectLoad);
         $$("templateList").attachEvent("onSelectChange", onTemplatesListSelectChange);
         $$("stepTree").attachEvent("onAfterLoad", onTaskTreeLoad);
+        $$("useTemplateButton").attachEvent("onItemClick", onUseTemplateButtonClick);
     }
 };

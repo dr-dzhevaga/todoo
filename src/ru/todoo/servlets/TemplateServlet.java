@@ -26,13 +26,13 @@ public class TemplateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
-            String filter = Objects.toString(request.getParameter("filter"), "");
+            String filter = Objects.toString(request.getParameter("filter"), "all");
             String id = request.getParameter("id");
             List<Task> templatesList;
             JsonArray templatesArray;
             switch (filter) {
                 case "parent":
-                    templatesList = serviceProvider.getTemplateService().readChildren(Integer.valueOf(id));
+                    templatesList = serviceProvider.getTemplateService().readHierarchy(Integer.valueOf(id));
                     templatesArray = JsonUtil.toJsonArray(templatesList, Integer.valueOf(id));
                     break;
                 case "category":

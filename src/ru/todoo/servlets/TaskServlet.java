@@ -32,7 +32,7 @@ public class TaskServlet extends HttpServlet {
             JsonArray taskArray;
             switch (filter) {
                 case "parent":
-                    taskList = serviceProvider.getTaskService().readChildren(Integer.valueOf(id));
+                    taskList = serviceProvider.getTaskService().readHierarchy(Integer.valueOf(id));
                     taskArray = JsonUtil.toJsonArray(taskList, Integer.valueOf(id));
                     break;
                 default:
@@ -46,11 +46,18 @@ public class TaskServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String templateId = request.getParameter("templateId");
+        Integer userId = ServletUtil.getUser().getId();
         ServletUtil.process(response, () -> {
-            String json = ServletUtil.readContent(request);
-            Task task = JsonUtil.toObject(json, Task.class);
-            task.setUserId(ServletUtil.getUser().getId());
-            task = serviceProvider.getTaskService().create(task);
+            Task task;
+            if (templateId == null) {
+                String json = ServletUtil.readContent(request);
+                task = JsonUtil.toObject(json, Task.class);
+                task.setUserId(userId);
+                task = serviceProvider.getTaskService().create(task);
+            } else {
+                task = serviceProvider.getTaskService().createFromTemplate(Integer.valueOf(templateId), userId);
+            }
             JsonObject taskObject = JsonUtil.toJsonObject(task);
             return JsonUtil.getBuilder().add("data", taskObject).build();
         });
