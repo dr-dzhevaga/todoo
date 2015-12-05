@@ -84,20 +84,18 @@ var stepTree = {
     drag: true,
     select: true,
     template: function (obj, common) {
-        var content = "<span>";
-        content += common.icon(obj, common) + common.checkbox(obj, common);
+        var content = common.icon(obj, common) + common.checkbox(obj, common);
+        content += "<i class='delete fa fa-trash-o fa-fw'></i>";
+        content += "<div class='step'>";
         if (obj.completed) {
             content += "<span class='completed'>";
         }
         content += obj.name;
-        if (obj.description) {
-            content += "<span class='description'>" + " " + obj.description.trunc(100) + "</span>";
-        }
+        content += "<span class='description'>" + obj.description + "</span>";
         if (obj.completed) {
             content += "</span>";
         }
-        content += "<i class='delete fa fa-trash-o fa-fw'></i>";
-        content += "</span>";
+        content += "</div>";
         return content;
     }
 };

@@ -44,6 +44,8 @@ var onTaskListSelectChange = function () {
     dataStoreHelper.setValueSilently("taskDescription", task.description);
     $$("taskDescription").define('readonly', !task);
     $$("taskDescription").refresh();
+    dataStoreHelper.setValueSilently("stepName");
+    dataStoreHelper.setValueSilently("stepDescription");
 };
 
 var onTaskNameChange = function (name) {
