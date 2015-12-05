@@ -1,4 +1,4 @@
-var popup = {
+var popupHelper = {
     show: function (id, parent) {
         $$(id).show(parent.$view);
         $$(id).getBody().focus();
@@ -14,7 +14,7 @@ var popup = {
     }
 };
 
-var uiComponent = {
+var dataStoreHelper = {
     reload: function (id, filter, url) {
         ajax.getJson(url, filter, function (text) {
             $$(id).clearAll();
@@ -28,3 +28,6 @@ var uiComponent = {
     }
 };
 
+String.prototype.trunc = String.prototype.trunc || function (n) {
+        return (this.length > n) ? this.substr(0, n - 1) + '&hellip;' : this;
+    };

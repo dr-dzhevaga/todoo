@@ -91,7 +91,7 @@ var stepTree = {
         }
         content += obj.name;
         if (obj.description) {
-            content += "<span class='description'>" + " " + obj.description + "</span>";
+            content += "<span class='description'>" + " " + obj.description.trunc(100) + "</span>";
         }
         if (obj.completed) {
             content += "</span>";

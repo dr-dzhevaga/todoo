@@ -1,9 +1,9 @@
 var onCreateCategoryButtonClick = function () {
-    popup.show("createCategoryPopup", this);
+    popupHelper.show("createCategoryPopup", this);
 };
 
 var onCreateCategoryConfirmButtonClick = function () {
-    var category = popup.getValue("createCategoryPopup");
+    var category = popupHelper.getValue("createCategoryPopup");
     if (category) {
         ajax.postJson(CATEGORY_API_ENDPOINT, category, function (data) {
             $$("categoryRichSelect").getList().add(data.json().data);
@@ -23,12 +23,12 @@ var onDeleteCategoryButtonClick = function () {
 var onEditCategoryButtonClick = function () {
     var category = $$("categoryRichSelect").getList().getSelectedItem();
     if (category.filter === "category") {
-        popup.show("editCategoryPopup", this);
+        popupHelper.show("editCategoryPopup", this);
     }
 };
 
 var onEditCategoryConfirmButtonClick = function () {
-    var category = popup.getValue("editCategoryPopup");
+    var category = popupHelper.getValue("editCategoryPopup");
     ajax.putJson(CATEGORY_API_ENDPOINT, category, function () {
         $$("categoryRichSelect").getList().updateItem(category.id, category);
         $$("categoryRichSelect").refresh();
@@ -39,14 +39,14 @@ var onCreateTemplateButtonClick = function () {
     var category = $$("categoryRichSelect").getList().getSelectedItem();
     if (category && category.filter === "category") {
         $$("createTaskPopup").getBody().setValues({categoryId: category.id});
-        popup.show("createTaskPopup", this);
+        popupHelper.show("createTaskPopup", this);
     } else {
         webix.message("Select category first");
     }
 };
 
 var onCreateTemplateConfirmButtonClick = function () {
-    var template = popup.getValue("createTaskPopup");
+    var template = popupHelper.getValue("createTaskPopup");
     if (template) {
         ajax.postJson(TEMPLATE_API_ENDPOINT, template, function (data) {
             $$("templateList").add(data.json().data);
@@ -59,7 +59,7 @@ var onDeleteTemplateButtonClick = function () {
     if (template) {
         ajax.deleteId(TEMPLATE_API_ENDPOINT, template.id, function () {
             $$("templateList").remove(template.id);
-            uiComponent.setValueSilently("templateDescription");
+            dataStoreHelper.setValueSilently("templateDescription");
             $$("stepTree").clearAll();
         });
     }
@@ -68,12 +68,12 @@ var onDeleteTemplateButtonClick = function () {
 var onEditTemplateButtonClick = function () {
     var template = $$("templateList").getSelectedItem();
     if (template) {
-        popup.show("editTemplatePopup", this);
+        popupHelper.show("editTemplatePopup", this);
     }
 };
 
 var onEditTemplateConfirmButtonClick = function () {
-    var template = popup.getValue("editTemplatePopup");
+    var template = popupHelper.getValue("editTemplatePopup");
     ajax.putJson(TEMPLATE_API_ENDPOINT, template, function () {
         $$("templateList").updateItem(template.id, template);
         $$("templateList").refresh();
@@ -87,14 +87,14 @@ var onCreateStepButtonClick = function () {
     var parent = step ? step : template;
     if (parent) {
         $$("createStepPopup").getBody().setValues({parentId: parent.id, rootId: template.id});
-        popup.show("createStepPopup", this);
+        popupHelper.show("createStepPopup", this);
     } else {
         webix.message("Select parent template first");
     }
 };
 
 var onCreateStepConfirmButtonClick = function () {
-    var step = popup.getValue("createStepPopup");
+    var step = popupHelper.getValue("createStepPopup");
     if (step) {
         ajax.postJson(TEMPLATE_API_ENDPOINT, step, function () {
             ajax.getJson(TEMPLATE_API_ENDPOINT, {filter: "parent", id: step.rootId}, function (text) {
@@ -108,14 +108,14 @@ var onCreateStepConfirmButtonClick = function () {
 var onEditStepButtonClick = function () {
     var step = $$("stepTree").getSelectedItem();
     if (step) {
-        popup.show("editStepPopup", this);
+        popupHelper.show("editStepPopup", this);
     } else {
         webix.message("Select step first");
     }
 };
 
 var onEditStepConfirmButtonClick = function () {
-    var step = popup.getValue("editStepPopup");
+    var step = popupHelper.getValue("editStepPopup");
     ajax.putJson(TEMPLATE_API_ENDPOINT, step, function () {
         $$("stepTree").updateItem(step.id, step);
         $$("stepTree").refresh();
@@ -138,7 +138,7 @@ var onStepTreeAfterDrop = function (context) {
     source.parentId = target.parentId;
     ajax.putJson(TEMPLATE_API_ENDPOINT, source, function () {
         var template = $$("templateList").getSelectedItem();
-        uiComponent.reload("stepTree", {filter: "parent", id: template.id}, TEMPLATE_API_ENDPOINT);
+        dataStoreHelper.reload("stepTree", {filter: "parent", id: template.id}, TEMPLATE_API_ENDPOINT);
     });
 };
 

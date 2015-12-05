@@ -1,9 +1,9 @@
 var onCreateTaskButtonClick = function () {
-    popup.show("createTaskPopup", this);
+    popupHelper.show("createTaskPopup", this);
 };
 
 var onCreateTaskConfirmButtonClick = function () {
-    var task = popup.getValue("createTaskPopup");
+    var task = popupHelper.getValue("createTaskPopup");
     if (task) {
         ajax.postJson(TASK_API_ENDPOINT, task, function (data) {
             $$("taskList").add(data.json().data);
@@ -25,10 +25,10 @@ var onDeleteTaskButtonClick = function () {
                 ajax.deleteId(TASK_API_ENDPOINT, task.id, function () {
                     $$("taskList").remove(task.id);
                     $$("stepTree").clearAll();
-                    uiComponent.setValueSilently("taskName");
-                    uiComponent.setValueSilently("taskDescription");
-                    uiComponent.setValueSilently("stepName");
-                    uiComponent.setValueSilently("stepDescription");
+                    dataStoreHelper.setValueSilently("taskName");
+                    dataStoreHelper.setValueSilently("taskDescription");
+                    dataStoreHelper.setValueSilently("stepName");
+                    dataStoreHelper.setValueSilently("stepDescription");
                 });
             }
         }
@@ -37,11 +37,11 @@ var onDeleteTaskButtonClick = function () {
 
 var onTaskListSelectChange = function () {
     var task = this.getSelectedItem();
-    uiComponent.reload("stepTree", {filter: "parent", id: task.id}, TASK_API_ENDPOINT);
-    uiComponent.setValueSilently("taskName", task.name);
+    dataStoreHelper.reload("stepTree", {filter: "parent", id: task.id}, TASK_API_ENDPOINT);
+    dataStoreHelper.setValueSilently("taskName", task.name);
     $$("taskName").define("readonly", !task);
     $$("taskName").refresh();
-    uiComponent.setValueSilently("taskDescription", task.description);
+    dataStoreHelper.setValueSilently("taskDescription", task.description);
     $$("taskDescription").define('readonly', !task);
     $$("taskDescription").refresh();
 };
@@ -68,17 +68,17 @@ var onCreateStepButtonClick = function () {
     var parent = step ? step : task;
     if (parent) {
         $$("createStepPopup").getBody().setValues({parentId: parent.id, rootId: task.id});
-        popup.show("createStepPopup", this);
+        popupHelper.show("createStepPopup", this);
     } else {
         webix.message("Select parent task first");
     }
 };
 
 var onCreateStepConfirmButtonClick = function () {
-    var step = popup.getValue("createStepPopup");
+    var step = popupHelper.getValue("createStepPopup");
     if (step) {
         ajax.postJson(TASK_API_ENDPOINT, step, function () {
-            uiComponent.reload("stepTree", {filter: "parent", id: step.rootId}, TASK_API_ENDPOINT);
+            dataStoreHelper.reload("stepTree", {filter: "parent", id: step.rootId}, TASK_API_ENDPOINT);
         });
     }
 };
@@ -96,10 +96,10 @@ var onStepTreeLoad = function () {
 
 var onStepTreeSelectChange = function () {
     var step = this.getSelectedItem();
-    uiComponent.setValueSilently("stepName", step.name);
+    dataStoreHelper.setValueSilently("stepName", step.name);
     $$("stepName").define("readonly", !step);
     $$("stepName").refresh();
-    uiComponent.setValueSilently("stepDescription", step.description);
+    dataStoreHelper.setValueSilently("stepDescription", step.description);
     $$("stepDescription").define('readonly', !step);
     $$("stepDescription").refresh();
 };
@@ -115,8 +115,8 @@ var onStepTreeItemCheck = function (id, state) {
 var onStepTreeItemDeleteIconClick = function (e, id) {
     ajax.deleteId(TASK_API_ENDPOINT, id, function () {
         $$("stepTree").remove(id);
-        uiComponent.setValueSilently("stepName");
-        uiComponent.setValueSilently("stepDescription");
+        dataStoreHelper.setValueSilently("stepName");
+        dataStoreHelper.setValueSilently("stepDescription");
     });
 };
 
@@ -127,7 +127,7 @@ var onStepTreeAfterDrop = function (context) {
     source.parentId = target.parentId;
     ajax.putJson(TASK_API_ENDPOINT, source, function () {
         var task = $$("taskList").getSelectedItem();
-        uiComponent.reload("stepTree", {filter: "parent", id: task.id}, TASK_API_ENDPOINT);
+        dataStoreHelper.reload("stepTree", {filter: "parent", id: task.id}, TASK_API_ENDPOINT);
     });
 };
 

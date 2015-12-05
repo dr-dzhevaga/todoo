@@ -1,8 +1,8 @@
 var onCategoryRichSelectSelectChange = function (id) {
     var category = $$("categoryRichSelect").getList().getItem(id);
     if (category) {
-        uiComponent.reload("templateList", category, TEMPLATE_API_ENDPOINT);
-        uiComponent.setValueSilently("templateDescription");
+        dataStoreHelper.reload("templateList", category, TEMPLATE_API_ENDPOINT);
+        dataStoreHelper.setValueSilently("templateDescription");
         $$("stepTree").clearAll();
     }
 };
@@ -14,7 +14,7 @@ var onCategoryRichSelectSelectLoad = function () {
 var onTemplatesListSelectChange = function () {
     var template = $$("templateList").getSelectedItem();
     $$("templateDescription").setValue(template.description);
-    uiComponent.reload("stepTree", {filter: "parent", id: template.id}, TEMPLATE_API_ENDPOINT);
+    dataStoreHelper.reload("stepTree", {filter: "parent", id: template.id}, TEMPLATE_API_ENDPOINT);
 };
 
 var onTaskTreeLoad = function () {
