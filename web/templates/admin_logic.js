@@ -59,6 +59,7 @@ var onDeleteTemplateButtonClick = function () {
     if (template) {
         ajax.deleteId(TEMPLATE_API_ENDPOINT, template.id, function () {
             $$("templateList").remove(template.id);
+            uiComponent.setValueSilently("templateDescription");
             $$("stepTree").clearAll();
         });
     }

@@ -2,6 +2,7 @@ var onCategoryRichSelectSelectChange = function (id) {
     var category = $$("categoryRichSelect").getList().getItem(id);
     if (category) {
         uiComponent.reload("templateList", category, TEMPLATE_API_ENDPOINT);
+        uiComponent.setValueSilently("templateDescription");
         $$("stepTree").clearAll();
     }
 };

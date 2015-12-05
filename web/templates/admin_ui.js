@@ -80,20 +80,15 @@ createCategoryButton.tooltip = "Add category";
 
 var createCategoryPopup = webix.copy(createTaskPopup);
 createCategoryPopup.id = "createCategoryPopup";
-createCategoryPopup.body.elements = [{
-    view: "text",
-    name: "name",
-    label: "Name",
-    labelPosition: "top",
-    invalidMessage: "Name can not be empty"
-}, {
+createCategoryPopup.body.elements.pop();
+createCategoryPopup.body.elements[1] = {
     id: "createCategoryConfirmButton",
     view: "button",
     type: "form",
     value: "Create",
     inputWidth: 80,
     align: "right"
-}];
+};
 
 var editCategoryButton = webix.copy(editTemplateButton);
 editCategoryButton.id = "editCategoryButton";
@@ -153,7 +148,6 @@ var admin_ui = {
         };
         stepTree.drag = true;
         stepTree.select = true;
-        stepTree.css = "selected";
         webix.ui(createTaskPopup);
         webix.ui(editTemplatePopup);
         webix.ui(createStepPopup);

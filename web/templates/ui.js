@@ -38,7 +38,8 @@ var stepTree = {
             content += "<span class='description'>" + " " + obj.description + "</span>";
         }
         return content;
-    }
+    },
+    css: "selected"
 };
 
 var useTemplateButton = {
