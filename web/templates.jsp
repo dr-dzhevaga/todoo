@@ -3,20 +3,15 @@
     boolean isAdmin = request.isUserInRole("admin");
 %>
 <!DOCTYPE html>
-
 <head>
     <meta charset="utf-8">
-
     <link rel="stylesheet" href="common/webix/skins/terrace.css" type="text/css" media="screen" charset="utf-8">
     <link rel="stylesheet" href="common/css/header.css">
     <link rel="stylesheet" href="common/css/body.css">
-
     <script type="text/javascript" src="common/webix/webix.js" charset="utf-8"></script>
-
     <script type="text/javascript" src='common/js/endpoints.js'></script>
     <script type="text/javascript" src='common/js/ajax_util.js'></script>
     <script type="text/javascript" src='common/js/ui_util.js'></script>
-
     <script type="text/javascript" src='templates/ui.js'></script>
     <script type="text/javascript" src='templates/logic.js'></script>
     <%if (isAdmin) {%>
@@ -34,17 +29,13 @@
                 <%if (isLogged) {%>
                 <li><a href="/logout">Logout</a></li>
                 <%} else {%>
-                <li><a href="/mytasks.jsp">Login</a></li>
+                <li><a href="/login?from=<%=request.getRequestURI()%>">Login</a></li>
                 <% } %>
             </ul>
         </div>
     </header>
 </head>
-
 <body>
-<style type="text/css">
-
-</style>
 <script>
     webix.ready(function () {
         <%if(isAdmin) {%>
@@ -58,5 +49,4 @@
     });
 </script>
 </body>
-
 </html>
