@@ -2,8 +2,11 @@ package ru.todoo.dao.derby;
 
 import ru.todoo.dao.*;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,10 +16,10 @@ import java.util.function.Function;
  * Created by Dmitriy Dzhevaga on 01.11.2015.
  */
 public class DerbyDAOFactory implements DAOFactory<Connection> {
-    private final static Map<Class, Function<Connection, ?>> creators = new HashMap<>();
-    private static final String CONNECTION_STRING = "jdbc:derby://localhost:1527/../db/todoo";
-    private static final String DRIVER_NAME = "org.apache.derby.jdbc.ClientDriver";
+    private static final String ENVIRONMENT_CONTEXT_NAME = "java:comp/env";
+    private static final String DATA_SOURCE_NAME = "jdbc/todooDB";
 
+    private final static Map<Class, Function<Connection, ?>> creators = new HashMap<>();
     static {
         creators.put(UserDAO.class, DerbyUserDAO::new);
         creators.put(CategoryDAO.class, DerbyCategoryDAO::new);
@@ -25,14 +28,14 @@ public class DerbyDAOFactory implements DAOFactory<Connection> {
 
     @Override
     public Connection getContext() throws PersistException {
-        Connection connection;
         try {
-            Class.forName(DRIVER_NAME);
-            connection = DriverManager.getConnection(CONNECTION_STRING);
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new PersistException(e);
+            Context initialContext = new InitialContext();
+            Context environmentContext = (Context) initialContext.lookup(ENVIRONMENT_CONTEXT_NAME);
+            DataSource dataSource = (DataSource) environmentContext.lookup(DATA_SOURCE_NAME);
+            return dataSource.getConnection();
+        } catch (NamingException | SQLException e) {
+            throw new PersistException(e, e.getMessage());
         }
-        return connection;
     }
 
     @Override
