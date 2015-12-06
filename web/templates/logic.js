@@ -24,8 +24,8 @@ var onTaskTreeLoad = function () {
 var onUseTemplateButtonClick = function () {
     var template = $$("templateList").getSelectedItem();
     if (template) {
-        ajax.postJson(TASK_API_ENDPOINT + "?templateId=" + template.id, {}, function () {
-            window.location = ("/mytasks.html");
+        ajax_util.postJson(TASK_API_ENDPOINT + "?templateId=" + template.id, {}, function () {
+            window.location = ("/mytasks.jsp");
         });
     }
 };

@@ -10,7 +10,7 @@
     <script type="text/javascript" src="common/webix/webix.js" charset="utf-8"></script>
 
     <script type="text/javascript" src='common/js/endpoints.js'></script>
-    <script type="text/javascript" src='common/js/ajax.js'></script>
+    <script type="text/javascript" src='common/js/ajax_util.js'></script>
     <script type="text/javascript" src='common/js/ui_util.js'></script>
 
     <script type="text/javascript" src='templates/ui.js'></script>
@@ -23,7 +23,7 @@
             <h1><a>Tod<span>oo</span></a></h1>
             <nav>
                 <a href="/" class="selected">Templates</a>
-                <a href="/mytasks.html">My tasks</a>
+                <a href="/mytasks.jsp">My tasks</a>
             </nav>
         </div>
     </header>

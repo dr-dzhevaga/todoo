@@ -5,7 +5,7 @@ var onCreateCategoryButtonClick = function () {
 var onCreateCategoryConfirmButtonClick = function () {
     var category = popupHelper.getValue("createCategoryPopup");
     if (category) {
-        ajax.postJson(CATEGORY_API_ENDPOINT, category, function (data) {
+        ajax_util.postJson(CATEGORY_API_ENDPOINT, category, function (data) {
             $$("categoryRichSelect").getList().add(data.json().data);
         });
     }
@@ -14,7 +14,7 @@ var onCreateCategoryConfirmButtonClick = function () {
 var onDeleteCategoryButtonClick = function () {
     var category = $$("categoryRichSelect").getList().getSelectedItem();
     if (category.filter === "category") {
-        ajax.deleteId(CATEGORY_API_ENDPOINT, category.id, function () {
+        ajax_util.deleteId(CATEGORY_API_ENDPOINT, category.id, function () {
             $$("categoryRichSelect").getList().remove(category.id);
         });
     }
@@ -29,7 +29,7 @@ var onEditCategoryButtonClick = function () {
 
 var onEditCategoryConfirmButtonClick = function () {
     var category = popupHelper.getValue("editCategoryPopup");
-    ajax.putJson(CATEGORY_API_ENDPOINT, category, function () {
+    ajax_util.putJson(CATEGORY_API_ENDPOINT, category, function () {
         $$("categoryRichSelect").getList().updateItem(category.id, category);
         $$("categoryRichSelect").refresh();
     });
@@ -48,7 +48,7 @@ var onCreateTemplateButtonClick = function () {
 var onCreateTemplateConfirmButtonClick = function () {
     var template = popupHelper.getValue("createTaskPopup");
     if (template) {
-        ajax.postJson(TEMPLATE_API_ENDPOINT, template, function (data) {
+        ajax_util.postJson(TEMPLATE_API_ENDPOINT, template, function (data) {
             $$("templateList").add(data.json().data);
         });
     }
@@ -57,7 +57,7 @@ var onCreateTemplateConfirmButtonClick = function () {
 var onDeleteTemplateButtonClick = function () {
     var template = $$("templateList").getSelectedItem();
     if (template) {
-        ajax.deleteId(TEMPLATE_API_ENDPOINT, template.id, function () {
+        ajax_util.deleteId(TEMPLATE_API_ENDPOINT, template.id, function () {
             $$("templateList").remove(template.id);
             dataStoreHelper.setValueSilently("templateDescription");
             $$("stepTree").clearAll();
@@ -74,7 +74,7 @@ var onEditTemplateButtonClick = function () {
 
 var onEditTemplateConfirmButtonClick = function () {
     var template = popupHelper.getValue("editTemplatePopup");
-    ajax.putJson(TEMPLATE_API_ENDPOINT, template, function () {
+    ajax_util.putJson(TEMPLATE_API_ENDPOINT, template, function () {
         $$("templateList").updateItem(template.id, template);
         $$("templateList").refresh();
         $$("templateDescription").setValue(template.description);
@@ -96,8 +96,8 @@ var onCreateStepButtonClick = function () {
 var onCreateStepConfirmButtonClick = function () {
     var step = popupHelper.getValue("createStepPopup");
     if (step) {
-        ajax.postJson(TEMPLATE_API_ENDPOINT, step, function () {
-            ajax.getJson(TEMPLATE_API_ENDPOINT, {filter: "parent", id: step.rootId}, function (text) {
+        ajax_util.postJson(TEMPLATE_API_ENDPOINT, step, function () {
+            ajax_util.getJson(TEMPLATE_API_ENDPOINT, {filter: "parent", id: step.rootId}, function (text) {
                 $$("stepTree").clearAll();
                 $$("stepTree").parse(text);
             });
@@ -116,7 +116,7 @@ var onEditStepButtonClick = function () {
 
 var onEditStepConfirmButtonClick = function () {
     var step = popupHelper.getValue("editStepPopup");
-    ajax.putJson(TEMPLATE_API_ENDPOINT, step, function () {
+    ajax_util.putJson(TEMPLATE_API_ENDPOINT, step, function () {
         $$("stepTree").updateItem(step.id, step);
         $$("stepTree").refresh();
     });
@@ -125,7 +125,7 @@ var onEditStepConfirmButtonClick = function () {
 var onDeleteStepButtonClick = function () {
     var step = $$("stepTree").getSelectedItem();
     if (step) {
-        ajax.deleteId(TEMPLATE_API_ENDPOINT, step.id, function () {
+        ajax_util.deleteId(TEMPLATE_API_ENDPOINT, step.id, function () {
             $$("stepTree").remove(step.id);
         });
     }
@@ -136,7 +136,7 @@ var onStepTreeAfterDrop = function (context) {
     var target = this.getItem(context.target);
     source.order = target.order;
     source.parentId = target.parentId;
-    ajax.putJson(TEMPLATE_API_ENDPOINT, source, function () {
+    ajax_util.putJson(TEMPLATE_API_ENDPOINT, source, function () {
         var template = $$("templateList").getSelectedItem();
         dataStoreHelper.reload("stepTree", {filter: "parent", id: template.id}, TEMPLATE_API_ENDPOINT);
     });

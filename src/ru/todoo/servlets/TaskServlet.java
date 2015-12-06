@@ -8,6 +8,8 @@ import ru.todoo.utils.JsonUtil;
 import ru.todoo.utils.ServletUtil;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.HttpConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import java.util.Objects;
  * Created by Dmitriy Dzhevaga on 03.12.2015.
  */
 @WebServlet("/api/tasks/*")
+@ServletSecurity(@HttpConstraint(rolesAllowed = "user"))
 public class TaskServlet extends HttpServlet {
     private static final ServiceProvider serviceProvider = new ServiceProvider();
 

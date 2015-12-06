@@ -8,6 +8,8 @@ import ru.todoo.utils.JsonUtil;
 import ru.todoo.utils.ServletUtil;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.HttpMethodConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,13 @@ import java.util.Objects;
  * Created by Dmitriy Dzhevaga on 29.11.2015.
  */
 @WebServlet("/api/templates/*")
+@ServletSecurity(
+        httpMethodConstraints = {
+                @HttpMethodConstraint(value = "POST", rolesAllowed = "admin"),
+                @HttpMethodConstraint(value = "PUT", rolesAllowed = "admin"),
+                @HttpMethodConstraint(value = "DELETE", rolesAllowed = "admin")
+        }
+)
 public class TemplateServlet extends HttpServlet {
     private static final ServiceProvider serviceProvider = new ServiceProvider();
 

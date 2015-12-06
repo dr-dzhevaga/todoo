@@ -8,6 +8,8 @@ import ru.todoo.utils.JsonUtil;
 import ru.todoo.utils.ServletUtil;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.HttpMethodConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,13 @@ import java.util.List;
  * Created by Dmitriy Dzhevaga on 23.11.2015.
  */
 @WebServlet("/api/categories/*")
+@ServletSecurity(
+        httpMethodConstraints = {
+                @HttpMethodConstraint(value = "POST", rolesAllowed = "admin"),
+                @HttpMethodConstraint(value = "PUT", rolesAllowed = "admin"),
+                @HttpMethodConstraint(value = "DELETE", rolesAllowed = "admin")
+        }
+)
 public class CategoryServlet extends HttpServlet {
     private static final ServiceProvider serviceProvider = new ServiceProvider();
 
