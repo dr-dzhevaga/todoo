@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
  * Created by Dmitriy Dzhevaga on 06.11.2015.
  */
 public class TaskService extends TaskServiceAbstract {
+    protected TaskService() throws PersistException {
+    }
+
     public List<Task> readByUser(Integer userId) throws PersistException {
         return daoHelper.read(taskDAO -> taskDAO.readTasksByUser(userId));
     }

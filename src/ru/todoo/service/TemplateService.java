@@ -10,6 +10,9 @@ import java.util.List;
  * Created by Dmitriy Dzhevaga on 29.11.2015.
  */
 public class TemplateService extends TaskServiceAbstract {
+    protected TemplateService() throws PersistException {
+    }
+
     public List<Task> readAll() throws PersistException {
         return daoHelper.read(TaskDAO::readAllTaskTemplates);
     }

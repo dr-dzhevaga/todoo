@@ -11,7 +11,11 @@ import java.util.List;
  * Created by Dmitriy Dzhevaga on 06.11.2015.
  */
 public class CategoryService {
-    private final DerbyDAOHelper<CategoryDAO> daoHelper = new DerbyDAOHelper<>(CategoryDAO.class);
+    private final DerbyDAOHelper<CategoryDAO> daoHelper;
+
+    public CategoryService() throws PersistException {
+        daoHelper = new DerbyDAOHelper<>(CategoryDAO.class);
+    }
 
     public Category create(Category category) throws PersistException {
         return daoHelper.executeFunction(categoryDAO -> categoryDAO.create(category));

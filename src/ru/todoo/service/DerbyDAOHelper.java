@@ -13,11 +13,12 @@ import static ru.todoo.utils.LambdaExceptionUtil.ThrowingFunction;
  * Created by Dmitriy Dzhevaga on 08.11.2015.
  */
 public class DerbyDAOHelper<T> {
-    private final DerbyDAOFactory daoFactory = new DerbyDAOFactory();
+    private final DerbyDAOFactory daoFactory;
     private final Class<T> daoClass;
 
-    public DerbyDAOHelper(Class<T> daoClass) {
+    public DerbyDAOHelper(Class<T> daoClass) throws PersistException {
         this.daoClass = daoClass;
+        daoFactory = new DerbyDAOFactory();
     }
 
     public <R> R read(ThrowingFunction<T, R, PersistException> function) throws PersistException {

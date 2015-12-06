@@ -10,7 +10,11 @@ import java.util.List;
  * Created by Dmitriy Dzhevaga on 29.11.2015.
  */
 public abstract class TaskServiceAbstract {
-    protected final DerbyDAOHelper<TaskDAO> daoHelper = new DerbyDAOHelper<>(TaskDAO.class);
+    protected final DerbyDAOHelper<TaskDAO> daoHelper;
+
+    protected TaskServiceAbstract() throws PersistException {
+        daoHelper = new DerbyDAOHelper<>(TaskDAO.class);
+    }
 
     protected Task create(Task task) throws PersistException {
         return daoHelper.executeFunction(taskDAO -> taskDAO.create(task));

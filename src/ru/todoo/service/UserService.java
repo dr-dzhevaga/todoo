@@ -11,7 +11,11 @@ import java.util.List;
  * Created by Dmitriy Dzhevaga on 06.11.2015.
  */
 public class UserService {
-    private final DerbyDAOHelper<UserDAO> daoHelper = new DerbyDAOHelper<>(UserDAO.class);
+    private final DerbyDAOHelper<UserDAO> daoHelper;
+
+    public UserService() throws PersistException {
+        daoHelper = new DerbyDAOHelper<>(UserDAO.class);
+    }
 
     public void addUser(User user) throws PersistException, SQLException {
         // TODO - check login and create
