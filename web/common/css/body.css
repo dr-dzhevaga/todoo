@@ -5,11 +5,17 @@
     text-overflow: ellipsis;
 }
 
+.name {
+    margin-left: 5px !important;
+    padding: 0 !important;
+}
+
 .description {
     font-style: italic;
     font-size: small;
     text-align: right;
-    margin-left: 10px;
+    margin-left: 10px !important;
+    padding: 0 !important;
 }
 
 .completed {
@@ -32,13 +38,4 @@
 
 .selected .webix_tree_item.webix_selected span {
     background: transparent !important;
-}
-
-.selected .webix_tree_img {
-    background-color: transparent;
-}
-
-.selected .webix_tree_item.webix_selected .description {
-    margin-left: 10px;
-    padding: 0;
 }

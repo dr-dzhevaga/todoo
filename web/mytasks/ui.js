@@ -90,7 +90,7 @@ var stepTree = {
         if (obj.completed) {
             content += "<span class='completed'>";
         }
-        content += obj.name;
+        content += "<span class='name'>" + obj.name + "</span>";
         content += "<span class='description'>" + obj.description + "</span>";
         if (obj.completed) {
             content += "</span>";

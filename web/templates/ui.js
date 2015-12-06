@@ -35,7 +35,7 @@ var stepTree = {
     template: function (obj, common) {
         var content = common.checkbox(obj, common);
         content += "<div class='step'>";
-        content += obj.name;
+        content += "<span class='name'>" + obj.name + "</span>";
         content += "<span class='description'>" + obj.description + "</span>";
         content += "</div>";
         return content;
