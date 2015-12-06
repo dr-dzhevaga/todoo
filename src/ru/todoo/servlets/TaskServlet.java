@@ -39,7 +39,7 @@ public class TaskServlet extends HttpServlet {
                     taskArray = JsonUtil.toJsonArray(taskList, Integer.valueOf(id));
                     break;
                 default:
-                    taskList = serviceProvider.getTaskService().readByUser(ServletUtil.getUser().getId());
+                    taskList = serviceProvider.getTaskService().readByUser(ServletUtil.getUser(request).getId());
                     taskArray = JsonUtil.toJsonArray(taskList);
                     break;
             }
@@ -50,8 +50,8 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String templateId = request.getParameter("templateId");
-        Integer userId = ServletUtil.getUser().getId();
         ServletUtil.process(response, () -> {
+            Integer userId = ServletUtil.getUser(request).getId();
             Task task;
             if (templateId == null) {
                 String json = ServletUtil.readContent(request);

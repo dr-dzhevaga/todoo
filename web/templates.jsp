@@ -1,3 +1,7 @@
+<%@ page import="ru.todoo.utils.ServletUtil" %>
+<%
+    boolean isAdmin = ServletUtil.isAdmin(request);
+%>
 <!DOCTYPE html>
 
 <head>
@@ -15,9 +19,10 @@
 
     <script type="text/javascript" src='templates/ui.js'></script>
     <script type="text/javascript" src='templates/logic.js'></script>
+    <%if (isAdmin) {%>
     <script type="text/javascript" src='templates/admin_ui.js'></script>
     <script type="text/javascript" src='templates/admin_logic.js'></script>
-
+    <%}%>
     <header class="header-basic">
         <div class="header-limiter">
             <h1><a>Tod<span>oo</span></a></h1>
@@ -35,9 +40,13 @@
 </style>
 <script>
     webix.ready(function () {
+        <%if(isAdmin) {%>
         admin_ui.init();
+        <%}%>
         ui.init();
+        <%if(isAdmin) {%>
         admin_logic.init();
+        <%}%>
         logic.init();
     });
 </script>

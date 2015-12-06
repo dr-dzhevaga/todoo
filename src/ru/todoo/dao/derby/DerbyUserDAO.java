@@ -66,7 +66,7 @@ public class DerbyUserDAO extends GenericDAOJDBCImpl<User, Integer> implements U
     }
 
     @Override
-    public List<User> getByLogin(String login) throws PersistException {
+    public List<User> readByLogin(String login) throws PersistException {
         String sql = getSelectQuery() + " WHERE login = ?";
         return jdbcHelper.select(sql, new Object[]{login}, this::parseResultSet);
     }

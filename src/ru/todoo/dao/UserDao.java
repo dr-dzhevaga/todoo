@@ -9,5 +9,5 @@ import java.util.List;
  * Created by Dmitriy Dzhevaga on 02.11.2015.
  */
 public interface UserDAO extends GenericDAO<User, Integer> {
-    List<User> getByLogin(String login) throws PersistException;
+    List<User> readByLogin(String login) throws PersistException;
 }

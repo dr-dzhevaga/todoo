@@ -3,6 +3,7 @@ package ru.todoo.utils;
 import com.google.gson.JsonObject;
 import ru.todoo.dao.PersistException;
 import ru.todoo.domain.User;
+import ru.todoo.service.ServiceProvider;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,12 +39,12 @@ public class ServletUtil {
         response.getWriter().print(result.toString());
     }
 
-    public static User getUser() {
-        return new User() {
-            @Override
-            public Integer getId() {
-                return 1;
-            }
-        };
+    public static User getUser(HttpServletRequest request) throws PersistException {
+        return new ServiceProvider().getUserService().readByLogin(request.getRemoteUser());
+    }
+
+    public static boolean isAdmin(HttpServletRequest request) throws PersistException {
+        User user = getUser(request);
+        return user != null && "admin".equals(user.getLogin());
     }
 }
