@@ -1,6 +1,6 @@
-<%@ page import="ru.todoo.utils.ServletUtil" %>
 <%
-    boolean isAdmin = ServletUtil.isAdmin(request);
+    boolean isLogged = request.getUserPrincipal() != null;
+    boolean isAdmin = request.isUserInRole("admin");
 %>
 <!DOCTYPE html>
 
@@ -23,13 +23,20 @@
     <script type="text/javascript" src='templates/admin_ui.js'></script>
     <script type="text/javascript" src='templates/admin_logic.js'></script>
     <%}%>
-    <header class="header-basic">
+    <header class="header-login-signup">
         <div class="header-limiter">
             <h1><a>Tod<span>oo</span></a></h1>
             <nav>
-                <a href="/" class="selected">Templates</a>
+                <a href="/templates.jsp" class="selected">Templates</a>
                 <a href="/mytasks.jsp">My tasks</a>
             </nav>
+            <ul>
+                <%if (isLogged) {%>
+                <li><a href="/logout">Logout</a></li>
+                <%} else {%>
+                <li><a href="/mytasks.jsp">Login</a></li>
+                <% } %>
+            </ul>
         </div>
     </header>
 </head>

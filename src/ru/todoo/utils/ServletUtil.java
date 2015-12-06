@@ -42,9 +42,4 @@ public class ServletUtil {
     public static User getUser(HttpServletRequest request) throws PersistException {
         return new ServiceProvider().getUserService().readByLogin(request.getRemoteUser());
     }
-
-    public static boolean isAdmin(HttpServletRequest request) throws PersistException {
-        User user = getUser(request);
-        return user != null && "admin".equals(user.getLogin());
-    }
 }

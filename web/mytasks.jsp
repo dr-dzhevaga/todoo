@@ -16,13 +16,16 @@
     <script type="text/javascript" src='mytasks/logic.js'></script>
     <script type="text/javascript" src='mytasks/ui.js'></script>
 
-    <header class="header-basic">
+    <header class="header-login-signup">
         <div class="header-limiter">
             <h1><a>Tod<span>oo</span></a></h1>
             <nav>
-                <a href="/">Templates</a>
+                <a href="/templates.jsp">Templates</a>
                 <a href="/mytasks.jsp" class="selected">My tasks</a>
             </nav>
+            <ul>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
         </div>
     </header>
 </head>
