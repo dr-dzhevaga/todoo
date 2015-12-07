@@ -9,7 +9,8 @@
 <div class="login-card">
     <h1>Log-in</h1>
     <%if (request.getParameterMap().containsKey("failed")) {%>
-    <div class="login-error">The username or password you have entered is incorrect</div>
+    <div class="login-error">The username or password you have entered is invalid</div>
+    <br>
     <%}%>
 
     <form method="POST" action="j_security_check">
@@ -19,7 +20,7 @@
     </form>
 
     <div class="login-help">
-        <a href="#">Register</a>
+        <a href="registration.jsp">Register</a>
     </div>
 </div>
 </body>

@@ -21,6 +21,7 @@ public class DerbyDAOFactory implements DAOFactory<Connection> {
     private final static Map<Class, Function<Connection, ?>> constructors = new HashMap<>();
     static {
         constructors.put(UserDAO.class, DerbyUserDAO::new);
+        constructors.put(RoleDAO.class, DerbyRoleDAO::new);
         constructors.put(CategoryDAO.class, DerbyCategoryDAO::new);
         constructors.put(TaskDAO.class, DerbyTaskDAO::new);
     }
