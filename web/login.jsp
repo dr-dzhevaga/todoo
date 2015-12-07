@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,11 +9,10 @@
 <body>
 <div class="login-card">
     <h1>Log-in</h1>
-    <%if (request.getParameterMap().containsKey("failed")) {%>
-    <div class="login-error">The username or password you have entered is invalid</div>
-    <br>
-    <%}%>
 
+    <c:if test="${not empty param.error}">
+        <div class="login-error">The username or password you have entered is invalid</div>
+    </c:if>
     <form method="POST" action="j_security_check">
         <input type="text" name="j_username" placeholder="Username">
         <input type="password" name="j_password" placeholder="Password">

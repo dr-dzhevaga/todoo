@@ -1,3 +1,3 @@
 <%
-    response.sendRedirect("/login.jsp?failed=true");
+    response.sendRedirect("/login.jsp?error=true");
 %>

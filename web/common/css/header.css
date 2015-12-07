@@ -74,6 +74,14 @@
 	float: right;
 }
 
+.header-login-signup .header-limiter ul li .user {
+	font:16px Arial, Helvetica, sans-serif;
+	line-height: 40px;
+	float: right;
+	margin: 0 0 0 60px;
+	padding: 0;
+}
+
 .header-login-signup .header-limiter ul li {
 	display: inline-block;
 	margin-left: 15px;

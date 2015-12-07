@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <head>
     <meta charset="utf-8">
@@ -14,11 +15,20 @@
         <div class="header-limiter">
             <h1><a>Tod<span>oo</span></a></h1>
             <nav>
-                <a href="/templates.jsp">Templates</a>
-                <a href="/mytasks.jsp" class="selected">My tasks</a>
+                <a href="${pageContext.request.contextPath}/templates.jsp">Templates</a>
+                <a href="${pageContext.request.contextPath}/mytasks.jsp" class="selected">My tasks</a>
             </nav>
             <ul>
-                <li><a href="/logout">Log-out</a></li>
+                <c:choose>
+                    <c:when test="${pageContext.request.userPrincipal eq null}">
+                        <li><a href="${pageContext.request.contextPath}/login?from=${pageContext.request.requestURL}">Log-in</a>
+                        </li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="user">You are welcome, ${pageContext.request.remoteUser}</li>
+                        <li><a href="${pageContext.request.contextPath}/logout">Log-out</a></li>
+                    </c:otherwise>
+                </c:choose>
             </ul>
         </div>
     </header>
