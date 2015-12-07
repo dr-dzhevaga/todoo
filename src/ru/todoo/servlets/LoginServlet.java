@@ -18,8 +18,6 @@ public class LoginServlet extends HttpServlet {
         String from = Objects.toString(request.getParameter("from"), "/");
         if (request.authenticate(response)) {
             response.sendRedirect(from);
-        } else {
-            response.sendRedirect("/login-failed.html");
         }
     }
 }

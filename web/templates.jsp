@@ -27,9 +27,9 @@
             </nav>
             <ul>
                 <%if (isLogged) {%>
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="/logout">Log-out</a></li>
                 <%} else {%>
-                <li><a href="/login?from=<%=request.getRequestURI()%>">Login</a></li>
+                <li><a href="/login?from=<%=request.getRequestURI()%>">Log-in</a></li>
                 <% } %>
             </ul>
         </div>

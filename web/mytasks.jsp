@@ -18,7 +18,7 @@
                 <a href="/mytasks.jsp" class="selected">My tasks</a>
             </nav>
             <ul>
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="/logout">Log-out</a></li>
             </ul>
         </div>
     </header>
