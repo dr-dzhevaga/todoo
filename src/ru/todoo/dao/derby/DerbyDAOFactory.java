@@ -15,11 +15,11 @@ import java.util.function.Function;
 /**
  * Created by Dmitriy Dzhevaga on 01.11.2015.
  */
-public class JDBCDAOFactory implements DAOFactory<Connection> {
+public class DerbyDAOFactory implements DAOFactory {
     private static final String ENVIRONMENT_CONTEXT_NAME = "java:comp/env";
     private static final String DATA_SOURCE_NAME = "jdbc/todooDB";
     private static final Map<Class, Function<Connection, ?>> constructors = new HashMap<>();
-    private static final JDBCDAOFactory INSTANCE = new JDBCDAOFactory();
+    private static DerbyDAOFactory INSTANCE;
 
     static {
         constructors.put(UserDAO.class, DerbyUserDAO::new);
@@ -30,22 +30,29 @@ public class JDBCDAOFactory implements DAOFactory<Connection> {
 
     private final DataSource dataSource;
 
-    private JDBCDAOFactory() {
+    private DerbyDAOFactory() throws PersistException {
         try {
             Context initialContext = new InitialContext();
             Context environmentContext = (Context) initialContext.lookup(ENVIRONMENT_CONTEXT_NAME);
             dataSource = (DataSource) environmentContext.lookup(DATA_SOURCE_NAME);
         } catch (NamingException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new PersistException(e, e.getMessage());
         }
     }
 
-    public static JDBCDAOFactory getInstance() {
-        return new JDBCDAOFactory();
+    public static DerbyDAOFactory getInstance() throws PersistException {
+        if (INSTANCE == null) {
+            synchronized (DAOFactoryProvider.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new DerbyDAOFactory();
+                }
+            }
+        }
+        return INSTANCE;
     }
 
     @Override
-    public Connection getContext() throws PersistException {
+    public Object getContext() throws PersistException {
         try {
             return dataSource.getConnection();
         } catch (SQLException e) {
@@ -54,11 +61,11 @@ public class JDBCDAOFactory implements DAOFactory<Connection> {
     }
 
     @Override
-    public <R> R getDao(Connection connection, Class<R> daoClass) throws PersistException {
+    public <T> T getDao(Object context, Class<T> daoClass) throws PersistException {
         Function<Connection, ?> constructor = constructors.get(daoClass);
         if (constructor == null) {
             throw new IllegalArgumentException("DAO for " + daoClass + " class not found");
         }
-        return daoClass.cast(constructor.apply(connection));
+        return daoClass.cast(constructor.apply((Connection) context));
     }
 }

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by Dmitriy Dzhevaga on 03.11.2015.
  */
-public interface Listed<PK extends Serializable> {
+public interface Structured<PK extends Serializable> {
     PK getParentId();
 
     void setParentId(PK parentId);

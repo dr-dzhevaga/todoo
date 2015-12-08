@@ -29,8 +29,6 @@ import java.util.List;
         }
 )
 public class CategoryServlet extends HttpServlet {
-    private static final ServiceProvider serviceProvider = new ServiceProvider();
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
@@ -47,7 +45,7 @@ public class CategoryServlet extends HttpServlet {
                     addProperty("filter", "popular").
                     build()
             );
-            List<Category> categoriesList = serviceProvider.getCategoryService().readAll();
+            List<Category> categoriesList = ServiceProvider.getCategoryService().readAll();
             categoriesList.forEach(category -> categoriesArray.add(JsonUtil.getBuilder(category).
                     addProperty("filter", "category").
                     build())
@@ -61,7 +59,7 @@ public class CategoryServlet extends HttpServlet {
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
             Category category = JsonUtil.toObject(json, Category.class);
-            category = serviceProvider.getCategoryService().create(category);
+            category = ServiceProvider.getCategoryService().create(category);
             JsonObject categoryObject = JsonUtil.getBuilder(category).addProperty("filter", "category").build();
             return JsonUtil.getBuilder().add("data", categoryObject).build();
         });
@@ -71,7 +69,7 @@ public class CategoryServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
             int id = ServletUtil.getIdFromUri(request);
-            serviceProvider.getCategoryService().delete(id);
+            ServiceProvider.getCategoryService().delete(id);
             return JsonUtil.getBuilder().addProperty("message", "Category is deleted").build();
         });
     }
@@ -81,7 +79,7 @@ public class CategoryServlet extends HttpServlet {
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
             Category category = JsonUtil.toObject(json, Category.class);
-            serviceProvider.getCategoryService().update(category);
+            ServiceProvider.getCategoryService().update(category);
             return JsonUtil.getBuilder().addProperty("message", "Category is updated").build();
         });
     }

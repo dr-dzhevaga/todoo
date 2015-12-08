@@ -15,53 +15,44 @@ import java.util.stream.Collectors;
 public class TaskService {
     private static final String ACCESS_ERROR = "Access denied";
     private static final String TEMPLATE_S_IS_NOT_FOUND_ERROR = "Template %s is not found";
-    private final DerbyDAOHelper<TaskDAO> daoHelper;
     private final User user;
 
     public TaskService(String username) throws PersistException {
-        daoHelper = new DerbyDAOHelper<>(TaskDAO.class);
-        user = new ServiceProvider().getUserService().readByLogin(username);
+        user = ServiceProvider.getUserService().readByLogin(username);
     }
 
     public List<Task> readAll() throws PersistException {
-        return daoHelper.callOnDAO(taskDAO -> taskDAO.readTasksByUser(user.getId()));
+        return DAOHelper.callOnDAO(TaskDAO.class, false, taskDAO -> taskDAO.readTasksByUser(user.getId()));
     }
 
     public List<Task> readHierarchy(Integer parentId) throws PersistException {
-        return daoHelper.callOnDAO(
-                taskDAO -> {
-                    Task parent = taskDAO.read(parentId);
-                    checkOwner(parent);
-                    return taskDAO.readHierarchy(parentId);
-                },
-                false);
+        return DAOHelper.callOnDAO(TaskDAO.class, false, taskDAO -> {
+            Task parent = taskDAO.read(parentId);
+            checkOwner(parent);
+            return taskDAO.readStructure(parentId);
+        });
     }
 
     public Task create(Task task) throws PersistException {
         task.setTemplate(false);
         task.setUserId(user.getId());
-        return daoHelper.callOnDAO(
-                taskDAO -> {
-                    if (task.getParentId() != null) {
-                        Task parent = taskDAO.read(task.getParentId());
-                        checkOwner(parent);
-                    }
-                    return taskDAO.create(task);
-                },
-                true);
+        return DAOHelper.callOnDAO(TaskDAO.class, true, taskDAO -> {
+            if (task.getParentId() != null) {
+                Task parent = taskDAO.read(task.getParentId());
+                checkOwner(parent);
+            }
+            return taskDAO.create(task);
+        });
     }
 
     public Task createFromTemplate(Integer templateId) throws PersistException {
-        return daoHelper.callOnDAO(
-                taskDAO -> {
-                    List<Task> templates = taskDAO.readHierarchy(templateId);
-                    if (templates.isEmpty()) {
-                        throw new PersistException(String.format(TEMPLATE_S_IS_NOT_FOUND_ERROR, templateId));
-                    }
-                    return createFromTemplatesRecursive(templates, null, null, taskDAO);
-                },
-                true
-        );
+        return DAOHelper.callOnDAO(TaskDAO.class, true, taskDAO -> {
+            List<Task> templates = taskDAO.readStructure(templateId);
+            if (templates.isEmpty()) {
+                throw new PersistException(String.format(TEMPLATE_S_IS_NOT_FOUND_ERROR, templateId));
+            }
+            return createFromTemplatesRecursive(templates, null, null, taskDAO);
+        });
     }
 
     private Task createFromTemplatesRecursive(List<Task> templates, Integer templateId, Integer taskId, TaskDAO taskDAO) throws PersistException {
@@ -81,24 +72,18 @@ public class TaskService {
     }
 
     public void delete(Integer taskId) throws PersistException {
-        daoHelper.executeOnDAO(
-                taskDAO -> {
-                    Task task = taskDAO.read(taskId);
-                    checkOwner(task);
-                    taskDAO.delete(taskId);
-                },
-                true
-        );
+        DAOHelper.executeOnDAO(TaskDAO.class, true, taskDAO -> {
+            Task task = taskDAO.read(taskId);
+            checkOwner(task);
+            taskDAO.deleteStructure(taskId);
+        });
     }
 
     public void update(Task task) throws PersistException {
-        daoHelper.executeOnDAO(
-                taskDAO -> {
-                    checkOwner(task);
-                    taskDAO.update(task);
-                },
-                true
-        );
+        DAOHelper.executeOnDAO(TaskDAO.class, true, taskDAO -> {
+            checkOwner(task);
+            taskDAO.update(task);
+        });
     }
 
     private void checkOwner(Task task) {

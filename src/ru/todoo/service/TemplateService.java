@@ -10,38 +10,32 @@ import java.util.List;
  * Created by Dmitriy Dzhevaga on 29.11.2015.
  */
 public class TemplateService {
-    protected final DerbyDAOHelper<TaskDAO> daoHelper;
-
-    public TemplateService() throws PersistException {
-        daoHelper = new DerbyDAOHelper<>(TaskDAO.class);
-    }
-
     public List<Task> readAll() throws PersistException {
-        return daoHelper.callOnDAO(TaskDAO::readAllTaskTemplates);
+        return DAOHelper.callOnDAO(TaskDAO.class, false, TaskDAO::readAllTaskTemplates);
     }
 
     public List<Task> readByCategory(Integer categoryId) throws PersistException {
-        return daoHelper.callOnDAO(taskDAO -> taskDAO.readTaskTemplatesByCategory(categoryId));
+        return DAOHelper.callOnDAO(TaskDAO.class, false, taskDAO -> taskDAO.readTaskTemplatesByCategory(categoryId));
     }
 
     public List<Task> readPopular() throws PersistException {
-        return daoHelper.callOnDAO(TaskDAO::readPopularTaskTemplates);
+        return DAOHelper.callOnDAO(TaskDAO.class, false, TaskDAO::readPopularTaskTemplates);
     }
 
     public List<Task> readHierarchy(Integer parentId) throws PersistException {
-        return daoHelper.callOnDAO(taskDAO -> taskDAO.readHierarchy(parentId));
+        return DAOHelper.callOnDAO(TaskDAO.class, false, taskDAO -> taskDAO.readStructure(parentId));
     }
 
     public Task create(Task task) throws PersistException {
         task.setTemplate(true);
-        return daoHelper.callOnDAO(taskDAO -> taskDAO.create(task), true);
+        return DAOHelper.callOnDAO(TaskDAO.class, true, taskDAO -> taskDAO.create(task));
     }
 
     public void delete(Integer taskId) throws PersistException {
-        daoHelper.executeOnDAO(taskDAO -> taskDAO.delete(taskId), true);
+        DAOHelper.executeOnDAO(TaskDAO.class, true, taskDAO -> taskDAO.deleteStructure(taskId));
     }
 
     public void update(Task task) throws PersistException {
-        daoHelper.executeOnDAO(taskDAO -> taskDAO.update(task), true);
+        DAOHelper.executeOnDAO(TaskDAO.class, true, taskDAO -> taskDAO.update(task));
     }
 }

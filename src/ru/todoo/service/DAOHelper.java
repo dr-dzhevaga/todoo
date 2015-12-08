@@ -1,7 +1,7 @@
 package ru.todoo.service;
 
+import ru.todoo.dao.DAOFactoryProvider;
 import ru.todoo.dao.PersistException;
-import ru.todoo.dao.derby.JDBCDAOFactory;
 
 import java.sql.Connection;
 
@@ -11,17 +11,12 @@ import static ru.todoo.utils.LambdaExceptionUtil.ThrowingFunction;
 /**
  * Created by Dmitriy Dzhevaga on 08.11.2015.
  */
-public class DerbyDAOHelper<T> {
-    private final JDBCDAOFactory daoFactory;
-    private final Class<T> daoClass;
-
-    public DerbyDAOHelper(Class<T> daoClass) throws PersistException {
-        this.daoClass = daoClass;
-        daoFactory = JDBCDAOFactory.getInstance();
+public class DAOHelper {
+    private DAOHelper() {
     }
 
-    public static void executeOnConnection(ThrowingConsumer<Connection, PersistException> consumer, boolean transactional) throws PersistException {
-        try (Connection connection = JDBCDAOFactory.getInstance().getContext()) {
+    public static void executeOnContext(boolean transactional, ThrowingConsumer<Object, PersistException> consumer) throws PersistException {
+        try (Connection connection = (Connection) DAOFactoryProvider.getDAOFactory().getContext()) {
             try {
                 if (transactional) {
                     connection.setAutoCommit(false);
@@ -45,8 +40,8 @@ public class DerbyDAOHelper<T> {
         }
     }
 
-    public static <R> R callOnConnection(ThrowingFunction<Connection, R, PersistException> function, boolean transactional) throws PersistException {
-        try (Connection connection = JDBCDAOFactory.getInstance().getContext()) {
+    public static <R> R callOnContext(boolean transactional, ThrowingFunction<Object, R, PersistException> function) throws PersistException {
+        try (Connection connection = (Connection) DAOFactoryProvider.getDAOFactory().getContext()) {
             try {
                 if (transactional) {
                     connection.setAutoCommit(false);
@@ -71,19 +66,13 @@ public class DerbyDAOHelper<T> {
         }
     }
 
-    public void executeOnDAO(ThrowingConsumer<T, PersistException> consumer, boolean transactional) throws PersistException {
-        executeOnConnection(connection -> consumer.accept(daoFactory.getDao(connection, daoClass)), transactional);
+    public static <T> void executeOnDAO(Class<T> daoClass, boolean transactional, ThrowingConsumer<T, PersistException> consumer) throws PersistException {
+        executeOnContext(transactional, context ->
+                consumer.accept(DAOFactoryProvider.getDAOFactory().getDao(context, daoClass)));
     }
 
-    public void executeOnDAO(ThrowingConsumer<T, PersistException> consumer) throws PersistException {
-        executeOnDAO(consumer, false);
-    }
-
-    public <R> R callOnDAO(ThrowingFunction<T, R, PersistException> function, boolean transactional) throws PersistException {
-        return callOnConnection(connection -> function.apply(daoFactory.getDao(connection, daoClass)), transactional);
-    }
-
-    public <R> R callOnDAO(ThrowingFunction<T, R, PersistException> function) throws PersistException {
-        return callOnDAO(function, false);
+    public static <R, T> R callOnDAO(Class<T> daoClass, boolean transactional, ThrowingFunction<T, R, PersistException> function) throws PersistException {
+        return callOnContext(transactional, context ->
+                function.apply(DAOFactoryProvider.getDAOFactory().getDao(context, daoClass)));
     }
 }

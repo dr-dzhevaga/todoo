@@ -16,8 +16,6 @@ import java.io.IOException;
  */
 @WebServlet("/registration")
 public class RegistrationServlet extends HttpServlet {
-    private final ServiceProvider serviceProvider = new ServiceProvider();
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String login = request.getParameter("username");
@@ -26,7 +24,7 @@ public class RegistrationServlet extends HttpServlet {
             User user = new User();
             user.setLogin(login);
             user.setPassword(password);
-            serviceProvider.getUserService().create(user);
+            ServiceProvider.getUserService().create(user);
             request.login(login, password);
             response.sendRedirect("/");
         } catch (PersistException e) {

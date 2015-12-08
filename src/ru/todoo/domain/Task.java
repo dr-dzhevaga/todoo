@@ -1,14 +1,14 @@
 package ru.todoo.domain;
 
 import ru.todoo.dao.generic.Identified;
-import ru.todoo.dao.generic.Listed;
+import ru.todoo.dao.generic.Structured;
 
 import java.sql.Timestamp;
 
 /**
  * Created by Dmitriy Dzhevaga on 28.10.2015.
  */
-public class Task implements Identified<Integer>, Listed<Integer> {
+public class Task implements Identified<Integer>, Structured<Integer> {
     private Integer id;
     private Integer parentId;
     private Integer order;

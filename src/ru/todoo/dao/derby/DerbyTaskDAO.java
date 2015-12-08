@@ -2,7 +2,7 @@ package ru.todoo.dao.derby;
 
 import ru.todoo.dao.PersistException;
 import ru.todoo.dao.TaskDAO;
-import ru.todoo.dao.generic.ListedDAOJDBCImpl;
+import ru.todoo.dao.generic.StructuredDAOJDBCImpl;
 import ru.todoo.domain.Task;
 
 import java.sql.Connection;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Dmitriy Dzhevaga on 02.11.2015.
  */
-public class DerbyTaskDAO extends ListedDAOJDBCImpl<Task, Integer> implements TaskDAO {
+public class DerbyTaskDAO extends StructuredDAOJDBCImpl<Task, Integer> implements TaskDAO {
     public DerbyTaskDAO(Connection connection) {
         super(connection, "tasks");
     }

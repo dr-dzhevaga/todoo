@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import ru.todoo.domain.Task;
 import ru.todoo.service.ServiceProvider;
+import ru.todoo.service.TaskService;
 import ru.todoo.utils.JsonUtil;
 import ru.todoo.utils.ServletUtil;
 
@@ -24,8 +25,6 @@ import java.util.Objects;
 @WebServlet("/api/tasks/*")
 @ServletSecurity(@HttpConstraint(rolesAllowed = "user"))
 public class TaskServlet extends HttpServlet {
-    private static final ServiceProvider serviceProvider = new ServiceProvider();
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
@@ -34,13 +33,14 @@ public class TaskServlet extends HttpServlet {
             String username = request.getRemoteUser();
             List<Task> taskList;
             JsonArray taskArray;
+            TaskService taskService = ServiceProvider.getTaskService(username);
             switch (filter) {
                 case "parent":
-                    taskList = serviceProvider.getTaskService(username).readHierarchy(Integer.valueOf(id));
+                    taskList = taskService.readHierarchy(Integer.valueOf(id));
                     taskArray = JsonUtil.toJsonArray(taskList, Integer.valueOf(id));
                     break;
                 default:
-                    taskList = serviceProvider.getTaskService(username).readAll();
+                    taskList = taskService.readAll();
                     taskArray = JsonUtil.toJsonArray(taskList);
                     break;
             }
@@ -54,12 +54,13 @@ public class TaskServlet extends HttpServlet {
         String username = request.getRemoteUser();
         ServletUtil.process(response, () -> {
             Task task;
+            TaskService taskService = ServiceProvider.getTaskService(username);
             if (templateId == null) {
                 String json = ServletUtil.readContent(request);
                 task = JsonUtil.toObject(json, Task.class);
-                task = serviceProvider.getTaskService(username).create(task);
+                task = taskService.create(task);
             } else {
-                task = serviceProvider.getTaskService(username).createFromTemplate(Integer.valueOf(templateId));
+                task = taskService.createFromTemplate(Integer.valueOf(templateId));
             }
             JsonObject taskObject = JsonUtil.toJsonObject(task);
             return JsonUtil.getBuilder().add("data", taskObject).build();
@@ -71,7 +72,7 @@ public class TaskServlet extends HttpServlet {
         String username = request.getRemoteUser();
         ServletUtil.process(response, () -> {
             int id = ServletUtil.getIdFromUri(request);
-            serviceProvider.getTaskService(username).delete(id);
+            ServiceProvider.getTaskService(username).delete(id);
             return JsonUtil.getBuilder().addProperty("message", "Task is deleted").build();
         });
     }
@@ -82,7 +83,7 @@ public class TaskServlet extends HttpServlet {
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
             Task task = JsonUtil.toObject(json, Task.class);
-            serviceProvider.getTaskService(username).update(task);
+            ServiceProvider.getTaskService(username).update(task);
             return JsonUtil.getBuilder().addProperty("message", "Task is updated").build();
         });
     }

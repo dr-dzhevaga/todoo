@@ -10,13 +10,13 @@ import java.util.Objects;
 /**
  * Created by Dmitriy Dzhevga on 04.11.2015.
  */
-public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, PK extends Serializable> extends GenericDAOJDBCImpl<T, PK> implements ListedDAO<T, PK> {
-    public ListedDAOJDBCImpl(Connection connection, String table) {
+public abstract class StructuredDAOJDBCImpl<T extends Identified<PK> & Structured<PK>, PK extends Serializable> extends GenericDAOJDBCImpl<T, PK> implements StructuredDAO<T, PK> {
+    public StructuredDAOJDBCImpl(Connection connection, String table) {
         super(connection, table);
     }
 
     @Override
-    public List<T> readHierarchy(PK parentId) throws PersistException {
+    public List<T> readStructure(PK parentId) throws PersistException {
         String sql = "SELECT *\n" +
                 "FROM " + table + "\n" +
                 "WHERE ID = ? OR PARENT_ID = ?\n" +
@@ -28,6 +28,29 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
                 "                    WHERE PARENT_ID = ?)\n" +
                 "ORDER BY ORDER_NUMBER";
         return jdbcHelper.select(sql, new Object[]{parentId, parentId, parentId}, this::parseResultSet);
+    }
+
+    @Override
+    public void deleteStructure(PK id) throws PersistException {
+        T deletedInstance = read(id);
+        String sql = "DELETE FROM " + table + "\n" +
+                "WHERE id IN (SELECT id\n" +
+                "             FROM " + table + "\n" +
+                "             WHERE ID = ? OR PARENT_ID = ?\n" +
+                "             UNION\n" +
+                "             SELECT id\n" +
+                "             FROM " + table + "\n" +
+                "             WHERE PARENT_ID IN (SELECT ID\n" +
+                "                                 FROM " + table + "\n" +
+                "                                 WHERE PARENT_ID = ?))";
+        jdbcHelper.update(sql, new Object[]{id, id, id});
+        // move up children after the deleted child
+        if (deletedInstance.getParentId() != null) {
+            T lastNeighbor = readLastChild(deletedInstance.getParentId());
+            if (lastNeighbor != null && !Objects.equals(lastNeighbor.getId(), deletedInstance.getId())) {
+                moveChildrenUp(deletedInstance.getParentId(), deletedInstance.getOrder() + 1, lastNeighbor.getOrder());
+            }
+        }
     }
 
     @Override
@@ -50,33 +73,6 @@ public abstract class ListedDAOJDBCImpl<T extends Identified<PK> & Listed<PK>, P
             }
         }
         return super.create(newInstance);
-    }
-
-    @Override
-    public void delete(PK id) throws PersistException {
-        T deletedInstance = read(id);
-        // move up children after the deleted child
-        if (deletedInstance.getParentId() != null) {
-            T lastNeighbor = readLastChild(deletedInstance.getParentId());
-            if (lastNeighbor != null && !Objects.equals(lastNeighbor.getId(), deletedInstance.getId())) {
-                moveChildrenUp(deletedInstance.getParentId(), deletedInstance.getOrder() + 1, lastNeighbor.getOrder());
-            }
-        }
-        deleteHierarchy(id);
-    }
-
-    private void deleteHierarchy(PK id) throws PersistException {
-        String sql = "DELETE FROM " + table + "\n" +
-                "WHERE id IN (SELECT id\n" +
-                "             FROM " + table + "\n" +
-                "             WHERE ID = ? OR PARENT_ID = ?\n" +
-                "             UNION\n" +
-                "             SELECT id\n" +
-                "             FROM " + table + "\n" +
-                "             WHERE PARENT_ID IN (SELECT ID\n" +
-                "                                 FROM " + table + "\n" +
-                "                                 WHERE PARENT_ID = ?))";
-        jdbcHelper.update(sql, new Object[]{id, id, id});
     }
 
     @Override
