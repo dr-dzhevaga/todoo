@@ -17,22 +17,22 @@ public abstract class TaskServiceAbstract {
     }
 
     protected Task create(Task task) throws PersistException {
-        return daoHelper.executeFunction(taskDAO -> taskDAO.create(task));
+        return daoHelper.callOnDAO(taskDAO -> taskDAO.create(task), true);
     }
 
     public Task read(Integer taskId) throws PersistException {
-        return daoHelper.read(taskDAO -> taskDAO.read(taskId));
+        return daoHelper.callOnDAO(taskDAO -> taskDAO.read(taskId));
     }
 
     public List<Task> readHierarchy(Integer parentId) throws PersistException {
-        return daoHelper.read(taskDAO -> taskDAO.readHierarchy(parentId));
+        return daoHelper.callOnDAO(taskDAO -> taskDAO.readHierarchy(parentId));
     }
 
     public void delete(Integer taskId) throws PersistException {
-        daoHelper.executeProcedure(taskDAO -> taskDAO.delete(taskId));
+        daoHelper.executeOnDAO(taskDAO -> taskDAO.delete(taskId), true);
     }
 
     public void update(Task task) throws PersistException {
-        daoHelper.executeProcedure(taskDAO -> taskDAO.update(task));
+        daoHelper.executeOnDAO(taskDAO -> taskDAO.update(task), true);
     }
 }

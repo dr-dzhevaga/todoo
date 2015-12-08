@@ -15,10 +15,12 @@ import java.util.function.Function;
 /**
  * Created by Dmitriy Dzhevaga on 01.11.2015.
  */
-public class DerbyDAOFactory implements DAOFactory<Connection> {
+public class JDBCDAOFactory implements DAOFactory<Connection> {
     private static final String ENVIRONMENT_CONTEXT_NAME = "java:comp/env";
     private static final String DATA_SOURCE_NAME = "jdbc/todooDB";
-    private final static Map<Class, Function<Connection, ?>> constructors = new HashMap<>();
+    private static final Map<Class, Function<Connection, ?>> constructors = new HashMap<>();
+    private static final JDBCDAOFactory INSTANCE = new JDBCDAOFactory();
+
     static {
         constructors.put(UserDAO.class, DerbyUserDAO::new);
         constructors.put(RoleDAO.class, DerbyRoleDAO::new);
@@ -28,14 +30,18 @@ public class DerbyDAOFactory implements DAOFactory<Connection> {
 
     private final DataSource dataSource;
 
-    public DerbyDAOFactory() throws PersistException {
+    private JDBCDAOFactory() {
         try {
             Context initialContext = new InitialContext();
             Context environmentContext = (Context) initialContext.lookup(ENVIRONMENT_CONTEXT_NAME);
             dataSource = (DataSource) environmentContext.lookup(DATA_SOURCE_NAME);
         } catch (NamingException e) {
-            throw new PersistException(e, e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    public static JDBCDAOFactory getInstance() {
+        return new JDBCDAOFactory();
     }
 
     @Override

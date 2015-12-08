@@ -18,22 +18,22 @@ public class CategoryService {
     }
 
     public Category create(Category category) throws PersistException {
-        return daoHelper.executeFunction(categoryDAO -> categoryDAO.create(category));
+        return daoHelper.callOnDAO(categoryDAO -> categoryDAO.create(category));
     }
 
     public Category read(Integer categoryId) throws PersistException {
-        return daoHelper.read(categoryDAO -> categoryDAO.read(categoryId));
+        return daoHelper.callOnDAO(categoryDAO -> categoryDAO.read(categoryId));
     }
 
     public List<Category> readAll() throws PersistException {
-        return daoHelper.read(GenericDAO::readAll);
+        return daoHelper.callOnDAO(GenericDAO::readAll);
     }
 
     public void delete(Integer categoryId) throws PersistException {
-        daoHelper.executeProcedure(categoryDAO -> categoryDAO.delete(categoryId));
+        daoHelper.executeOnDAO(categoryDAO -> categoryDAO.delete(categoryId));
     }
 
     public void update(Category category) throws PersistException {
-        daoHelper.executeProcedure(categoryDAO -> categoryDAO.update(category));
+        daoHelper.executeOnDAO(categoryDAO -> categoryDAO.update(category));
     }
 }

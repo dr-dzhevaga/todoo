@@ -1,6 +1,7 @@
 package ru.todoo.service;
 
 import ru.todoo.dao.PersistException;
+import ru.todoo.dao.TaskDAO;
 import ru.todoo.domain.Task;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class TaskService extends TaskServiceAbstract {
     }
 
     public List<Task> readByUser(Integer userId) throws PersistException {
-        return daoHelper.read(taskDAO -> taskDAO.readTasksByUser(userId));
+        return daoHelper.callOnDAO(taskDAO -> taskDAO.readTasksByUser(userId));
     }
 
     @Override
@@ -25,20 +26,26 @@ public class TaskService extends TaskServiceAbstract {
     }
 
     public Task createFromTemplate(Integer templateId, Integer userId) throws PersistException {
-        List<Task> templates = readHierarchy(templateId);
-        if (templates.isEmpty()) {
-            throw new PersistException("Template " + templateId + " is not found");
-        }
-        return createRecursive(templates, userId, null, null);
+        return daoHelper.callOnDAO(
+                taskDAO -> {
+                    List<Task> templates = taskDAO.readHierarchy(templateId);
+                    if (templates.isEmpty()) {
+                        throw new PersistException("Template " + templateId + " is not found");
+                    }
+                    return createFromTemplatesRecursive(templates, userId, null, null, taskDAO);
+                },
+                true
+        );
     }
 
-    private Task createRecursive(List<Task> templates, Integer userId, Integer templateParentId, Integer taskParentId) throws PersistException {
+    private Task createFromTemplatesRecursive(List<Task> templates, Integer userId, Integer templateId, Integer taskId, TaskDAO taskDAO) throws PersistException {
         Task task = null;
-        for (Task template : filterByParent(templates, templateParentId)) {
+        for (Task template : filterByParent(templates, templateId)) {
+            template.setTemplate(false);
             template.setUserId(userId);
-            template.setParentId(taskParentId);
-            task = create(template);
-            createRecursive(templates, userId, template.getId(), task.getId());
+            template.setParentId(taskId);
+            task = taskDAO.create(template);
+            createFromTemplatesRecursive(templates, userId, template.getId(), task.getId(), taskDAO);
         }
         return task;
     }

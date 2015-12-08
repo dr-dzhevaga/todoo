@@ -14,15 +14,15 @@ public class TemplateService extends TaskServiceAbstract {
     }
 
     public List<Task> readAll() throws PersistException {
-        return daoHelper.read(TaskDAO::readAllTaskTemplates);
+        return daoHelper.callOnDAO(TaskDAO::readAllTaskTemplates);
     }
 
     public List<Task> readByCategory(Integer categoryId) throws PersistException {
-        return daoHelper.read(taskDAO -> taskDAO.readTaskTemplatesByCategory(categoryId));
+        return daoHelper.callOnDAO(taskDAO -> taskDAO.readTaskTemplatesByCategory(categoryId));
     }
 
     public List<Task> readPopular() throws PersistException {
-        return daoHelper.read(TaskDAO::readPopularTaskTemplates);
+        return daoHelper.callOnDAO(TaskDAO::readPopularTaskTemplates);
     }
 
     public Task create(Task task) throws PersistException {
