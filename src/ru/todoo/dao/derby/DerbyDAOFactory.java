@@ -19,7 +19,7 @@ public class DerbyDAOFactory implements DAOFactory {
     private static final String ENVIRONMENT_CONTEXT_NAME = "java:comp/env";
     private static final String DATA_SOURCE_NAME = "jdbc/todooDB";
     private static final Map<Class, Function<Connection, ?>> constructors = new HashMap<>();
-    private static DerbyDAOFactory INSTANCE;
+    private static volatile DerbyDAOFactory INSTANCE;
 
     static {
         constructors.put(UserDAO.class, DerbyUserDAO::new);
