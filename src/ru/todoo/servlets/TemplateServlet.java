@@ -66,7 +66,6 @@ public class TemplateServlet extends HttpServlet {
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
             Task template = JsonUtil.toObject(json, Task.class);
-            template.setUserId(ServletUtil.getUser(request).getId());
             template = serviceProvider.getTemplateService().create(template);
             JsonObject templateObject = JsonUtil.toJsonObject(template);
             return JsonUtil.getBuilder().add("data", templateObject).build();

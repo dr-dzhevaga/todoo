@@ -14,8 +14,8 @@ public class ServiceProvider {
         return new CategoryService();
     }
 
-    public TaskService getTaskService() throws PersistException {
-        return new TaskService();
+    public TaskService getTaskService(String username) throws PersistException {
+        return new TaskService(username);
     }
 
     public TemplateService getTemplateService() throws PersistException {

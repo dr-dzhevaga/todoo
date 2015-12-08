@@ -9,8 +9,11 @@ import java.util.List;
 /**
  * Created by Dmitriy Dzhevaga on 29.11.2015.
  */
-public class TemplateService extends TaskServiceAbstract {
-    protected TemplateService() throws PersistException {
+public class TemplateService {
+    protected final DerbyDAOHelper<TaskDAO> daoHelper;
+
+    public TemplateService() throws PersistException {
+        daoHelper = new DerbyDAOHelper<>(TaskDAO.class);
     }
 
     public List<Task> readAll() throws PersistException {
@@ -25,8 +28,20 @@ public class TemplateService extends TaskServiceAbstract {
         return daoHelper.callOnDAO(TaskDAO::readPopularTaskTemplates);
     }
 
+    public List<Task> readHierarchy(Integer parentId) throws PersistException {
+        return daoHelper.callOnDAO(taskDAO -> taskDAO.readHierarchy(parentId));
+    }
+
     public Task create(Task task) throws PersistException {
         task.setTemplate(true);
-        return super.create(task);
+        return daoHelper.callOnDAO(taskDAO -> taskDAO.create(task), true);
+    }
+
+    public void delete(Integer taskId) throws PersistException {
+        daoHelper.executeOnDAO(taskDAO -> taskDAO.delete(taskId), true);
+    }
+
+    public void update(Task task) throws PersistException {
+        daoHelper.executeOnDAO(taskDAO -> taskDAO.update(task), true);
     }
 }
