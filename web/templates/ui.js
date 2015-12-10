@@ -47,10 +47,11 @@ var useTemplateButton = {
     id: "useTemplateButton",
     view: "button",
     tooltip: "Use this template",
+    label: "Use template",
     type: "icon",
     icon: "hand-o-right",
     align: "left",
-    width: 30
+    width: 110
 };
 
 var scheme = {

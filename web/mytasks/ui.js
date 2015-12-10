@@ -3,9 +3,10 @@ var createTaskButton = {
     view: "button",
     type: "icon",
     icon: "plus",
+    label: "Create todo",
     tooltip: "Create todo",
     align: "left",
-    width: 30
+    width: 100
 };
 
 var createTaskPopup = {
@@ -43,6 +44,7 @@ var createTaskPopup = {
 var deleteTaskButton = webix.copy(createTaskButton);
 deleteTaskButton.id = "deleteTaskButton";
 deleteTaskButton.icon = "remove";
+deleteTaskButton.label = "Delete todo";
 deleteTaskButton.tooltip = "Delete todo";
 
 var taskList = {
@@ -65,13 +67,14 @@ var taskName = {
 var taskDescription = {
     id: "taskDescription",
     view: "textarea",
-    height: 60,
+    height: 50,
     readonly: true
 };
 
 var createStepButton = webix.copy(createTaskButton);
 createStepButton.id = "createStepButton";
-createStepButton.tooltip = "Create task";
+createStepButton.tooltip = "Add step";
+createStepButton.label = "Add step";
 
 var createStepPopup = webix.copy(createTaskPopup);
 createStepPopup.id = "createStepPopup";
@@ -108,7 +111,8 @@ var stepDescription = {
 
 var stepName = {
     id: "stepName",
-    view: "text",
+    view: "textarea",
+    height: 80,
     readonly: true
 };
 
