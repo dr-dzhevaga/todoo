@@ -37,5 +37,6 @@ var logic = {
         $$("templateList").attachEvent("onSelectChange", onTemplatesListSelectChange);
         $$("stepTree").attachEvent("onAfterLoad", onTaskTreeLoad);
         $$("useTemplateButton").attachEvent("onItemClick", onUseTemplateButtonClick);
+        dataStoreHelper.reload("categoryRichSelectList", {}, CATEGORY_API_ENDPOINT);
     }
 };

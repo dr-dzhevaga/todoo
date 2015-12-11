@@ -4,8 +4,8 @@ var categoryRichSelect = {
     label: "Category:",
     options: {
         template: "#name#",
-        url: CATEGORY_API_ENDPOINT,
         body: {
+            id: "categoryRichSelectList",
             template: "#name#"
         }
     }
@@ -18,8 +18,7 @@ var templateList = {
     template: "#name#<div class='description'>#description#</div>",
     type: {
         height: 50
-    },
-    url: TEMPLATE_API_ENDPOINT
+    }
 };
 
 var templateDescription = {

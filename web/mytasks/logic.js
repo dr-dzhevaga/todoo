@@ -167,5 +167,6 @@ var logic = {
         $$("stepTree").attachEvent("onAfterDrop", onStepTreeAfterDrop);
         $$("stepName").attachEvent("onChange", onStepNameChange);
         $$("stepDescription").attachEvent("onChange", onStepDescriptionChange);
+        dataStoreHelper.reload("taskList", {}, TASK_API_ENDPOINT);
     }
 };

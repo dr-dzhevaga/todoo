@@ -54,7 +54,6 @@ var taskList = {
     type: {
         height: 50
     },
-    url: TASK_API_ENDPOINT,
     select: true
 };
 
