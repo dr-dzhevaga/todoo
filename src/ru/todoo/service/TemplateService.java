@@ -34,17 +34,21 @@ public class TemplateService {
     }
 
     public List<Task> createFromText(String text, Integer parentId, Integer userId) throws PersistException {
-        String[] names = Arrays.stream(text.split("\\r?\\n")).filter(line -> !line.isEmpty()).toArray(String[]::new);
+        String[] steps = Arrays.stream(text.split("\\r?\\n")).filter(line -> !line.isEmpty()).toArray(String[]::new);
         List<Task> result = new ArrayList<>();
         DAOHelper.executeOnDAO(TaskDAO.class, true, taskDAO -> {
             Integer secondLevelParentId = parentId;
-            for (String name : names) {
-                boolean isFirstLevelChild = !Character.isWhitespace(name.charAt(0));
+            for (String step : steps) {
+                boolean isFirstLevelChild = !Character.isWhitespace(step.charAt(0));
+                String[] items = step.trim().split("&&");
+                String name = items[0];
+                String description = items.length > 1 ? items[1] : "";
                 Task template = new Task();
                 template.setUserId(userId);
                 template.setTemplate(true);
                 template.setParentId(isFirstLevelChild ? parentId : secondLevelParentId);
-                template.setName(name.trim());
+                template.setName(name);
+                template.setDescription(description);
                 template = taskDAO.create(template);
                 result.add(template);
                 if (isFirstLevelChild) {
