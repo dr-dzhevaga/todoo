@@ -56,15 +56,44 @@ deleteTemplateButton.icon = "remove";
 
 var createStepButton = webix.copy(createTemplateButton);
 createStepButton.id = "createStepButton";
-createStepButton.tooltip = "Add task";
+createStepButton.tooltip = "Add step";
 
 var createStepPopup = webix.copy(createTaskPopup);
 createStepPopup.id = "createStepPopup";
 createStepPopup.body.elements[createStepPopup.body.elements.length - 1].id = "createStepConfirmButton";
 
+var createStepsFromTextButton = webix.copy(createTemplateButton);
+createStepsFromTextButton.id = "createStepsFromTextButton";
+createStepsFromTextButton.tooltip = "Create steps from text";
+createStepsFromTextButton.icon = "file-text-o";
+
+var createStepsFromTextPopup = webix.copy(createTaskPopup);
+createStepsFromTextPopup.id = "createStepsFromTextPopup";
+createStepsFromTextPopup.body = {
+    view: "form",
+    width: 600,
+    elements: [{
+        view: "textarea",
+        name: "text",
+        label: "Steps",
+        labelPosition: "top",
+        height: 300
+    }, {
+        id: "createStepsFromTextConfirmButton",
+        view: "button",
+        value: "Create",
+        type: "form",
+        inputWidth: 80,
+        align: "right"
+    }],
+    rules: {
+        "text": webix.rules.isNotEmpty
+    }
+};
+
 var editStepButton = webix.copy(editTemplateButton);
 editStepButton.id = "editStepButton";
-editStepButton.tooltip = "Edit task";
+editStepButton.tooltip = "Edit step";
 
 var editStepPopup = webix.copy(editTemplatePopup);
 editStepPopup.id = "editStepPopup";
@@ -72,7 +101,7 @@ editStepPopup.body.elements[editStepPopup.body.elements.length - 1].id = "editSt
 
 var deleteStepButton = webix.copy(deleteTemplateButton);
 deleteStepButton.id = "deleteStepButton";
-deleteStepButton.tooltip = "Delete task";
+deleteStepButton.tooltip = "Delete step";
 
 var createCategoryButton = webix.copy(createTemplateButton);
 createCategoryButton.id = "createCategoryButton";
@@ -80,7 +109,6 @@ createCategoryButton.tooltip = "Add category";
 
 var createCategoryPopup = webix.copy(createTaskPopup);
 createCategoryPopup.id = "createCategoryPopup";
-createCategoryPopup.body.elements.pop();
 createCategoryPopup.body.elements[1] = {
     id: "createCategoryConfirmButton",
     view: "button",
@@ -89,6 +117,7 @@ createCategoryPopup.body.elements[1] = {
     inputWidth: 80,
     align: "right"
 };
+createCategoryPopup.body.elements.pop();
 
 var editCategoryButton = webix.copy(editTemplateButton);
 editCategoryButton.id = "editCategoryButton";
@@ -133,6 +162,7 @@ var adminToolBar = {
         separatorLabel,
         stepLabel,
         createStepButton,
+        createStepsFromTextButton,
         deleteStepButton,
         editStepButton
     ]
@@ -151,6 +181,7 @@ var admin_ui = {
         webix.ui(createTaskPopup);
         webix.ui(editTemplatePopup);
         webix.ui(createStepPopup);
+        webix.ui(createStepsFromTextPopup);
         webix.ui(editStepPopup);
         webix.ui(createCategoryPopup);
         webix.ui(editCategoryPopup);

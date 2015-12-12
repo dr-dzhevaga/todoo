@@ -1,9 +1,6 @@
 package ru.todoo.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import ru.todoo.dao.generic.Identified;
 import ru.todoo.dao.generic.Structured;
 
@@ -24,6 +21,14 @@ public class JsonUtil {
 
     public static JsonObject toJsonObject(Object object) {
         return new Gson().toJsonTree(object).getAsJsonObject();
+    }
+
+    public static JsonArray toJsonArray(String json) {
+        return new JsonParser().parse(json).getAsJsonArray();
+    }
+
+    public static JsonObject toJsonObject(String json) {
+        return new JsonParser().parse(json).getAsJsonObject();
     }
 
     public static JsonBuilder getBuilder() {

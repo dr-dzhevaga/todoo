@@ -69,7 +69,7 @@ var onCreateStepButtonClick = function () {
     var step = $$("stepTree").getSelectedItem();
     var parent = step ? step : task;
     if (parent) {
-        $$("createStepPopup").getBody().setValues({parentId: parent.id, rootId: task.id});
+        $$("createStepPopup").getBody().setValues({parentId: parent.id, taskId: task.id});
         popupHelper.show("createStepPopup", this);
     } else {
         webix.message("Select parent task first");
@@ -80,7 +80,7 @@ var onCreateStepConfirmButtonClick = function () {
     var step = popupHelper.getValue("createStepPopup");
     if (step) {
         ajax_util.postJson(TASK_API_ENDPOINT, step, function () {
-            dataStoreHelper.reload("stepTree", {filter: "parent", id: step.rootId}, TASK_API_ENDPOINT);
+            dataStoreHelper.reload("stepTree", {filter: "parent", id: step.taskId}, TASK_API_ENDPOINT);
         });
     }
 };

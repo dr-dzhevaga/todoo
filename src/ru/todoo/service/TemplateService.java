@@ -4,6 +4,8 @@ import ru.todoo.dao.PersistException;
 import ru.todoo.dao.TaskDAO;
 import ru.todoo.domain.Task;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,6 +31,28 @@ public class TemplateService {
     public Task create(Task task) throws PersistException {
         task.setTemplate(true);
         return DAOHelper.callOnDAO(TaskDAO.class, true, taskDAO -> taskDAO.create(task));
+    }
+
+    public List<Task> createFromText(String text, Integer parentId, Integer userId) throws PersistException {
+        String[] names = Arrays.stream(text.split("\\r?\\n")).filter(line -> !line.isEmpty()).toArray(String[]::new);
+        List<Task> result = new ArrayList<>();
+        DAOHelper.executeOnDAO(TaskDAO.class, true, taskDAO -> {
+            Integer secondLevelParentId = parentId;
+            for (String name : names) {
+                boolean isFirstLevelChild = !Character.isWhitespace(name.charAt(0));
+                Task template = new Task();
+                template.setUserId(userId);
+                template.setTemplate(true);
+                template.setParentId(isFirstLevelChild ? parentId : secondLevelParentId);
+                template.setName(name.trim());
+                template = taskDAO.create(template);
+                result.add(template);
+                if (isFirstLevelChild) {
+                    secondLevelParentId = template.getId();
+                }
+            }
+        });
+        return result;
     }
 
     public void delete(Integer taskId) throws PersistException {

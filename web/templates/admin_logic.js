@@ -86,7 +86,7 @@ var onCreateStepButtonClick = function () {
     var step = $$("stepTree").getSelectedItem();
     var parent = step ? step : template;
     if (parent) {
-        $$("createStepPopup").getBody().setValues({parentId: parent.id, rootId: template.id});
+        $$("createStepPopup").getBody().setValues({parentId: parent.id, templateId: template.id});
         popupHelper.show("createStepPopup", this);
     } else {
         webix.message("Select parent template first");
@@ -97,7 +97,29 @@ var onCreateStepConfirmButtonClick = function () {
     var step = popupHelper.getValue("createStepPopup");
     if (step) {
         ajax_util.postJson(TEMPLATE_API_ENDPOINT, step, function () {
-            ajax_util.getJson(TEMPLATE_API_ENDPOINT, {filter: "parent", id: step.rootId}, function (text) {
+            ajax_util.getJson(TEMPLATE_API_ENDPOINT, {filter: "parent", id: step.templateId}, function (text) {
+                $$("stepTree").clearAll();
+                $$("stepTree").parse(text);
+            });
+        });
+    }
+};
+
+var onCreateStepsFromTextButtonClick = function () {
+    var template = $$("templateList").getSelectedItem();
+    if (template) {
+        $$("createStepsFromTextPopup").getBody().setValues({templateId: template.id, sourceType: "text"});
+        popupHelper.show("createStepsFromTextPopup", this);
+    } else {
+        webix.message("Select parent template first");
+    }
+};
+
+var onCreateStepFromTextConfirmButtonClick = function () {
+    var step = popupHelper.getValue("createStepsFromTextPopup");
+    if (step) {
+        ajax_util.postJson(TEMPLATE_API_ENDPOINT, step, function () {
+            ajax_util.getJson(TEMPLATE_API_ENDPOINT, {filter: "parent", id: step.templateId}, function (text) {
                 $$("stepTree").clearAll();
                 $$("stepTree").parse(text);
             });
@@ -160,6 +182,8 @@ var admin_logic = {
 
         $$("createStepButton").attachEvent("onItemClick", onCreateStepButtonClick);
         $$("createStepConfirmButton").attachEvent("onItemClick", onCreateStepConfirmButtonClick);
+        $$("createStepsFromTextButton").attachEvent("onItemClick", onCreateStepsFromTextButtonClick);
+        $$("createStepsFromTextConfirmButton").attachEvent("onItemClick", onCreateStepFromTextConfirmButtonClick);
         $$("editStepButton").attachEvent("onItemClick", onEditStepButtonClick);
         $$("editStepConfirmButton").attachEvent("onItemClick", onEditStepConfirmButtonClick);
         $$("editStepPopup").getBody().bind($$("stepTree"));

@@ -35,7 +35,7 @@ var stepTree = {
         var content = common.checkbox(obj, common);
         content += "<div class='step'>";
         content += "<span class='name'>" + obj.name + "</span>";
-        content += "<span class='description'>" + obj.description + "</span>";
+        content += "<span class='description'>" + (obj.description || "") + "</span>";
         content += "</div>";
         return content;
     },

@@ -64,12 +64,20 @@ public class TemplateServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
+            Integer userId = ServletUtil.getUser(request).getId();
             String json = ServletUtil.readContent(request);
-            Task template = JsonUtil.toObject(json, Task.class);
-            template.setUserId(ServletUtil.getUser(request).getId());
-            template = ServiceProvider.getTemplateService().create(template);
-            JsonObject templateObject = JsonUtil.toJsonObject(template);
-            return JsonUtil.getBuilder().add("data", templateObject).build();
+            JsonObject parameters = JsonUtil.toJsonObject(json);
+            if (parameters.has("sourceType") && parameters.get("sourceType").getAsString().equals("text")) {
+                String text = parameters.get("text").getAsString();
+                Integer templateId = parameters.get("templateId").getAsInt();
+                List<Task> result = ServiceProvider.getTemplateService().createFromText(text, templateId, userId);
+                return JsonUtil.getBuilder().add("data", JsonUtil.toJsonArray(result)).build();
+            } else {
+                Task template = JsonUtil.toObject(json, Task.class);
+                template.setUserId(userId);
+                template = ServiceProvider.getTemplateService().create(template);
+                return JsonUtil.getBuilder().add("data", JsonUtil.toJsonObject(template)).build();
+            }
         });
     }
 
