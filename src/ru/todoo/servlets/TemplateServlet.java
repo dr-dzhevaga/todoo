@@ -2,7 +2,8 @@ package ru.todoo.servlets;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import ru.todoo.domain.Task;
+import ru.todoo.domain.Template;
+import ru.todoo.domain.User;
 import ru.todoo.service.ServiceProvider;
 import ru.todoo.service.TemplateService;
 import ru.todoo.utils.JsonUtil;
@@ -36,26 +37,29 @@ public class TemplateServlet extends HttpServlet {
         ServletUtil.process(response, () -> {
             String filter = Objects.toString(request.getParameter("filter"), "all");
             String id = request.getParameter("id");
-            List<Task> templatesList;
             JsonArray templatesArray;
             TemplateService templateService = ServiceProvider.getTemplateService();
             switch (filter) {
-                case "parent":
-                    templatesList = templateService.readHierarchy(Integer.valueOf(id));
-                    templatesArray = JsonUtil.toJsonArray(templatesList, Integer.valueOf(id));
+                case "parent": {
+                    Template template = templateService.read(Integer.valueOf(id));
+                    templatesArray = JsonUtil.toJsonArray(template);
                     break;
-                case "category":
-                    templatesList = templateService.readByCategory(Integer.valueOf(id));
-                    templatesArray = JsonUtil.toJsonArray(templatesList);
+                }
+                case "category": {
+                    List<Template> templates = templateService.readByCategory(Integer.valueOf(id));
+                    templatesArray = JsonUtil.toJsonArray(templates);
                     break;
-                case "popular":
-                    templatesList = templateService.readPopular();
-                    templatesArray = JsonUtil.toJsonArray(templatesList);
+                }
+                case "popular": {
+                    List<Template> templates = templateService.readPopular();
+                    templatesArray = JsonUtil.toJsonArray(templates);
                     break;
-                default:
-                    templatesList = templateService.readAll();
-                    templatesArray = JsonUtil.toJsonArray(templatesList);
+                }
+                default: {
+                    List<Template> templates = templateService.readAll();
+                    templatesArray = JsonUtil.toJsonArray(templates);
                     break;
+                }
             }
             return JsonUtil.getBuilder().add("data", templatesArray).build();
         });
@@ -64,18 +68,19 @@ public class TemplateServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
-            Integer userId = ServletUtil.getUser(request).getId();
+            User user = ServletUtil.getUser(request);
             String json = ServletUtil.readContent(request);
             JsonObject parameters = JsonUtil.toJsonObject(json);
+            TemplateService templateService = ServiceProvider.getTemplateService();
             if (parameters.has("sourceType") && parameters.get("sourceType").getAsString().equals("text")) {
                 String text = parameters.get("text").getAsString();
                 Integer templateId = parameters.get("templateId").getAsInt();
-                List<Task> result = ServiceProvider.getTemplateService().createFromText(text, templateId, userId);
+                Template result = templateService.createStepsFromText(text, templateId, user);
                 return JsonUtil.getBuilder().add("data", JsonUtil.toJsonArray(result)).build();
             } else {
-                Task template = JsonUtil.toObject(json, Task.class);
-                template.setUserId(userId);
-                template = ServiceProvider.getTemplateService().create(template);
+                Template template = JsonUtil.toObject(json, Template.class);
+                template.setUser(user);
+                template = templateService.create(template);
                 return JsonUtil.getBuilder().add("data", JsonUtil.toJsonObject(template)).build();
             }
         });
@@ -94,8 +99,8 @@ public class TemplateServlet extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
-            Task task = JsonUtil.toObject(json, Task.class);
-            ServiceProvider.getTemplateService().update(task);
+            Template template = JsonUtil.toObject(json, Template.class);
+            ServiceProvider.getTemplateService().update(template);
             return JsonUtil.getBuilder().addProperty("message", "Template is updated").build();
         });
     }

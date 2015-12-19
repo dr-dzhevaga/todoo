@@ -31,17 +31,16 @@ public class TaskServlet extends HttpServlet {
             String filter = Objects.toString(request.getParameter("filter"), "");
             String id = request.getParameter("id");
             String username = request.getRemoteUser();
-            List<Task> taskList;
             JsonArray taskArray;
             TaskService taskService = ServiceProvider.getTaskService(username);
             switch (filter) {
                 case "parent":
-                    taskList = taskService.readHierarchy(Integer.valueOf(id));
-                    taskArray = JsonUtil.toJsonArray(taskList, Integer.valueOf(id));
+                    Task task = taskService.read(Integer.valueOf(id));
+                    taskArray = JsonUtil.toJsonArray(task);
                     break;
                 default:
-                    taskList = taskService.readAll();
-                    taskArray = JsonUtil.toJsonArray(taskList);
+                    List<Task> tasks = taskService.readAll();
+                    taskArray = JsonUtil.toJsonArray(tasks);
                     break;
             }
             return JsonUtil.getBuilder().add("data", taskArray).build();

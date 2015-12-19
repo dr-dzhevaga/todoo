@@ -1,11 +1,6 @@
 package ru.todoo.utils;
 
 import com.google.gson.*;
-import ru.todoo.dao.generic.Identified;
-import ru.todoo.dao.generic.Structured;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Dmitriy Dzhevaga on 28.11.2015.
@@ -37,19 +32,6 @@ public class JsonUtil {
 
     public static JsonBuilder getBuilder(Object object) {
         return new JsonBuilder(object);
-    }
-
-    public static <T extends Identified<Integer> & Structured<Integer>> JsonArray toJsonArray(List<T> objects, Integer root) {
-        JsonArray result = new JsonArray();
-        getChildren(objects, root).forEach(firstLevelChild -> {
-            List<T> secondLevelChildren = getChildren(objects, firstLevelChild.getId());
-            result.add(getBuilder(firstLevelChild).add("data", toJsonArray(secondLevelChildren)).build());
-        });
-        return result;
-    }
-
-    private static <T extends Identified<Integer> & Structured<Integer>> List<T> getChildren(List<T> objects, Integer rootId) {
-        return objects.stream().filter(object -> rootId.equals(object.getParentId())).collect(Collectors.toList());
     }
 
     public static class JsonBuilder {

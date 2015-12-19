@@ -1,13 +1,12 @@
 package ru.todoo.service;
 
-import ru.todoo.dao.PersistException;
-import ru.todoo.dao.TaskDAO;
+import ru.todoo.dao.*;
 import ru.todoo.domain.Task;
+import ru.todoo.domain.Template;
 import ru.todoo.domain.User;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Created by Dmitriy Dzhevaga on 06.11.2015.
@@ -15,6 +14,7 @@ import java.util.stream.Collectors;
 public class TaskService {
     private static final String ACCESS_ERROR = "Access denied";
     private static final String TEMPLATE_S_IS_NOT_FOUND_ERROR = "Template %s is not found";
+    private static final DAOUtil daoUtil = DAOProvider.getDAOUtil();
     private final User user;
 
     public TaskService(String username) throws PersistException {
@@ -22,23 +22,22 @@ public class TaskService {
     }
 
     public List<Task> readAll() throws PersistException {
-        return DAOHelper.callOnDAO(TaskDAO.class, false, taskDAO -> taskDAO.readTasksByUser(user.getId()));
+        return daoUtil.callOnDAO(TaskDAO.class, taskDAO -> taskDAO.readByUser(user.getId()));
     }
 
-    public List<Task> readHierarchy(Integer parentId) throws PersistException {
-        return DAOHelper.callOnDAO(TaskDAO.class, false, taskDAO -> {
-            Task parent = taskDAO.read(parentId);
-            checkOwner(parent);
-            return taskDAO.readStructure(parentId);
+    public Task read(Integer id) throws PersistException {
+        return daoUtil.callOnDAO(TaskDAO.class, taskDAO -> {
+            Task task = taskDAO.read(id);
+            checkOwner(task);
+            return task;
         });
     }
 
     public Task create(Task task) throws PersistException {
-        task.setTemplate(false);
-        task.setUserId(user.getId());
-        return DAOHelper.callOnDAO(TaskDAO.class, true, taskDAO -> {
-            if (task.getParentId() != null) {
-                Task parent = taskDAO.read(task.getParentId());
+        task.setUser(user);
+        return daoUtil.callOnDAO(TaskDAO.class, taskDAO -> {
+            if (task.getParent() != null) {
+                Task parent = taskDAO.read(task.getParent().getId());
                 checkOwner(parent);
             }
             return taskDAO.create(task);
@@ -46,48 +45,47 @@ public class TaskService {
     }
 
     public Task createFromTemplate(Integer templateId) throws PersistException {
-        return DAOHelper.callOnDAO(TaskDAO.class, true, taskDAO -> {
-            List<Task> templates = taskDAO.readStructure(templateId);
-            if (templates.isEmpty()) {
+        return daoUtil.callOnContext(session -> {
+            TemplateDAO templateDAO = DAOProvider.getDAOFactory().getDao(session, TemplateDAO.class);
+            TaskDAO taskDAO = DAOProvider.getDAOFactory().getDao(session, TaskDAO.class);
+            Template template = templateDAO.read(templateId);
+            if (template == null) {
                 throw new PersistException(String.format(TEMPLATE_S_IS_NOT_FOUND_ERROR, templateId));
             }
-            return createFromTemplatesRecursive(templates, null, null, taskDAO);
+            Task task = createTaskFromTemplate(template, user);
+            return taskDAO.create(task);
         });
     }
 
-    private Task createFromTemplatesRecursive(List<Task> templates, Integer templateId, Integer taskId, TaskDAO taskDAO) throws PersistException {
-        Task task = null;
-        for (Task template : getChildren(templates, templateId)) {
-            template.setTemplate(false);
-            template.setUserId(user.getId());
-            template.setParentId(taskId);
-            task = taskDAO.create(template);
-            createFromTemplatesRecursive(templates, template.getId(), task.getId(), taskDAO);
-        }
+    private Task createTaskFromTemplate(Template template, User user) {
+        Task task = new Task();
+        task.setUser(user);
+        task.setOrigin(template);
+        task.setName(template.getName());
+        task.setDescription(template.getDescription());
+        task.setOrder(template.getOrder());
+        template.getChildren().forEach(childTemplate ->
+                task.getChildren().add(createTaskFromTemplate(childTemplate, user)));
         return task;
     }
 
-    private List<Task> getChildren(List<Task> templates, Integer parentId) {
-        return templates.stream().filter(task -> Objects.equals(parentId, task.getParentId())).collect(Collectors.toList());
-    }
-
     public void delete(Integer taskId) throws PersistException {
-        DAOHelper.executeOnDAO(TaskDAO.class, true, taskDAO -> {
+        daoUtil.executeOnDAO(TaskDAO.class, taskDAO -> {
             Task task = taskDAO.read(taskId);
             checkOwner(task);
-            taskDAO.deleteStructure(taskId);
+            taskDAO.delete(taskId);
         });
     }
 
     public void update(Task task) throws PersistException {
-        DAOHelper.executeOnDAO(TaskDAO.class, true, taskDAO -> {
+        daoUtil.executeOnDAO(TaskDAO.class, taskDAO -> {
             checkOwner(task);
             taskDAO.update(task);
         });
     }
 
     private void checkOwner(Task task) {
-        if (!Objects.equals(task.getUserId(), user.getId())) {
+        if (!Objects.equals(task.getUser(), user)) {
             throw new SecurityException(ACCESS_ERROR);
         }
     }

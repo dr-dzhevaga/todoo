@@ -1,28 +1,65 @@
 package ru.todoo.domain;
 
-import ru.todoo.dao.generic.Identified;
+import ru.todoo.dao.generic.Identifiable;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Created by Dmitriy Dzhevaga on 28.10.2015.
+ * Created by Dmitriy Dzhevaga on 19.12.2015.
  */
-public class User implements Identified<Integer> {
+@Entity
+@Table(name = "USERS", schema = "APP", catalog = "")
+public class User implements Serializable, Identifiable<Integer> {
     private Integer id;
     private String login;
     private String password;
     private Timestamp created;
     private Timestamp modified;
+    private Set<String> roles = new HashSet<>();
 
-    @Override
+    @Id
+    @GeneratedValue
+    @Column(name = "ID", insertable = false, updatable = false)
     public Integer getId() {
         return id;
     }
 
-    protected void setId(Integer id) {
+    private void setId(Integer id) {
         this.id = id;
     }
 
+    @Basic
+    @Column(name = "CREATED", insertable = false, updatable = false)
+    public Timestamp getCreated() {
+        return created;
+    }
+
+    private void setCreated(Timestamp created) {
+        this.created = created;
+    }
+
+    @Basic
+    @Column(name = "MODIFIED", updatable = false)
+    public Timestamp getModified() {
+        return modified;
+    }
+
+    private void setModified(Timestamp modified) {
+        this.modified = modified;
+    }
+
+    @PreUpdate
+    private void updateModified() {
+        this.modified = new Timestamp(Calendar.getInstance().getTime().getTime());
+    }
+
+    @Basic
+    @Column(name = "LOGIN")
     public String getLogin() {
         return login;
     }
@@ -31,6 +68,8 @@ public class User implements Identified<Integer> {
         this.login = login;
     }
 
+    @Basic
+    @Column(name = "PASSWORD")
     public String getPassword() {
         return password;
     }
@@ -39,19 +78,39 @@ public class User implements Identified<Integer> {
         this.password = password;
     }
 
-    public Timestamp getCreated() {
-        return created;
+    @ElementCollection
+    @CollectionTable(name = "ROLES", joinColumns = @JoinColumn(name = "LOGIN", referencedColumnName = "LOGIN"))
+    @Column(name = "ROLE")
+    public Set<String> getRoles() {
+        return roles;
     }
 
-    protected void setCreated(Timestamp created) {
-        this.created = created;
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 
-    public Timestamp getModified() {
-        return modified;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User that = (User) o;
+
+        if (id != that.id) return false;
+        if (created != null ? !created.equals(that.created) : that.created != null) return false;
+        if (modified != null ? !modified.equals(that.modified) : that.modified != null) return false;
+        if (login != null ? !login.equals(that.login) : that.login != null) return false;
+        return !(password != null ? !password.equals(that.password) : that.password != null);
+
     }
 
-    public void setModified(Timestamp modified) {
-        this.modified = modified;
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (created != null ? created.hashCode() : 0);
+        result = 31 * result + (modified != null ? modified.hashCode() : 0);
+        result = 31 * result + (login != null ? login.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        return result;
     }
 }

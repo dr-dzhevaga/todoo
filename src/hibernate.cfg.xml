@@ -10,8 +10,8 @@
         <property name="hibernate.current_session_context_class">thread</property>
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hbm2ddl.auto">update</property> -->
-        <mapping class="ru.todoo.domain.CategoryEntity"/>
-        <mapping class="ru.todoo.domain.TaskEntity"/>
-        <mapping class="ru.todoo.domain.UserEntity"/>
+        <mapping class="ru.todoo.domain.Category"/>
+        <mapping class="ru.todoo.domain.AbstractTask"/>
+        <mapping class="ru.todoo.domain.User"/>
     </session-factory>
 </hibernate-configuration>

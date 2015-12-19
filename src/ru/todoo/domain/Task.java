@@ -1,125 +1,57 @@
 package ru.todoo.domain;
 
-import ru.todoo.dao.generic.Identified;
-import ru.todoo.dao.generic.Structured;
-
-import java.sql.Timestamp;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by Dmitriy Dzhevaga on 28.10.2015.
+ * Created by Dmitriy Dzhevaga on 19.12.2015.
  */
-public class Task implements Identified<Integer>, Structured<Integer> {
-    private Integer id;
-    private Integer parentId;
-    private Integer order;
-    private String name;
-    private String description;
-    private boolean template;
-    private Integer categoryId;
-    private Integer userId;
-    private Integer originId;
-    private boolean completed;
-    private Timestamp created;
-    private Timestamp modified;
+@Entity
+@DiscriminatorValue(value = "0")
+public class Task extends AbstractTask {
+    private Template origin;
+    private boolean isCompleted;
+    private List<Task> children = new ArrayList<>();
+    private Task parent;
 
-    @Override
-    public Integer getId() {
-        return id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(updatable = false)
+    public Template getOrigin() {
+        return origin;
     }
 
-    protected void setId(Integer id) {
-        this.id = id;
+    public void setOrigin(Template origin) {
+        this.origin = origin;
     }
 
-    @Override
-    public Integer getParentId() {
-        return parentId;
-    }
-
-    @Override
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
-    }
-
-    @Override
-    public Integer getOrder() {
-        return order;
-    }
-
-    @Override
-    public void setOrder(Integer order) {
-        this.order = order;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isTemplate() {
-        return template;
-    }
-
-    public void setTemplate(boolean template) {
-        this.template = template;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getOriginId() {
-        return originId;
-    }
-
-    public void setOriginId(Integer originId) {
-        this.originId = originId;
-    }
-
+    @Basic
+    @Column(name = "IS_COMPLETED")
     public boolean isCompleted() {
-        return completed;
+        return isCompleted;
     }
 
     public void setCompleted(boolean completed) {
-        this.completed = completed;
+        isCompleted = completed;
     }
 
-    public Integer getCategoryId() {
-        return categoryId;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "PARENT_ID")
+    public List<Task> getChildren() {
+        return children;
     }
 
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
+    private void setChildren(List<Task> children) {
+        this.children = children;
     }
 
-    public Timestamp getCreated() {
-        return created;
+    @ManyToOne(fetch = FetchType.LAZY)
+    public Task getParent() {
+        return parent;
     }
 
-    protected void setCreated(Timestamp created) {
-        this.created = created;
+    public void setParent(Task parent) {
+        this.parent = parent;
     }
 
-    public Timestamp getModified() {
-        return modified;
-    }
-
-    public void setModified(Timestamp modified) {
-        this.modified = modified;
-    }
 }

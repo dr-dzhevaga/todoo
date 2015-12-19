@@ -1,10 +1,13 @@
 package ru.todoo.service;
 
+import ru.todoo.dao.DAOProvider;
+import ru.todoo.dao.DAOUtil;
 import ru.todoo.dao.PersistException;
-import ru.todoo.dao.TaskDAO;
-import ru.todoo.domain.Task;
+import ru.todoo.dao.TemplateDAO;
+import ru.todoo.dao.generic.GenericDAO;
+import ru.todoo.domain.Template;
+import ru.todoo.domain.User;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,58 +15,59 @@ import java.util.List;
  * Created by Dmitriy Dzhevaga on 29.11.2015.
  */
 public class TemplateService {
-    public List<Task> readAll() throws PersistException {
-        return DAOHelper.callOnDAO(TaskDAO.class, false, TaskDAO::readAllTaskTemplates);
+    private static final DAOUtil daoUtil = DAOProvider.getDAOUtil();
+
+    public List<Template> readAll() throws PersistException {
+        return daoUtil.callOnDAO(TemplateDAO.class, GenericDAO::readAll);
     }
 
-    public List<Task> readByCategory(Integer categoryId) throws PersistException {
-        return DAOHelper.callOnDAO(TaskDAO.class, false, taskDAO -> taskDAO.readTaskTemplatesByCategory(categoryId));
+    public List<Template> readByCategory(Integer categoryId) throws PersistException {
+        return daoUtil.callOnDAO(TemplateDAO.class, templateDAO -> templateDAO.readByCategory(categoryId));
     }
 
-    public List<Task> readPopular() throws PersistException {
-        return DAOHelper.callOnDAO(TaskDAO.class, false, TaskDAO::readPopularTaskTemplates);
+    public List<Template> readPopular() throws PersistException {
+        return daoUtil.callOnDAO(TemplateDAO.class, TemplateDAO::readPopular);
     }
 
-    public List<Task> readHierarchy(Integer parentId) throws PersistException {
-        return DAOHelper.callOnDAO(TaskDAO.class, false, taskDAO -> taskDAO.readStructure(parentId));
+    public Template read(Integer id) throws PersistException {
+        return daoUtil.callOnDAO(TemplateDAO.class, templateDAO -> templateDAO.read(id));
     }
 
-    public Task create(Task task) throws PersistException {
-        task.setTemplate(true);
-        return DAOHelper.callOnDAO(TaskDAO.class, true, taskDAO -> taskDAO.create(task));
+    public Template create(Template template) throws PersistException {
+        return daoUtil.callOnDAO(TemplateDAO.class, templateDAO -> templateDAO.create(template));
     }
 
-    public List<Task> createFromText(String text, Integer parentId, Integer userId) throws PersistException {
-        String[] steps = Arrays.stream(text.split("\\r?\\n")).filter(line -> !line.isEmpty()).toArray(String[]::new);
-        List<Task> result = new ArrayList<>();
-        DAOHelper.executeOnDAO(TaskDAO.class, true, taskDAO -> {
-            Integer secondLevelParentId = parentId;
+    public Template createStepsFromText(String text, Integer rootId, User user) throws PersistException {
+        return daoUtil.callOnDAO(TemplateDAO.class, taskDAO -> {
+            String[] steps = Arrays.stream(text.split("\\r?\\n")).filter(line -> !line.isEmpty()).toArray(String[]::new);
+            Template root = taskDAO.read(rootId);
+            Template node = root;
             for (String step : steps) {
-                boolean isFirstLevelChild = !Character.isWhitespace(step.charAt(0));
+                boolean isLeaf = Character.isWhitespace(step.charAt(0));
                 String[] items = step.trim().split("&&");
                 String name = items[0];
                 String description = items.length > 1 ? items[1] : "";
-                Task template = new Task();
-                template.setUserId(userId);
-                template.setTemplate(true);
-                template.setParentId(isFirstLevelChild ? parentId : secondLevelParentId);
+                Template template = new Template();
+                template.setUser(user);
                 template.setName(name);
                 template.setDescription(description);
-                template = taskDAO.create(template);
-                result.add(template);
-                if (isFirstLevelChild) {
-                    secondLevelParentId = template.getId();
+                if (!isLeaf) {
+                    root.getChildren().add(template);
+                    node = template;
+                } else {
+                    node.getChildren().add(template);
                 }
             }
+            taskDAO.update(root);
+            return root;
         });
-        return result;
     }
 
-    public void delete(Integer taskId) throws PersistException {
-        DAOHelper.executeOnDAO(TaskDAO.class, true, taskDAO -> taskDAO.deleteStructure(taskId));
+    public void delete(Integer id) throws PersistException {
+        daoUtil.executeOnDAO(TemplateDAO.class, templateDAO -> templateDAO.delete(id));
     }
 
-    public void update(Task task) throws PersistException {
-        DAOHelper.executeOnDAO(TaskDAO.class, true, taskDAO -> taskDAO.update(task));
+    public void update(Template template) throws PersistException {
+        daoUtil.executeOnDAO(TemplateDAO.class, templateDAO -> templateDAO.update(template));
     }
 }

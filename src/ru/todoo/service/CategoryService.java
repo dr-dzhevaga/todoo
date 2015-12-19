@@ -1,6 +1,7 @@
 package ru.todoo.service;
 
 import ru.todoo.dao.CategoryDAO;
+import ru.todoo.dao.DAOProvider;
 import ru.todoo.dao.PersistException;
 import ru.todoo.dao.generic.GenericDAO;
 import ru.todoo.domain.Category;
@@ -12,22 +13,22 @@ import java.util.List;
  */
 public class CategoryService {
     public Category create(Category category) throws PersistException {
-        return DAOHelper.callOnDAO(CategoryDAO.class, false, categoryDAO -> categoryDAO.create(category));
+        return DAOProvider.getDAOUtil().callOnDAO(CategoryDAO.class, categoryDAO -> categoryDAO.create(category));
     }
 
     public Category read(Integer categoryId) throws PersistException {
-        return DAOHelper.callOnDAO(CategoryDAO.class, false, categoryDAO -> categoryDAO.read(categoryId));
+        return DAOProvider.getDAOUtil().callOnDAO(CategoryDAO.class, categoryDAO -> categoryDAO.read(categoryId));
     }
 
     public List<Category> readAll() throws PersistException {
-        return DAOHelper.callOnDAO(CategoryDAO.class, false, GenericDAO::readAll);
+        return DAOProvider.getDAOUtil().callOnDAO(CategoryDAO.class, GenericDAO::readAll);
     }
 
     public void delete(Integer categoryId) throws PersistException {
-        DAOHelper.executeOnDAO(CategoryDAO.class, false, categoryDAO -> categoryDAO.delete(categoryId));
+        DAOProvider.getDAOUtil().executeOnDAO(CategoryDAO.class, categoryDAO -> categoryDAO.delete(categoryId));
     }
 
     public void update(Category category) throws PersistException {
-        DAOHelper.executeOnDAO(CategoryDAO.class, false, categoryDAO -> categoryDAO.update(category));
+        DAOProvider.getDAOUtil().executeOnDAO(CategoryDAO.class, categoryDAO -> categoryDAO.update(category));
     }
 }

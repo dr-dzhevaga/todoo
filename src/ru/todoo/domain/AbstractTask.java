@@ -1,39 +1,36 @@
 package ru.todoo.domain;
 
+import ru.todoo.dao.generic.Identifiable;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.12.2015.
  */
 @Entity
-@Table(name = "TASKS", schema = "APP", catalog = "")
-public class TaskEntity {
-    private int id;
+@Table(name = "TASKS", schema = "APP")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "IS_TEMPLATE", discriminatorType = DiscriminatorType.INTEGER)
+public abstract class AbstractTask implements Identifiable<Integer> {
+    private Integer id;
+    private Boolean isTemplate;
     private Integer order;
     private String name;
     private String description;
-    private UserEntity user;
-    private Boolean isTemplate;
-    private CategoryEntity category;
-    private TaskEntity origin;
-    private boolean isCompleted;
+    private User user;
     private Timestamp created;
     private Timestamp modified;
-    private List<TaskEntity> children = new ArrayList<>();
-    private TaskEntity parent;
 
     @Id
     @GeneratedValue
     @Column(name = "ID", insertable = false, updatable = false)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    private void setId(int id) {
+    private void setId(Integer id) {
         this.id = id;
     }
 
@@ -70,22 +67,12 @@ public class TaskEntity {
 
     @Basic
     @Column(name = "IS_TEMPLATE", updatable = false)
-    public Boolean getTemplate() {
+    private Boolean getTemplate() {
         return isTemplate;
     }
 
     private void setTemplate(Boolean template) {
         isTemplate = template;
-    }
-
-    @Basic
-    @Column(name = "IS_COMPLETED")
-    public boolean isCompleted() {
-        return isCompleted;
-    }
-
-    public void setCompleted(boolean completed) {
-        isCompleted = completed;
     }
 
     @Basic
@@ -113,52 +100,14 @@ public class TaskEntity {
         this.modified = new Timestamp(Calendar.getInstance().getTime().getTime());
     }
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "PARENT_ID")
-    public List<TaskEntity> getChildren() {
-        return children;
-    }
-
-    private void setChildren(List<TaskEntity> children) {
-        this.children = children;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    public TaskEntity getParent() {
-        return parent;
-    }
-
-    public void setParent(TaskEntity parent) {
-        this.parent = parent;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    public CategoryEntity getCategory() {
-        return category;
-    }
-
-    public void setCategory(CategoryEntity category) {
-        this.category = category;
-    }
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(updatable = false)
-    public UserEntity getUser() {
+    public User getUser() {
         return user;
     }
 
-    private void setUser(UserEntity user) {
+    public void setUser(User user) {
         this.user = user;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(updatable = false)
-    public TaskEntity getOrigin() {
-        return origin;
-    }
-
-    private void setOrigin(TaskEntity origin) {
-        this.origin = origin;
     }
 
     @Override
@@ -166,10 +115,8 @@ public class TaskEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TaskEntity that = (TaskEntity) o;
-
+        AbstractTask that = (AbstractTask) o;
         if (id != that.id) return false;
-        if (isCompleted != that.isCompleted) return false;
         if (order != null ? !order.equals(that.order) : that.order != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
@@ -186,7 +133,6 @@ public class TaskEntity {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (isTemplate != null ? isTemplate.hashCode() : 0);
-        result = 31 * result + (isCompleted ? 1 : 0);
         result = 31 * result + (created != null ? created.hashCode() : 0);
         result = 31 * result + (modified != null ? modified.hashCode() : 0);
         return result;
