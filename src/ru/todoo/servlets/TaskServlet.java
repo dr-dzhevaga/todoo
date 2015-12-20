@@ -2,7 +2,7 @@ package ru.todoo.servlets;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import ru.todoo.domain.Task;
+import ru.todoo.domain.dto.TaskDTO;
 import ru.todoo.service.ServiceProvider;
 import ru.todoo.service.TaskService;
 import ru.todoo.utils.JsonUtil;
@@ -35,15 +35,15 @@ public class TaskServlet extends HttpServlet {
             TaskService taskService = ServiceProvider.getTaskService(username);
             switch (filter) {
                 case "parent":
-                    Task task = taskService.read(Integer.valueOf(id));
+                    TaskDTO task = taskService.read(Integer.valueOf(id));
                     taskArray = JsonUtil.toJsonArray(task);
                     break;
                 default:
-                    List<Task> tasks = taskService.readAll();
+                    List<TaskDTO> tasks = taskService.readAll();
                     taskArray = JsonUtil.toJsonArray(tasks);
                     break;
             }
-            return JsonUtil.getBuilder().add("data", taskArray).build();
+            return taskArray;
         });
     }
 
@@ -52,17 +52,17 @@ public class TaskServlet extends HttpServlet {
         String templateId = request.getParameter("templateId");
         String username = request.getRemoteUser();
         ServletUtil.process(response, () -> {
-            Task task;
+            TaskDTO task;
             TaskService taskService = ServiceProvider.getTaskService(username);
             if (templateId == null) {
                 String json = ServletUtil.readContent(request);
-                task = JsonUtil.toObject(json, Task.class);
+                task = JsonUtil.toObject(json, TaskDTO.class);
                 task = taskService.create(task);
             } else {
                 task = taskService.createFromTemplate(Integer.valueOf(templateId));
             }
             JsonObject taskObject = JsonUtil.toJsonObject(task);
-            return JsonUtil.getBuilder().add("data", taskObject).build();
+            return taskObject;
         });
     }
 
@@ -81,7 +81,7 @@ public class TaskServlet extends HttpServlet {
         String username = request.getRemoteUser();
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
-            Task task = JsonUtil.toObject(json, Task.class);
+            TaskDTO task = JsonUtil.toObject(json, TaskDTO.class);
             ServiceProvider.getTaskService(username).update(task);
             return JsonUtil.getBuilder().addProperty("message", "Task is updated").build();
         });

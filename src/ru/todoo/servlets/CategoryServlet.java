@@ -1,8 +1,7 @@
 package ru.todoo.servlets;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import ru.todoo.domain.Category;
+import ru.todoo.domain.dto.CategoryDTO;
 import ru.todoo.service.ServiceProvider;
 import ru.todoo.utils.JsonUtil;
 import ru.todoo.utils.ServletUtil;
@@ -45,12 +44,12 @@ public class CategoryServlet extends HttpServlet {
                     addProperty("filter", "popular").
                     build()
             );
-            List<Category> categoriesList = ServiceProvider.getCategoryService().readAll();
+            List<CategoryDTO> categoriesList = ServiceProvider.getCategoryService().readAll();
             categoriesList.forEach(category -> categoriesArray.add(JsonUtil.getBuilder(category).
                     addProperty("filter", "category").
                     build())
             );
-            return JsonUtil.getBuilder().add("data", categoriesArray).build();
+            return categoriesArray;
         });
     }
 
@@ -58,10 +57,9 @@ public class CategoryServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
-            Category category = JsonUtil.toObject(json, Category.class);
+            CategoryDTO category = JsonUtil.toObject(json, CategoryDTO.class);
             category = ServiceProvider.getCategoryService().create(category);
-            JsonObject categoryObject = JsonUtil.getBuilder(category).addProperty("filter", "category").build();
-            return JsonUtil.getBuilder().add("data", categoryObject).build();
+            return JsonUtil.getBuilder(category).addProperty("filter", "category").build();
         });
     }
 
@@ -78,7 +76,7 @@ public class CategoryServlet extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
-            Category category = JsonUtil.toObject(json, Category.class);
+            CategoryDTO category = JsonUtil.toObject(json, CategoryDTO.class);
             ServiceProvider.getCategoryService().update(category);
             return JsonUtil.getBuilder().addProperty("message", "Category is updated").build();
         });

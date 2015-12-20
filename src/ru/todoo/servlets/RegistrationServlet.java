@@ -1,7 +1,7 @@
 package ru.todoo.servlets;
 
 import ru.todoo.dao.PersistException;
-import ru.todoo.domain.User;
+import ru.todoo.domain.dto.UserDTO;
 import ru.todoo.service.ServiceProvider;
 
 import javax.servlet.ServletException;
@@ -21,7 +21,7 @@ public class RegistrationServlet extends HttpServlet {
         String login = request.getParameter("username");
         String password = request.getParameter("password");
         try {
-            User user = new User();
+            UserDTO user = new UserDTO();
             user.setLogin(login);
             user.setPassword(password);
             ServiceProvider.getUserService().create(user);

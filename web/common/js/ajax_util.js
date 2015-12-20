@@ -1,39 +1,39 @@
 var ajax_util = {
-    getJson: function (url, parameters, onSuccess) {
-        webix.ajax(url, parameters, {
+    getJson: function (url, queryParameters, onSuccess) {
+        webix.ajax(url, queryParameters, {
             success: function (text) {
                 onSuccess(text);
             },
-            error: function (text, data) {
-                ajax_util.showError(data);
+            error: function (text) {
+                ajax_util.showError(text);
             }
         });
     },
-    postJson: function (url, content, onSuccess) {
+    postObject: function (url, object, onSuccess) {
         webix.ajax().
         header({
             "Content-Type": "application/json;charset=utf-8"
         }).
-        post(url, JSON.stringify(content), {
+        post(url, JSON.stringify(object), {
             success: function (text, data) {
                 onSuccess(data);
             },
-            error: function (text, data) {
-                ajax_util.showError(data);
+            error: function (text) {
+                ajax_util.showError(text);
             }
         })
     },
-    putJson: function (url, content, onSuccess) {
+    putObject: function (url, object, onSuccess) {
         webix.ajax().
         header({
             "Content-Type": "application/json;charset=utf-8"
         }).
-        put(url, JSON.stringify(content), {
+        put(url, JSON.stringify(object), {
             success: function (text, data) {
                 onSuccess(data);
             },
-            error: function (text, data) {
-                ajax_util.showError(data);
+            error: function (text) {
+                ajax_util.showError(text);
             }
         })
     },
@@ -43,12 +43,12 @@ var ajax_util = {
             success: function (text, data) {
                 onSuccess(data);
             },
-            error: function (text, data) {
-                ajax_util.showError(data);
+            error: function (text) {
+                ajax_util.showError(text);
             }
         });
     },
-    showError: function (data) {
-        webix.message({type: "error", text: data.json().message, expire: 10000});
+    showError: function (text) {
+        webix.message({type: "error", text: text, expire: 10000});
     }
 };

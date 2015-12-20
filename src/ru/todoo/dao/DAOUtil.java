@@ -11,11 +11,11 @@ public interface DAOUtil {
 
     <R> R callOnContext(ThrowingFunction<Object, R, PersistException> function) throws PersistException;
 
-    default <T> void executeOnDAO(Class<T> daoClass, ThrowingConsumer<T, PersistException> consumer) throws PersistException {
+    default <T> void execute(Class<T> daoClass, ThrowingConsumer<T, PersistException> consumer) throws PersistException {
         executeOnContext(context -> consumer.accept(DAOProvider.getDAOFactory().getDao(context, daoClass)));
     }
 
-    default <R, T> R callOnDAO(Class<T> daoClass, ThrowingFunction<T, R, PersistException> function) throws PersistException {
+    default <R, T> R call(Class<T> daoClass, ThrowingFunction<T, R, PersistException> function) throws PersistException {
         return callOnContext(context -> function.apply(DAOProvider.getDAOFactory().getDao(context, daoClass)));
     }
 }

@@ -17,8 +17,8 @@ public class HibernateDAOFactory implements DAOFactory {
     static {
         constructors.put(UserDAO.class, HibernateUserDAO::new);
         constructors.put(CategoryDAO.class, HibernateCategoryDAO::new);
-        constructors.put(TemplateDAO.class, HibernateUserDAO::new);
-        constructors.put(TaskDAO.class, HibernateUserDAO::new);
+        constructors.put(TemplateDAO.class, HibernateTemplateDAO::new);
+        constructors.put(TaskDAO.class, HibernateTaskDAO::new);
     }
 
     public static HibernateDAOFactory getInstance() {

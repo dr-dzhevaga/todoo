@@ -1,53 +1,78 @@
 package ru.todoo.service;
 
-import ru.todoo.dao.DAOProvider;
-import ru.todoo.dao.DAOUtil;
-import ru.todoo.dao.PersistException;
-import ru.todoo.dao.TemplateDAO;
-import ru.todoo.dao.generic.GenericDAO;
-import ru.todoo.domain.Template;
-import ru.todoo.domain.User;
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
+import ru.todoo.dao.*;
+import ru.todoo.domain.dto.TemplateDTO;
+import ru.todoo.domain.entity.TemplateEntity;
+import ru.todoo.domain.entity.UserEntity;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Dmitriy Dzhevaga on 29.11.2015.
  */
 public class TemplateService {
     private static final DAOUtil daoUtil = DAOProvider.getDAOUtil();
+    private static final Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
 
-    public List<Template> readAll() throws PersistException {
-        return daoUtil.callOnDAO(TemplateDAO.class, GenericDAO::readAll);
+    public List<TemplateDTO> readAll() throws PersistException {
+        return daoUtil.call(TemplateDAO.class, templateDAO -> {
+            List<TemplateEntity> templates = templateDAO.readAllRoot();
+            return templates.stream().
+                    map(template -> mapper.map(template, TemplateDTO.class, "templateWithoutChildren")).
+                    collect(Collectors.toList());
+        });
     }
 
-    public List<Template> readByCategory(Integer categoryId) throws PersistException {
-        return daoUtil.callOnDAO(TemplateDAO.class, templateDAO -> templateDAO.readByCategory(categoryId));
+    public List<TemplateDTO> readByCategory(Integer categoryId) throws PersistException {
+        return daoUtil.call(TemplateDAO.class, templateDAO -> {
+            List<TemplateEntity> templates = templateDAO.readRootByCategory(categoryId);
+            return templates.stream().
+                    map(template -> mapper.map(template, TemplateDTO.class, "templateWithoutChildren")).
+                    collect(Collectors.toList());
+        });
     }
 
-    public List<Template> readPopular() throws PersistException {
-        return daoUtil.callOnDAO(TemplateDAO.class, TemplateDAO::readPopular);
+    public List<TemplateDTO> readPopular() throws PersistException {
+        return daoUtil.call(TemplateDAO.class, templateDAO -> {
+            List<TemplateEntity> templates = templateDAO.readPopularRoot();
+            return templates.stream().
+                    map(template -> mapper.map(template, TemplateDTO.class, "templateWithoutChildren")).
+                    collect(Collectors.toList());
+        });
     }
 
-    public Template read(Integer id) throws PersistException {
-        return daoUtil.callOnDAO(TemplateDAO.class, templateDAO -> templateDAO.read(id));
+    public TemplateDTO read(Integer id) throws PersistException {
+        return daoUtil.call(TemplateDAO.class, templateDAO -> {
+            TemplateEntity template = templateDAO.read(id);
+            return mapper.map(template, TemplateDTO.class);
+        });
     }
 
-    public Template create(Template template) throws PersistException {
-        return daoUtil.callOnDAO(TemplateDAO.class, templateDAO -> templateDAO.create(template));
+    public TemplateDTO create(TemplateDTO template) throws PersistException {
+        return daoUtil.call(TemplateDAO.class, templateDAO -> {
+            TemplateEntity templateEntity = templateDAO.create(mapper.map(template, TemplateEntity.class));
+            return mapper.map(templateEntity, TemplateDTO.class);
+        });
     }
 
-    public Template createStepsFromText(String text, Integer rootId, User user) throws PersistException {
-        return daoUtil.callOnDAO(TemplateDAO.class, taskDAO -> {
+    public TemplateEntity createStepsFromText(String text, Integer rootId, Integer userId) throws PersistException {
+        return daoUtil.callOnContext(session -> {
             String[] steps = Arrays.stream(text.split("\\r?\\n")).filter(line -> !line.isEmpty()).toArray(String[]::new);
-            Template root = taskDAO.read(rootId);
-            Template node = root;
+            UserDAO userDAO = DAOProvider.getDAOFactory().getDao(session, UserDAO.class);
+            UserEntity user = userDAO.read(userId);
+            TemplateDAO templateDAO = DAOProvider.getDAOFactory().getDao(session, TemplateDAO.class);
+            TemplateEntity root = templateDAO.read(rootId);
+            TemplateEntity node = root;
             for (String step : steps) {
                 boolean isLeaf = Character.isWhitespace(step.charAt(0));
                 String[] items = step.trim().split("&&");
                 String name = items[0];
                 String description = items.length > 1 ? items[1] : "";
-                Template template = new Template();
+                TemplateEntity template = new TemplateEntity();
                 template.setUser(user);
                 template.setName(name);
                 template.setDescription(description);
@@ -58,16 +83,17 @@ public class TemplateService {
                     node.getChildren().add(template);
                 }
             }
-            taskDAO.update(root);
+            templateDAO.update(root);
             return root;
         });
     }
 
     public void delete(Integer id) throws PersistException {
-        daoUtil.executeOnDAO(TemplateDAO.class, templateDAO -> templateDAO.delete(id));
+        daoUtil.execute(TemplateDAO.class, templateDAO -> templateDAO.delete(id));
     }
 
-    public void update(Template template) throws PersistException {
-        daoUtil.executeOnDAO(TemplateDAO.class, templateDAO -> templateDAO.update(template));
+    public void update(TemplateDTO template) throws PersistException {
+        daoUtil.execute(TemplateDAO.class, templateDAO ->
+                templateDAO.update(mapper.map(template, TemplateEntity.class)));
     }
 }

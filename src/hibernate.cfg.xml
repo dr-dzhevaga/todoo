@@ -8,10 +8,15 @@
         <property name="connection.url">jdbc:derby://localhost:1527/../../db-derby-10.12.1.1-bin/db/todoo</property>
         <property name="connection.driver_class">org.apache.derby.jdbc.ClientDriver</property>
         <property name="hibernate.current_session_context_class">thread</property>
-        <!-- DB schema will be updated if needed -->
-        <!-- <property name="hbm2ddl.auto">update</property> -->
-        <mapping class="ru.todoo.domain.Category"/>
-        <mapping class="ru.todoo.domain.AbstractTask"/>
-        <mapping class="ru.todoo.domain.User"/>
+
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+        <property name="use_sql_comments">true</property>
+
+        <mapping class="ru.todoo.domain.entity.CategoryEntity"/>
+        <mapping class="ru.todoo.domain.entity.AbstractTaskEntity"/>
+        <mapping class="ru.todoo.domain.entity.TaskEntity"/>
+        <mapping class="ru.todoo.domain.entity.TemplateEntity"/>
+        <mapping class="ru.todoo.domain.entity.UserEntity"/>
     </session-factory>
 </hibernate-configuration>

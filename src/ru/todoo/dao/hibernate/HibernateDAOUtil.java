@@ -1,5 +1,7 @@
 package ru.todoo.dao.hibernate;
 
+import org.hibernate.Session;
+import ru.todoo.dao.DAOProvider;
 import ru.todoo.dao.DAOUtil;
 import ru.todoo.dao.PersistException;
 
@@ -21,11 +23,36 @@ public class HibernateDAOUtil implements DAOUtil {
 
     @Override
     public void executeOnContext(ThrowingConsumer<Object, PersistException> consumer) throws PersistException {
-
+        Session session = null;
+        try {
+            session = (Session) DAOProvider.getDAOFactory().getContext();
+            session.beginTransaction();
+            consumer.accept(session);
+            session.flush();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+            throw new PersistException(e, e.getMessage());
+        }
     }
 
     @Override
     public <R> R callOnContext(ThrowingFunction<Object, R, PersistException> function) throws PersistException {
-        return null;
+        Session session = null;
+        try {
+            session = (Session) DAOProvider.getDAOFactory().getContext();
+            session.beginTransaction();
+            R result = function.apply(session);
+            session.flush();
+            session.getTransaction().commit();
+            return result;
+        } catch (Exception e) {
+            if (session != null) {
+                session.getTransaction().rollback();
+            }
+            throw new PersistException(e, e.getMessage());
+        }
     }
 }

@@ -1,4 +1,4 @@
-package ru.todoo.domain;
+package ru.todoo.domain.entity;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,36 +9,36 @@ import java.util.List;
  */
 @Entity
 @DiscriminatorValue(value = "1")
-public class Template extends AbstractTask {
-    private Category category;
-    private List<Template> children = new ArrayList<>();
-    private Template parent;
+public class TemplateEntity extends AbstractTaskEntity {
+    private CategoryEntity category;
+    private List<TemplateEntity> children = new ArrayList<>();
+    private TemplateEntity parent;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    public Category getCategory() {
+    public CategoryEntity getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CategoryEntity category) {
         this.category = category;
     }
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "PARENT_ID")
-    public List<Template> getChildren() {
+    public List<TemplateEntity> getChildren() {
         return children;
     }
 
-    private void setChildren(List<Template> children) {
+    public void setChildren(List<TemplateEntity> children) {
         this.children = children;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    public Template getParent() {
+    public TemplateEntity getParent() {
         return parent;
     }
 
-    public void setParent(Template parent) {
+    public void setParent(TemplateEntity parent) {
         this.parent = parent;
     }
 }

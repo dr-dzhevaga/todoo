@@ -1,8 +1,8 @@
 package ru.todoo.utils;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import ru.todoo.dao.PersistException;
-import ru.todoo.domain.User;
+import ru.todoo.domain.dto.UserDTO;
 import ru.todoo.service.ServiceProvider;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,20 +26,19 @@ public class ServletUtil {
         return Integer.valueOf(request.getPathInfo().replaceAll("/", ""));
     }
 
-    public static void process(HttpServletResponse response, ThrowingCallable<JsonObject, PersistException> callable)
+    public static void process(HttpServletResponse response, ThrowingCallable<JsonElement, Exception> callable)
             throws IOException {
-        response.setContentType("application/json;charset=utf-8");
-        JsonObject result;
         try {
-            result = callable.call();
-        } catch (PersistException e) {
-            result = JsonUtil.getBuilder().addProperty("message", e.getMessage()).build();
+            JsonElement result = callable.call();
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().print(result.toString());
+        } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().print(e.toString());
         }
-        response.getWriter().print(result.toString());
     }
 
-    public static User getUser(HttpServletRequest request) throws PersistException {
+    public static UserDTO getUser(HttpServletRequest request) throws PersistException {
         return ServiceProvider.getUserService().readByLogin(request.getRemoteUser());
     }
 }

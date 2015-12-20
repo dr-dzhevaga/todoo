@@ -1,4 +1,4 @@
-package ru.todoo.domain;
+package ru.todoo.domain.entity;
 
 import ru.todoo.dao.generic.Identifiable;
 
@@ -13,24 +13,24 @@ import java.util.Calendar;
 @Table(name = "TASKS", schema = "APP")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "IS_TEMPLATE", discriminatorType = DiscriminatorType.INTEGER)
-public abstract class AbstractTask implements Identifiable<Integer> {
+public abstract class AbstractTaskEntity implements Identifiable<Integer> {
     private Integer id;
-    private Boolean isTemplate;
     private Integer order;
     private String name;
     private String description;
-    private User user;
+    private UserEntity user;
     private Timestamp created;
     private Timestamp modified;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", insertable = false, updatable = false)
+    @Override
     public Integer getId() {
         return id;
     }
 
-    private void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -66,16 +66,6 @@ public abstract class AbstractTask implements Identifiable<Integer> {
     }
 
     @Basic
-    @Column(name = "IS_TEMPLATE", updatable = false)
-    private Boolean getTemplate() {
-        return isTemplate;
-    }
-
-    private void setTemplate(Boolean template) {
-        isTemplate = template;
-    }
-
-    @Basic
     @Column(name = "CREATED", insertable = false, updatable = false)
     public Timestamp getCreated() {
         return created;
@@ -102,11 +92,11 @@ public abstract class AbstractTask implements Identifiable<Integer> {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(updatable = false)
-    public User getUser() {
+    public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 
@@ -115,15 +105,13 @@ public abstract class AbstractTask implements Identifiable<Integer> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AbstractTask that = (AbstractTask) o;
+        AbstractTaskEntity that = (AbstractTaskEntity) o;
         if (id != that.id) return false;
         if (order != null ? !order.equals(that.order) : that.order != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (isTemplate != null ? !isTemplate.equals(that.isTemplate) : that.isTemplate != null) return false;
         if (created != null ? !created.equals(that.created) : that.created != null) return false;
         return !(modified != null ? !modified.equals(that.modified) : that.modified != null);
-
     }
 
     @Override
@@ -132,7 +120,6 @@ public abstract class AbstractTask implements Identifiable<Integer> {
         result = 31 * result + (order != null ? order.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (isTemplate != null ? isTemplate.hashCode() : 0);
         result = 31 * result + (created != null ? created.hashCode() : 0);
         result = 31 * result + (modified != null ? modified.hashCode() : 0);
         return result;

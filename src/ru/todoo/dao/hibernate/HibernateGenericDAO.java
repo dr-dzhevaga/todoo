@@ -22,7 +22,7 @@ public class HibernateGenericDAO<T extends Identifiable<PK>, PK extends Serializ
 
     @Override
     public T create(T entity) throws PersistException {
-        session.persist(entity);
+        session.save(entity);
         return entity;
     }
 

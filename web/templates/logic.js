@@ -24,7 +24,7 @@ var onTaskTreeLoad = function () {
 var onUseTemplateButtonClick = function () {
     var template = $$("templateList").getSelectedItem();
     if (template) {
-        ajax_util.postJson(TASK_API_ENDPOINT + "?templateId=" + template.id, {}, function () {
+        ajax_util.postObject(TASK_API_ENDPOINT + "?templateId=" + template.id, {}, function () {
             window.location = ("/mytasks.jsp");
         });
     }
@@ -32,6 +32,7 @@ var onUseTemplateButtonClick = function () {
 
 var logic = {
     init: function () {
+        webix.DataDriver.json.child = "children";
         $$("categoryRichSelect").attachEvent("onChange", onCategoryRichSelectSelectChange);
         $$("categoryRichSelect").getList().attachEvent("onAfterLoad", onCategoryRichSelectSelectLoad);
         $$("templateList").attachEvent("onSelectChange", onTemplatesListSelectChange);
