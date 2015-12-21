@@ -11,7 +11,6 @@ import ru.todoo.domain.dto.UserDTO;
 import ru.todoo.domain.entity.UserEntity;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,9 +38,10 @@ public class UserService {
     }
 
     public UserDTO readByLogin(String login) throws PersistException {
-        UserEntity userEntity = daoUtil.call(UserDAO.class, userDAO ->
-                userDAO.readByLogin(login)).stream().findFirst().orElse(null);
-        return mapper.map(userEntity, UserDTO.class);
+        return daoUtil.call(UserDAO.class, userDAO -> {
+            UserEntity userEntity = userDAO.readByLogin(login);
+            return mapper.map(userEntity, UserDTO.class);
+        });
     }
 
     public void delete(Integer userId) throws PersistException {
@@ -49,7 +49,7 @@ public class UserService {
     }
 
     public boolean isLoginUnique(String login) throws PersistException {
-        List<UserEntity> users = daoUtil.call(UserDAO.class, userDAO -> userDAO.readByLogin(login));
-        return users.isEmpty();
+        UserEntity user = daoUtil.call(UserDAO.class, userDAO -> userDAO.readByLogin(login));
+        return user == null;
     }
 }

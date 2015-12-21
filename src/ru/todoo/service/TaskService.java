@@ -4,6 +4,7 @@ import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 import ru.todoo.dao.*;
 import ru.todoo.domain.dto.TaskDTO;
+import ru.todoo.domain.dto.UserDTO;
 import ru.todoo.domain.entity.TaskEntity;
 import ru.todoo.domain.entity.TemplateEntity;
 import ru.todoo.domain.entity.UserEntity;
@@ -20,15 +21,15 @@ public class TaskService {
     private static final String TEMPLATE_S_IS_NOT_FOUND_ERROR = "Template %s is not found";
     private static final DAOUtil daoUtil = DAOProvider.getDAOUtil();
     private static final Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
-    private final UserEntity user;
+    private final UserDTO user;
 
     public TaskService(String username) throws PersistException {
-        user = daoUtil.call(UserDAO.class, userDAO -> userDAO.readByLogin(username).stream().findFirst().get());
+        user = ServiceProvider.getUserService().readByLogin(username);
     }
 
     public List<TaskDTO> readAll() throws PersistException {
         return daoUtil.call(TaskDAO.class, taskDAO -> {
-            List<TaskEntity> tasks = taskDAO.readByUser(user.getId());
+            List<TaskEntity> tasks = taskDAO.readRootByUser(user.getId());
             return tasks.stream().
                     map(task -> mapper.map(task, TaskDTO.class, "taskWithoutChildren")).
                     collect(Collectors.toList());
@@ -96,7 +97,7 @@ public class TaskService {
     }
 
     private void checkOwner(TaskEntity task) {
-        if (!Objects.equals(task.getUser(), user)) {
+        if (!Objects.equals(task.getUser().getId(), user.getId())) {
             throw new SecurityException(ACCESS_ERROR);
         }
     }

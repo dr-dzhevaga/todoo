@@ -1,7 +1,5 @@
 package ru.todoo.servlets;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import ru.todoo.domain.dto.TaskDTO;
 import ru.todoo.service.ServiceProvider;
 import ru.todoo.service.TaskService;
@@ -31,19 +29,17 @@ public class TaskServlet extends HttpServlet {
             String filter = Objects.toString(request.getParameter("filter"), "");
             String id = request.getParameter("id");
             String username = request.getRemoteUser();
-            JsonArray taskArray;
+            List<TaskDTO> tasks;
             TaskService taskService = ServiceProvider.getTaskService(username);
             switch (filter) {
                 case "parent":
-                    TaskDTO task = taskService.read(Integer.valueOf(id));
-                    taskArray = JsonUtil.toJsonArray(task);
+                    tasks = taskService.read(Integer.valueOf(id)).getChildren();
                     break;
                 default:
-                    List<TaskDTO> tasks = taskService.readAll();
-                    taskArray = JsonUtil.toJsonArray(tasks);
+                    tasks = taskService.readAll();
                     break;
             }
-            return taskArray;
+            return JsonUtil.toJsonArray(tasks);
         });
     }
 
@@ -61,8 +57,7 @@ public class TaskServlet extends HttpServlet {
             } else {
                 task = taskService.createFromTemplate(Integer.valueOf(templateId));
             }
-            JsonObject taskObject = JsonUtil.toJsonObject(task);
-            return taskObject;
+            return JsonUtil.toJsonObject(task);
         });
     }
 

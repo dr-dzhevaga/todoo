@@ -36,7 +36,6 @@ public abstract class AbstractTaskEntity implements Identifiable<Integer> {
 
     @Basic
     @Column(name = "ORDER_NUMBER")
-    @OrderColumn
     public Integer getOrder() {
         return order;
     }

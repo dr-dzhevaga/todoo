@@ -18,7 +18,7 @@ public class HibernateTaskDAO extends HibernateGenericDAO<TaskEntity, Integer> i
 
     @Override
     @SuppressWarnings(value = "unchecked")
-    public List<TaskEntity> readByUser(Integer userId) throws PersistException {
-        return session.createCriteria(TaskEntity.class).createAlias("user", "user").add(Restrictions.eq("user.id", userId)).list();
+    public List<TaskEntity> readRootByUser(Integer userId) throws PersistException {
+        return session.createCriteria(TaskEntity.class).add(Restrictions.isNull("parent")).createAlias("user", "user").add(Restrictions.eq("user.id", userId)).list();
     }
 }

@@ -35,8 +35,9 @@ public class TaskEntity extends AbstractTaskEntity {
         isCompleted = completed;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "PARENT_ID")
+    @OrderColumn(name = "ORDER_NUMBER")
     public List<TaskEntity> getChildren() {
         return children;
     }

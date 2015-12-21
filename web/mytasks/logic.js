@@ -88,7 +88,7 @@ var onCreateStepConfirmButtonClick = function () {
 var onStepTreeLoad = function () {
     $$("stepTree").data.each(
         function (step) {
-            if (step.completed) {
+            if (step.isCompleted) {
                 $$("stepTree").checkItem(step.id);
             }
         }
@@ -108,7 +108,7 @@ var onStepTreeSelectChange = function () {
 
 var onStepTreeItemCheck = function (id, state) {
     var step = $$("stepTree").getItem(id);
-    step.completed = state;
+    step.isCompleted = state;
     ajax_util.putObject(TASK_API_ENDPOINT, step, function () {
         $$("stepTree").refresh();
     });

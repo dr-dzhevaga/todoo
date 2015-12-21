@@ -9,5 +9,5 @@ import java.util.List;
  * Created by Dmitriy Dzhevaga on 02.11.2015.
  */
 public interface TaskDAO extends GenericDAO<TaskEntity, Integer> {
-    List<TaskEntity> readByUser(Integer userId) throws PersistException;
+    List<TaskEntity> readRootByUser(Integer userId) throws PersistException;
 }

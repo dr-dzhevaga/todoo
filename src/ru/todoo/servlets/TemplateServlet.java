@@ -3,7 +3,6 @@ package ru.todoo.servlets;
 import com.google.gson.JsonObject;
 import ru.todoo.domain.dto.TemplateDTO;
 import ru.todoo.domain.dto.UserDTO;
-import ru.todoo.domain.entity.TemplateEntity;
 import ru.todoo.service.ServiceProvider;
 import ru.todoo.service.TemplateService;
 import ru.todoo.utils.JsonUtil;
@@ -64,17 +63,17 @@ public class TemplateServlet extends HttpServlet {
             String json = ServletUtil.readContent(request);
             JsonObject parameters = JsonUtil.toJsonObject(json);
             TemplateService templateService = ServiceProvider.getTemplateService();
+            TemplateDTO template;
             if (parameters.has("sourceType") && parameters.get("sourceType").getAsString().equals("text")) {
                 String text = parameters.get("text").getAsString();
                 Integer templateId = parameters.get("templateId").getAsInt();
-                TemplateEntity result = templateService.createStepsFromText(text, templateId, user.getId());
-                return JsonUtil.getBuilder().add("data", JsonUtil.toJsonArray(result)).build();
+                template = templateService.createStepsFromText(text, templateId, user.getId());
             } else {
-                TemplateDTO template = JsonUtil.toObject(json, TemplateDTO.class);
+                template = JsonUtil.toObject(json, TemplateDTO.class);
                 template.setUserId(user.getId());
                 template = templateService.create(template);
-                return JsonUtil.toJsonObject(template);
             }
+            return JsonUtil.toJsonObject(template);
         });
     }
 

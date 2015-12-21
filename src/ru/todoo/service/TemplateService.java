@@ -59,12 +59,12 @@ public class TemplateService {
         });
     }
 
-    public TemplateEntity createStepsFromText(String text, Integer rootId, Integer userId) throws PersistException {
+    public TemplateDTO createStepsFromText(String text, Integer rootId, Integer userId) throws PersistException {
         return daoUtil.callOnContext(session -> {
             String[] steps = Arrays.stream(text.split("\\r?\\n")).filter(line -> !line.isEmpty()).toArray(String[]::new);
             UserDAO userDAO = DAOProvider.getDAOFactory().getDao(session, UserDAO.class);
-            UserEntity user = userDAO.read(userId);
             TemplateDAO templateDAO = DAOProvider.getDAOFactory().getDao(session, TemplateDAO.class);
+            UserEntity user = userDAO.read(userId);
             TemplateEntity root = templateDAO.read(rootId);
             TemplateEntity node = root;
             for (String step : steps) {
@@ -84,7 +84,7 @@ public class TemplateService {
                 }
             }
             templateDAO.update(root);
-            return root;
+            return mapper.map(root, TemplateDTO.class);
         });
     }
 
