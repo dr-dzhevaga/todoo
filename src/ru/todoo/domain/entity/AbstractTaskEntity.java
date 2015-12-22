@@ -1,10 +1,10 @@
 package ru.todoo.domain.entity;
 
+import org.hibernate.annotations.UpdateTimestamp;
 import ru.todoo.dao.generic.Identifiable;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Calendar;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.12.2015.
@@ -70,23 +70,19 @@ public abstract class AbstractTaskEntity implements Identifiable<Integer> {
         return created;
     }
 
-    private void setCreated(Timestamp created) {
+    public void setCreated(Timestamp created) {
         this.created = created;
     }
 
     @Basic
-    @Column(name = "MODIFIED", updatable = false)
+    @UpdateTimestamp
+    @Column(name = "MODIFIED")
     public Timestamp getModified() {
         return modified;
     }
 
-    private void setModified(Timestamp modified) {
+    public void setModified(Timestamp modified) {
         this.modified = modified;
-    }
-
-    @PreUpdate
-    private void updateModified() {
-        this.modified = new Timestamp(Calendar.getInstance().getTime().getTime());
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

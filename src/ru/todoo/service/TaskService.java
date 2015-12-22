@@ -65,13 +65,13 @@ public class TaskService {
             if (template == null) {
                 throw new PersistException(String.format(TEMPLATE_S_IS_NOT_FOUND_ERROR, templateId));
             }
-            TaskEntity task = createTaskFromTemplate(template, mapper.map(user, UserEntity.class));
+            TaskEntity task = createFromTemplate(template, mapper.map(user, UserEntity.class));
             taskDAO.create(task);
             return mapper.map(task, TaskDTO.class);
         });
     }
 
-    private TaskEntity createTaskFromTemplate(TemplateEntity template, UserEntity user) {
+    private TaskEntity createFromTemplate(TemplateEntity template, UserEntity user) {
         TaskEntity task = new TaskEntity();
         task.setUser(user);
         task.setOrigin(template);
@@ -79,7 +79,7 @@ public class TaskService {
         task.setDescription(template.getDescription());
         task.setOrder(template.getOrder());
         template.getChildren().forEach(childTemplate ->
-                task.getChildren().add(createTaskFromTemplate(childTemplate, user)));
+                task.getChildren().add(createFromTemplate(childTemplate, user)));
         return task;
     }
 
@@ -92,8 +92,11 @@ public class TaskService {
     }
 
     public void update(TaskDTO task) throws PersistException {
-        daoUtil.execute(TaskDAO.class, taskDAO ->
-                taskDAO.update(mapper.map(task, TaskEntity.class)));
+        daoUtil.execute(TaskDAO.class, taskDAO -> {
+            TaskEntity taskEntity = taskDAO.read(task.getId());
+            mapper.map(task, taskEntity);
+            taskDAO.update(taskEntity);
+        });
     }
 
     private void checkOwner(TaskEntity task) {

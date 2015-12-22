@@ -93,7 +93,10 @@ public class TemplateService {
     }
 
     public void update(TemplateDTO template) throws PersistException {
-        daoUtil.execute(TemplateDAO.class, templateDAO ->
-                templateDAO.update(mapper.map(template, TemplateEntity.class)));
+        daoUtil.execute(TemplateDAO.class, templateDAO -> {
+            TemplateEntity templateEntity = templateDAO.read(template.getId());
+            mapper.map(template, templateEntity);
+            templateDAO.update(templateEntity);
+        });
     }
 }

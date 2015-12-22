@@ -1,5 +1,6 @@
 package ru.todoo.domain.entity;
 
+import org.hibernate.annotations.UpdateTimestamp;
 import ru.todoo.dao.generic.Identifiable;
 
 import javax.persistence.*;
@@ -45,7 +46,8 @@ public class UserEntity implements Serializable, Identifiable<Integer> {
     }
 
     @Basic
-    @Column(name = "MODIFIED", updatable = false)
+    @UpdateTimestamp
+    @Column(name = "MODIFIED")
     public Timestamp getModified() {
         return modified;
     }

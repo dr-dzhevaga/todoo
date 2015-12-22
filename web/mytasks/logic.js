@@ -86,6 +86,7 @@ var onCreateStepConfirmButtonClick = function () {
 };
 
 var onStepTreeLoad = function () {
+    $$("stepTree").blockEvent();
     $$("stepTree").data.each(
         function (step) {
             if (step.isCompleted) {
@@ -93,6 +94,7 @@ var onStepTreeLoad = function () {
             }
         }
     );
+    $$("stepTree").unblockEvent();
     $$("stepTree").openAll();
 };
 

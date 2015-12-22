@@ -23,7 +23,7 @@ public class TemplateEntity extends AbstractTaskEntity {
         this.category = category;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "PARENT_ID")
     @OrderColumn(name = "ORDER_NUMBER")
     public List<TemplateEntity> getChildren() {
