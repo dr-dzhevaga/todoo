@@ -9,7 +9,6 @@ import ru.todoo.domain.entity.UserEntity;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -56,14 +55,7 @@ public class TemplateService {
     public TemplateDTO create(TemplateDTO dto) throws PersistException {
         return daoUtil.call(TemplateDAO.class, dao -> {
             TemplateEntity entity = mapper.map(dto, TemplateEntity.class);
-            if (dto.getParentId() == null) {
-                dao.create(entity);
-            } else {
-                TemplateEntity parentEntity = dao.read(dto.getParentId());
-                parentEntity.getChildren().add(entity);
-                dao.update(parentEntity);
-            }
-            return mapper.map(entity, TemplateDTO.class);
+            return mapper.map(dao.create(entity), TemplateDTO.class);
         });
     }
 
@@ -104,25 +96,8 @@ public class TemplateService {
 
     public void update(TemplateDTO dto) throws PersistException {
         daoUtil.execute(TemplateDAO.class, dao -> {
-            TemplateEntity entity = dao.read(dto.getId());
-            if (entity.getParent() == null) {
-                mapper.map(dto, entity);
-                dao.update(entity);
-            } else {
-                TemplateEntity parentEntity = entity.getParent();
-                if (!Objects.equals(parentEntity.getId(), dto.getParentId())) {
-                    TemplateEntity newParentEntity = dao.read(dto.getParentId());
-                    newParentEntity.getChildren().add(entity);
-                    dao.update(newParentEntity);
-                } else if (!Objects.equals(entity.getOrder(), dto.getOrder())) {
-                    parentEntity.getChildren().remove(entity);
-                    parentEntity.getChildren().add(dto.getOrder(), entity);
-                    dao.update(parentEntity);
-                } else {
-                    mapper.map(dto, entity);
-                    dao.update(entity);
-                }
-            }
+            TemplateEntity entity = mapper.map(dto, TemplateEntity.class);
+            dao.update(entity);
         });
     }
 }

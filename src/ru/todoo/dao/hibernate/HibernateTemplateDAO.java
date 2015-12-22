@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by Dmitriy Dzhevaga on 19.12.2015.
  */
-public class HibernateTemplateDAO extends HibernateGenericDAO<TemplateEntity, Integer> implements TemplateDAO {
+public class HibernateTemplateDAO extends HibernateHierarhicalDAO<TemplateEntity, Integer> implements TemplateDAO {
     public HibernateTemplateDAO(Session session) {
         super(TemplateEntity.class, session);
     }

@@ -1,5 +1,6 @@
 package ru.todoo.dao.hibernate;
 
+import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.hibernate.Session;
 import ru.todoo.dao.PersistException;
 import ru.todoo.dao.generic.GenericDAO;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Created by Dmitriy Dzhevaga on 19.12.2015.
  */
-public class HibernateGenericDAO<T extends Identifiable<PK>, PK extends Serializable> implements GenericDAO<T, PK> {
+public abstract class HibernateGenericDAO<T extends Identifiable<PK>, PK extends Serializable> implements GenericDAO<T, PK> {
     protected final Class<T> type;
     protected final Session session;
 
@@ -33,7 +34,9 @@ public class HibernateGenericDAO<T extends Identifiable<PK>, PK extends Serializ
 
     @Override
     public void update(T entity) throws PersistException {
-        session.update(entity);
+        T originEntity = session.get(type, entity.getId());
+        DozerBeanMapperSingletonWrapper.getInstance().map(entity, originEntity);
+        session.update(originEntity);
     }
 
     @Override

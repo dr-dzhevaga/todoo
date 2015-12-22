@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by Dmitriy Dzhevaga on 19.12.2015.
  */
-public class HibernateTaskDAO extends HibernateGenericDAO<TaskEntity, Integer> implements TaskDAO {
+public class HibernateTaskDAO extends HibernateHierarhicalDAO<TaskEntity, Integer> implements TaskDAO {
     public HibernateTaskDAO(Session session) {
         super(TaskEntity.class, session);
     }
