@@ -59,16 +59,16 @@ public class TemplateService {
         });
     }
 
-    public TemplateDTO createStepsFromText(String text, Integer rootId, Integer userId) throws PersistException {
+    public TemplateDTO createStepsFromText(String text, Integer templateId, Integer userId) throws PersistException {
         return daoUtil.callOnContext(session -> {
             String[] steps = Arrays.stream(text.split("\\r?\\n")).filter(line -> !line.isEmpty()).toArray(String[]::new);
             UserDAO userDAO = DAOProvider.getDAOFactory().getDao(session, UserDAO.class);
             TemplateDAO templateDAO = DAOProvider.getDAOFactory().getDao(session, TemplateDAO.class);
             UserEntity user = userDAO.read(userId);
-            TemplateEntity rootTemplateEntity = templateDAO.read(rootId);
+            TemplateEntity rootTemplateEntity = templateDAO.read(templateId);
             TemplateEntity nodeTemplateEntity = rootTemplateEntity;
             for (String step : steps) {
-                boolean isLeaf = Character.isWhitespace(step.charAt(0));
+                boolean isNode = !Character.isWhitespace(step.charAt(0));
                 String[] items = step.trim().split("&&");
                 String name = items[0];
                 String description = items.length > 1 ? items[1] : "";
@@ -76,14 +76,14 @@ public class TemplateService {
                 templateEntity.setUser(user);
                 templateEntity.setName(name);
                 templateEntity.setDescription(description);
-                if (!isLeaf) {
+                if (isNode) {
                     rootTemplateEntity.getChildren().add(templateEntity);
                     nodeTemplateEntity = templateEntity;
                 } else {
                     nodeTemplateEntity.getChildren().add(templateEntity);
                 }
             }
-            templateDAO.update(rootTemplateEntity);
+            templateDAO.create(rootTemplateEntity);
             return mapper.map(rootTemplateEntity, TemplateDTO.class);
         });
     }
