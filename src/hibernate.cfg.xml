@@ -4,9 +4,8 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
+        <property name="connection.datasource">java:/comp/env/jdbc/todooDB</property>
         <property name="hibernate.dialect">org.hibernate.dialect.DerbyTenSevenDialect</property>
-        <property name="connection.url">jdbc:derby://localhost:1527/../../db-derby-10.12.1.1-bin/db/todoo</property>
-        <property name="connection.driver_class">org.apache.derby.jdbc.ClientDriver</property>
         <property name="hibernate.current_session_context_class">thread</property>
 
         <property name="show_sql">true</property>
