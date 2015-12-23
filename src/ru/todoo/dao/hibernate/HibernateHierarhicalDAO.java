@@ -43,7 +43,6 @@ public abstract class HibernateHierarhicalDAO<T extends Hierarchical<PK>, PK ext
     @Override
     @SuppressWarnings("unchecked")
     public void update(T newEntity) throws PersistException {
-        session.evict(newEntity);
         Hierarchical originEntity = session.get(type, newEntity.getId());
         if ((newEntity.getParent() != null) && (originEntity.getParent() != null)) {
             if (!Objects.equals(newEntity.getParent().getId(), originEntity.getParent().getId())) {

@@ -1,5 +1,7 @@
 package ru.todoo.domain.entity;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.UpdateTimestamp;
 import ru.todoo.dao.generic.Identifiable;
 
@@ -37,6 +39,7 @@ public class UserEntity implements Serializable, Identifiable<Integer> {
 
     @Basic
     @Column(name = "CREATED", insertable = false, updatable = false)
+    @Generated(GenerationTime.INSERT)
     public Timestamp getCreated() {
         return created;
     }

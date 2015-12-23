@@ -21,86 +21,84 @@ public class TaskService {
     private static final String TEMPLATE_S_IS_NOT_FOUND_ERROR = "Template %s is not found";
     private static final DAOUtil daoUtil = DAOProvider.getDAOUtil();
     private static final Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
-    private final UserDTO user;
+    private final UserDTO userDTO;
 
     public TaskService(String username) throws PersistException {
-        user = ServiceProvider.getUserService().readByLogin(username);
+        userDTO = ServiceProvider.getUserService().readByLogin(username);
     }
 
     public List<TaskDTO> readAll() throws PersistException {
-        return daoUtil.call(TaskDAO.class, taskDAO -> {
-            List<TaskEntity> tasks = taskDAO.readRootByUser(user.getId());
-            return tasks.stream().
+        return daoUtil.call(TaskDAO.class, dao -> {
+            List<TaskEntity> entities = dao.readRootByUser(userDTO.getId());
+            return entities.stream().
                     map(task -> mapper.map(task, TaskDTO.class, "taskWithoutChildren")).
                     collect(Collectors.toList());
         });
     }
 
     public TaskDTO read(Integer id) throws PersistException {
-        return daoUtil.call(TaskDAO.class, taskDAO -> {
-            TaskEntity task = taskDAO.read(id);
-            checkOwner(task);
-            return mapper.map(task, TaskDTO.class);
+        return daoUtil.call(TaskDAO.class, dao -> {
+            checkOwner(dao, id);
+            TaskEntity entity = dao.read(id);
+            return mapper.map(entity, TaskDTO.class);
         });
     }
 
-    public TaskDTO create(TaskDTO task) throws PersistException {
-        return daoUtil.call(TaskDAO.class, taskDAO -> {
-            if (task.getParentId() != null) {
-                TaskEntity parent = taskDAO.read(task.getParentId());
-                checkOwner(parent);
+    public TaskDTO create(TaskDTO dto) throws PersistException {
+        return daoUtil.call(TaskDAO.class, dao -> {
+            if (dto.getParentId() != null) {
+                checkOwner(dao, dto.getParentId());
             }
-            task.setUserId(user.getId());
-            TaskEntity taskEntity = taskDAO.create(mapper.map(task, TaskEntity.class));
-            return mapper.map(taskEntity, TaskDTO.class);
+            dto.setUserId(userDTO.getId());
+            TaskEntity entity = dao.create(mapper.map(dto, TaskEntity.class));
+            return mapper.map(entity, TaskDTO.class);
         });
     }
 
-    public TaskDTO createFromTemplate(Integer templateId) throws PersistException {
+    public TaskDTO createFromTemplate(Integer id) throws PersistException {
         return daoUtil.callOnContext(session -> {
             DAOFactory daoFactory = DAOProvider.getDAOFactory();
             TemplateDAO templateDAO = daoFactory.getDao(session, TemplateDAO.class);
             TaskDAO taskDAO = daoFactory.getDao(session, TaskDAO.class);
-            TemplateEntity template = templateDAO.read(templateId);
-            if (template == null) {
-                throw new PersistException(String.format(TEMPLATE_S_IS_NOT_FOUND_ERROR, templateId));
+            TemplateEntity templateEntity = templateDAO.read(id);
+            if (templateEntity == null) {
+                throw new PersistException(String.format(TEMPLATE_S_IS_NOT_FOUND_ERROR, id));
             }
-            TaskEntity task = createFromTemplate(template, mapper.map(user, UserEntity.class));
-            taskDAO.create(task);
-            return mapper.map(task, TaskDTO.class);
+            TaskEntity taskEntity = createFromTemplate(templateEntity, mapper.map(userDTO, UserEntity.class));
+            taskDAO.create(taskEntity);
+            return mapper.map(taskEntity, TaskDTO.class);
         });
     }
 
-    private TaskEntity createFromTemplate(TemplateEntity template, UserEntity user) {
-        TaskEntity task = new TaskEntity();
-        task.setUser(user);
-        task.setOrigin(template);
-        task.setName(template.getName());
-        task.setDescription(template.getDescription());
-        task.setOrder(template.getOrder());
-        template.getChildren().forEach(childTemplate ->
-                task.getChildren().add(createFromTemplate(childTemplate, user)));
-        return task;
+    private TaskEntity createFromTemplate(TemplateEntity templateEntity, UserEntity userEntity) {
+        TaskEntity taskEntity = new TaskEntity();
+        taskEntity.setUser(userEntity);
+        taskEntity.setOrigin(templateEntity);
+        taskEntity.setName(templateEntity.getName());
+        taskEntity.setDescription(templateEntity.getDescription());
+        taskEntity.setOrder(templateEntity.getOrder());
+        templateEntity.getChildren().stream().filter(Objects::nonNull).forEach(childTemplateEntity ->
+                taskEntity.getChildren().add(createFromTemplate(childTemplateEntity, userEntity)));
+        return taskEntity;
     }
 
-    public void delete(Integer taskId) throws PersistException {
-        daoUtil.execute(TaskDAO.class, taskDAO -> {
-            TaskEntity task = taskDAO.read(taskId);
-            checkOwner(task);
-            taskDAO.delete(taskId);
+    public void delete(Integer id) throws PersistException {
+        daoUtil.execute(TaskDAO.class, dao -> {
+            checkOwner(dao, id);
+            dao.delete(id);
         });
     }
 
-    public void update(TaskDTO task) throws PersistException {
-        daoUtil.execute(TaskDAO.class, taskDAO -> {
-            TaskEntity taskEntity = taskDAO.read(task.getId());
-            mapper.map(task, taskEntity);
-            taskDAO.update(taskEntity);
+    public void update(TaskDTO dto) throws PersistException {
+        daoUtil.execute(TaskDAO.class, dao -> {
+            TaskEntity entity = mapper.map(dto, TaskEntity.class);
+            dao.update(entity);
         });
     }
 
-    private void checkOwner(TaskEntity task) {
-        if (!Objects.equals(task.getUser().getId(), user.getId())) {
+    private void checkOwner(TaskDAO dao, Integer id) throws PersistException {
+        TaskEntity entity = dao.read(id);
+        if (!Objects.equals(entity.getUser().getId(), userDTO.getId())) {
             throw new SecurityException(ACCESS_ERROR);
         }
     }

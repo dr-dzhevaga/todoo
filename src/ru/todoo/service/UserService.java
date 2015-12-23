@@ -23,33 +23,33 @@ public class UserService {
     private static final DAOUtil daoUtil = DAOProvider.getDAOUtil();
     private static final Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
 
-    public void create(UserDTO user) throws PersistException {
-        if (StringUtils.isBlank(user.getLogin()) || StringUtils.isBlank(user.getPassword())) {
+    public void create(UserDTO dto) throws PersistException {
+        if (StringUtils.isBlank(dto.getLogin()) || StringUtils.isBlank(dto.getPassword())) {
             throw new PersistException(USERNAME_OR_PASSWORD_IS_EMPTY_ERROR);
         }
-        if (!isLoginUnique(user.getLogin())) {
+        if (!isLoginUnique(dto.getLogin())) {
             throw new PersistException(USERNAME_IS_NOT_UNIQUE_ERROR);
         }
         Set<String> roles = new HashSet<>();
         roles.add(DEFAULT_USER_ROLE);
-        UserEntity userEntity = mapper.map(user, UserEntity.class);
-        userEntity.setRoles(roles);
-        daoUtil.execute(UserDAO.class, userDAO -> userDAO.create(userEntity));
+        UserEntity entity = mapper.map(dto, UserEntity.class);
+        entity.setRoles(roles);
+        daoUtil.execute(UserDAO.class, dao -> dao.create(entity));
     }
 
     public UserDTO readByLogin(String login) throws PersistException {
-        return daoUtil.call(UserDAO.class, userDAO -> {
-            UserEntity userEntity = userDAO.readByLogin(login);
-            return mapper.map(userEntity, UserDTO.class);
+        return daoUtil.call(UserDAO.class, dao -> {
+            UserEntity entity = dao.readByLogin(login);
+            return mapper.map(entity, UserDTO.class);
         });
     }
 
-    public void delete(Integer userId) throws PersistException {
-        daoUtil.execute(UserDAO.class, userDAO -> userDAO.delete(userId));
+    public void delete(Integer id) throws PersistException {
+        daoUtil.execute(UserDAO.class, dao -> dao.delete(id));
     }
 
     public boolean isLoginUnique(String login) throws PersistException {
-        UserEntity user = daoUtil.call(UserDAO.class, userDAO -> userDAO.readByLogin(login));
-        return user == null;
+        UserEntity entity = daoUtil.call(UserDAO.class, dao -> dao.readByLogin(login));
+        return entity == null;
     }
 }

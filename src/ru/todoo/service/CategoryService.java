@@ -19,35 +19,34 @@ public class CategoryService {
     private static final DAOUtil daoUtil = DAOProvider.getDAOUtil();
     private static final Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
 
-    public CategoryDTO create(CategoryDTO category) throws PersistException {
-        return daoUtil.call(CategoryDAO.class, categoryDAO -> {
-            CategoryEntity categoryEntity = categoryDAO.create(mapper.map(category, CategoryEntity.class));
-            return mapper.map(categoryEntity, CategoryDTO.class);
+    public CategoryDTO create(CategoryDTO dto) throws PersistException {
+        return daoUtil.call(CategoryDAO.class, dao -> {
+            CategoryEntity entity = dao.create(mapper.map(dto, CategoryEntity.class));
+            return mapper.map(entity, CategoryDTO.class);
         });
     }
 
     public CategoryDTO read(Integer id) throws PersistException {
-        return daoUtil.call(CategoryDAO.class, categoryDAO -> {
-            CategoryEntity categoryEntity = categoryDAO.read(id);
-            return mapper.map(categoryEntity, CategoryDTO.class);
+        return daoUtil.call(CategoryDAO.class, dao -> {
+            CategoryEntity entity = dao.read(id);
+            return mapper.map(entity, CategoryDTO.class);
         });
     }
 
     public List<CategoryDTO> readAll() throws PersistException {
-        return daoUtil.call(CategoryDAO.class, categoryDAO -> {
-            List<CategoryEntity> categoryEntities = categoryDAO.readAll();
-            return categoryEntities.stream().
+        return daoUtil.call(CategoryDAO.class, dao -> {
+            List<CategoryEntity> entities = dao.readAll();
+            return entities.stream().
                     map(categoryEntity -> mapper.map(categoryEntity, CategoryDTO.class)).
                     collect(Collectors.toList());
         });
     }
 
     public void delete(Integer id) throws PersistException {
-        daoUtil.execute(CategoryDAO.class, categoryDAO -> categoryDAO.delete(id));
+        daoUtil.execute(CategoryDAO.class, dao -> dao.delete(id));
     }
 
-    public void update(CategoryDTO category) throws PersistException {
-        daoUtil.execute(CategoryDAO.class, categoryDAO ->
-                categoryDAO.update(mapper.map(category, CategoryEntity.class)));
+    public void update(CategoryDTO dto) throws PersistException {
+        daoUtil.execute(CategoryDAO.class, dao -> dao.update(mapper.map(dto, CategoryEntity.class)));
     }
 }

@@ -76,4 +76,38 @@
             <b>children</b>
         </field-exclude>
     </mapping>
+
+    <mapping map-null="false">
+        <class-a>ru.todoo.domain.entity.TemplateEntity</class-a>
+        <class-b>ru.todoo.domain.entity.TemplateEntity</class-b>
+        <field-exclude>
+            <a>parent</a>
+            <b>parent</b>
+        </field-exclude>
+        <field-exclude>
+            <a>children</a>
+            <b>children</b>
+        </field-exclude>
+        <field-exclude>
+            <a>user</a>
+            <b>user</b>
+        </field-exclude>
+    </mapping>
+
+    <mapping map-null="false">
+        <class-a>ru.todoo.domain.entity.TaskEntity</class-a>
+        <class-b>ru.todoo.domain.entity.TaskEntity</class-b>
+        <field-exclude>
+            <a>parent</a>
+            <b>parent</b>
+        </field-exclude>
+        <field-exclude>
+            <a>children</a>
+            <b>children</b>
+        </field-exclude>
+        <field-exclude>
+            <a>user</a>
+            <b>user</b>
+        </field-exclude>
+    </mapping>
 </mappings>
