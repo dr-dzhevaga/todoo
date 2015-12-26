@@ -21,7 +21,6 @@ public abstract class HibernateHierarhicalDAO<T extends Hierarchical<PK>, PK ext
         if (entity.getParent() != null) {
             Hierarchical parentEntity = session.get(type, entity.getParent().getId());
             parentEntity.getChildren().add(entity);
-            session.save(parentEntity);
             return entity;
         } else {
             return super.create(entity);
@@ -34,7 +33,6 @@ public abstract class HibernateHierarhicalDAO<T extends Hierarchical<PK>, PK ext
         if (entity.getParent() != null) {
             Hierarchical parentEntity = session.get(type, entity.getParent().getId());
             parentEntity.getChildren().remove(entity);
-            session.save(parentEntity);
         } else {
             super.delete(id);
         }
@@ -42,23 +40,21 @@ public abstract class HibernateHierarhicalDAO<T extends Hierarchical<PK>, PK ext
 
     @Override
     @SuppressWarnings("unchecked")
-    public void update(T newEntity) throws PersistException {
-        Hierarchical originEntity = session.get(type, newEntity.getId());
-        if ((newEntity.getParent() != null) && (originEntity.getParent() != null)) {
-            if (!Objects.equals(newEntity.getParent().getId(), originEntity.getParent().getId())) {
-                Hierarchical newParentEntity = session.load(type, newEntity.getParent().getId());
+    public void update(T updatedEntity) throws PersistException {
+        Hierarchical originEntity = session.get(type, updatedEntity.getId());
+        if ((updatedEntity.getParent() != null) && (originEntity.getParent() != null)) {
+            if (!Objects.equals(updatedEntity.getParent().getId(), originEntity.getParent().getId())) {
+                Hierarchical newParentEntity = session.load(type, updatedEntity.getParent().getId());
                 newParentEntity.getChildren().add(originEntity);
-                session.update(newParentEntity);
-            } else if (!Objects.equals(newEntity.getOrder(), originEntity.getOrder())) {
+            } else if (!Objects.equals(updatedEntity.getOrder(), originEntity.getOrder())) {
                 Hierarchical parentEntity = originEntity.getParent();
                 parentEntity.getChildren().remove(originEntity);
-                parentEntity.getChildren().add(newEntity.getOrder(), originEntity);
-                session.update(parentEntity);
+                parentEntity.getChildren().add(updatedEntity.getOrder(), originEntity);
             } else {
-                super.update(newEntity);
+                super.update(updatedEntity);
             }
         } else {
-            super.update(newEntity);
+            super.update(updatedEntity);
         }
     }
 }

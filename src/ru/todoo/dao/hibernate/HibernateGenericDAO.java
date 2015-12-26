@@ -23,7 +23,7 @@ public abstract class HibernateGenericDAO<T extends Identifiable<PK>, PK extends
 
     @Override
     public T create(T entity) throws PersistException {
-        session.save(entity);
+        session.persist(entity);
         return entity;
     }
 
@@ -33,10 +33,9 @@ public abstract class HibernateGenericDAO<T extends Identifiable<PK>, PK extends
     }
 
     @Override
-    public void update(T entity) throws PersistException {
-        T originEntity = session.get(type, entity.getId());
-        DozerBeanMapperSingletonWrapper.getInstance().map(entity, originEntity);
-        session.update(originEntity);
+    public void update(T updatedEntity) throws PersistException {
+        T originEntity = session.get(type, updatedEntity.getId());
+        DozerBeanMapperSingletonWrapper.getInstance().map(updatedEntity, originEntity);
     }
 
     @Override
