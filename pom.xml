@@ -4,10 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ru.todoo</groupId>
+    <groupId>ru</groupId>
     <artifactId>todoo</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <version>0.0.1</version>
+    <name>todoo</name>
+    <url>http://todoo.ru</url>
+
     <build>
+        <finalName>todoo</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -20,6 +25,11 @@
         </plugins>
     </build>
     <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
