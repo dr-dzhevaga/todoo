@@ -1,0 +1,41 @@
+.step {
+    display: inline-block;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.name {
+    margin-left: 5px !important;
+    padding: 0 !important;
+}
+
+.description {
+    font-style: italic;
+    font-size: small;
+    text-align: right;
+    margin-left: 10px !important;
+    padding: 0 !important;
+}
+
+.completed {
+    text-decoration: line-through;
+}
+
+.delete {
+    float: right;
+    margin: 6px;
+}
+
+.created {
+    font-size: small;
+    text-align: right;
+}
+
+.selected .webix_tree_item.webix_selected {
+    background: #fff3a1;
+}
+
+.selected .webix_tree_item.webix_selected span {
+    background: transparent !important;
+}
