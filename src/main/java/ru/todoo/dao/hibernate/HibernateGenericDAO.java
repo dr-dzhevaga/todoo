@@ -6,6 +6,7 @@ import ru.todoo.dao.generic.GenericDAO;
 import ru.todoo.dao.generic.Identifiable;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -18,11 +19,12 @@ import java.util.List;
  */
 public abstract class HibernateGenericDAO<T extends Identifiable<PK>, PK extends Serializable> implements GenericDAO<T, PK> {
     protected final Class<T> type;
-    protected final EntityManager entityManager;
 
-    public HibernateGenericDAO(Class<T> type, EntityManager entityManager) {
+    @PersistenceContext
+    protected EntityManager entityManager;
+
+    public HibernateGenericDAO(Class<T> type) {
         this.type = type;
-        this.entityManager = entityManager;
     }
 
     @Override

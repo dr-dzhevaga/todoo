@@ -1,10 +1,13 @@
 package ru.todoo.servlets;
 
 import com.google.gson.JsonObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import ru.todoo.domain.dto.TemplateDTO;
 import ru.todoo.domain.dto.UserDTO;
-import ru.todoo.service.ServiceProvider;
 import ru.todoo.service.TemplateService;
+import ru.todoo.service.UserService;
 import ru.todoo.utils.JsonUtil;
 import ru.todoo.utils.ServletUtil;
 
@@ -31,13 +34,25 @@ import java.util.Objects;
         }
 )
 public class TemplateServlet extends HttpServlet {
+    @Autowired
+    private TemplateService templateService;
+
+    @Autowired
+    private UserService userService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+        context.getAutowireCapableBeanFactory().autowireBean(this);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
             String filter = Objects.toString(request.getParameter("filter"), "all");
             String id = request.getParameter("id");
             List<TemplateDTO> templates;
-            TemplateService templateService = ServiceProvider.getTemplateService();
             switch (filter) {
                 case "parent":
                     templates = templateService.read(Integer.valueOf(id)).getChildren();
@@ -59,10 +74,9 @@ public class TemplateServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
-            UserDTO user = ServletUtil.getUser(request);
+            UserDTO user = userService.readByLogin(request.getRemoteUser());
             String json = ServletUtil.readContent(request);
             JsonObject parameters = JsonUtil.toJsonObject(json);
-            TemplateService templateService = ServiceProvider.getTemplateService();
             TemplateDTO template;
             if (parameters.has("sourceType") && parameters.get("sourceType").getAsString().equals("text")) {
                 String text = parameters.get("text").getAsString();
@@ -81,7 +95,7 @@ public class TemplateServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
             int id = ServletUtil.getIdFromUri(request);
-            ServiceProvider.getTemplateService().delete(id);
+            templateService.delete(id);
             return JsonUtil.getBuilder().addProperty("message", "Template is deleted").build();
         });
     }
@@ -91,7 +105,7 @@ public class TemplateServlet extends HttpServlet {
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
             TemplateDTO template = JsonUtil.toObject(json, TemplateDTO.class);
-            ServiceProvider.getTemplateService().update(template);
+            templateService.update(template);
             return JsonUtil.getBuilder().addProperty("message", "Template is updated").build();
         });
     }

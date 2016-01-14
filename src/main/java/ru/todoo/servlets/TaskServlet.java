@@ -1,7 +1,9 @@
 package ru.todoo.servlets;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import ru.todoo.domain.dto.TaskDTO;
-import ru.todoo.service.ServiceProvider;
 import ru.todoo.service.TaskService;
 import ru.todoo.utils.JsonUtil;
 import ru.todoo.utils.ServletUtil;
@@ -23,14 +25,22 @@ import java.util.Objects;
 @WebServlet("/api/tasks/*")
 @ServletSecurity(@HttpConstraint(rolesAllowed = "user"))
 public class TaskServlet extends HttpServlet {
+    @Autowired
+    private TaskService taskService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+        context.getAutowireCapableBeanFactory().autowireBean(this);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
             String filter = Objects.toString(request.getParameter("filter"), "");
             String id = request.getParameter("id");
-            String username = request.getRemoteUser();
             List<TaskDTO> tasks;
-            TaskService taskService = ServiceProvider.getTaskService(username);
             switch (filter) {
                 case "parent":
                     tasks = taskService.read(Integer.valueOf(id)).getChildren();
@@ -46,10 +56,8 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String templateId = request.getParameter("templateId");
-        String username = request.getRemoteUser();
         ServletUtil.process(response, () -> {
             TaskDTO task;
-            TaskService taskService = ServiceProvider.getTaskService(username);
             if (templateId == null) {
                 String json = ServletUtil.readContent(request);
                 task = JsonUtil.toObject(json, TaskDTO.class);
@@ -63,21 +71,19 @@ public class TaskServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getRemoteUser();
         ServletUtil.process(response, () -> {
             int id = ServletUtil.getIdFromUri(request);
-            ServiceProvider.getTaskService(username).delete(id);
+            taskService.delete(id);
             return JsonUtil.getBuilder().addProperty("message", "Task is deleted").build();
         });
     }
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getRemoteUser();
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
             TaskDTO task = JsonUtil.toObject(json, TaskDTO.class);
-            ServiceProvider.getTaskService(username).update(task);
+            taskService.update(task);
             return JsonUtil.getBuilder().addProperty("message", "Task is updated").build();
         });
     }

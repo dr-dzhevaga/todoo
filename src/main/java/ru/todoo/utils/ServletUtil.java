@@ -1,9 +1,6 @@
 package ru.todoo.utils;
 
 import com.google.gson.JsonElement;
-import ru.todoo.dao.PersistException;
-import ru.todoo.domain.dto.UserDTO;
-import ru.todoo.service.ServiceProvider;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,9 +33,5 @@ public class ServletUtil {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().print(e.toString());
         }
-    }
-
-    public static UserDTO getUser(HttpServletRequest request) throws PersistException {
-        return ServiceProvider.getUserService().readByLogin(request.getRemoteUser());
     }
 }

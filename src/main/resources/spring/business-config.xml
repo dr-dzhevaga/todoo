@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <import resource="datasource-config.xml"/>
+
+    <context:component-scan base-package="ru.todoo.service"/>
+    <context:component-scan base-package="ru.todoo.dao.hibernate"/>
+    <context:component-scan base-package="ru.todoo.servlets"/>
+
+    <context:property-placeholder location="classpath:spring/data-access.properties" system-properties-mode="OVERRIDE"/>
+
+    <beans>
+        <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+            <property name="dataSource" ref="dataSource"/>
+            <property name="jpaVendorAdapter">
+                <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                    <property name="database" value="${jpa.database}"/>
+                    <property name="showSql" value="${jpa.showSql}"/>
+                </bean>
+            </property>
+            <property name="persistenceUnitName" value="todooJPA"/>
+        </bean>
+
+        <tx:annotation-driven/>
+        <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+            <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        </bean>
+
+        <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+        <bean id="mapper" class="org.dozer.DozerBeanMapperSingletonWrapper" factory-method="getInstance"/>
+    </beans>
+</beans>

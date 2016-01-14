@@ -3,7 +3,6 @@ package ru.todoo.dao.hibernate;
 import ru.todoo.dao.PersistException;
 import ru.todoo.dao.generic.Hierarchical;
 
-import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -11,8 +10,8 @@ import java.util.Objects;
  * Created by Dzhevaga Dmitriy on 23.12.2015.
  */
 public abstract class HibernateHierarhicalDAO<T extends Hierarchical<PK>, PK extends Serializable> extends HibernateGenericDAO<T, PK> {
-    public HibernateHierarhicalDAO(Class<T> type, EntityManager entityManager) {
-        super(type, entityManager);
+    public HibernateHierarhicalDAO(Class<T> type) {
+        super(type);
     }
 
     @Override

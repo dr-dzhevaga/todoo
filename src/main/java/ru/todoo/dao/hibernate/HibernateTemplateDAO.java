@@ -2,20 +2,21 @@ package ru.todoo.dao.hibernate;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 import ru.todoo.dao.PersistException;
 import ru.todoo.dao.TemplateDAO;
 import ru.todoo.domain.entity.TemplateEntity;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Dmitriy Dzhevaga on 19.12.2015.
  */
+@Repository
 public class HibernateTemplateDAO extends HibernateHierarhicalDAO<TemplateEntity, Integer> implements TemplateDAO {
-    public HibernateTemplateDAO(EntityManager entityManager) {
-        super(TemplateEntity.class, entityManager);
+    public HibernateTemplateDAO() {
+        super(TemplateEntity.class);
     }
 
     @Override

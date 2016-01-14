@@ -1,8 +1,11 @@
 package ru.todoo.servlets;
 
 import com.google.gson.JsonArray;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import ru.todoo.domain.dto.CategoryDTO;
-import ru.todoo.service.ServiceProvider;
+import ru.todoo.service.CategoryService;
 import ru.todoo.utils.JsonUtil;
 import ru.todoo.utils.ServletUtil;
 
@@ -28,6 +31,16 @@ import java.util.List;
         }
 )
 public class CategoryServlet extends HttpServlet {
+    @Autowired
+    private CategoryService categoryService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+        context.getAutowireCapableBeanFactory().autowireBean(this);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
@@ -44,7 +57,7 @@ public class CategoryServlet extends HttpServlet {
                     addProperty("filter", "popular").
                     build()
             );
-            List<CategoryDTO> categoriesList = ServiceProvider.getCategoryService().readAll();
+            List<CategoryDTO> categoriesList = categoryService.readAll();
             categoriesList.forEach(category -> categoriesArray.add(JsonUtil.getBuilder(category).
                     addProperty("filter", "category").
                     build())
@@ -58,7 +71,7 @@ public class CategoryServlet extends HttpServlet {
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
             CategoryDTO category = JsonUtil.toObject(json, CategoryDTO.class);
-            category = ServiceProvider.getCategoryService().create(category);
+            category = categoryService.create(category);
             return JsonUtil.getBuilder(category).addProperty("filter", "category").build();
         });
     }
@@ -67,7 +80,7 @@ public class CategoryServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletUtil.process(response, () -> {
             int id = ServletUtil.getIdFromUri(request);
-            ServiceProvider.getCategoryService().delete(id);
+            categoryService.delete(id);
             return JsonUtil.getBuilder().addProperty("message", "Category is deleted").build();
         });
     }
@@ -77,7 +90,7 @@ public class CategoryServlet extends HttpServlet {
         ServletUtil.process(response, () -> {
             String json = ServletUtil.readContent(request);
             CategoryDTO category = JsonUtil.toObject(json, CategoryDTO.class);
-            ServiceProvider.getCategoryService().update(category);
+            categoryService.update(category);
             return JsonUtil.getBuilder().addProperty("message", "Category is updated").build();
         });
     }

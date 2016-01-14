@@ -2,18 +2,18 @@ package ru.todoo.dao.hibernate;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 import ru.todoo.dao.PersistException;
 import ru.todoo.dao.UserDAO;
 import ru.todoo.domain.entity.UserEntity;
 
-import javax.persistence.EntityManager;
-
 /**
  * Created by Dmitriy Dzhevaga on 19.12.2015.
  */
+@Repository
 public class HibernateUserDAO extends HibernateGenericDAO<UserEntity, Integer> implements UserDAO {
-    public HibernateUserDAO(EntityManager entityManager) {
-        super(UserEntity.class, entityManager);
+    public HibernateUserDAO() {
+        super(UserEntity.class);
     }
 
     @Override
