@@ -1,9 +1,8 @@
 package ru.todoo.dao.hibernate;
 
 import org.dozer.DozerBeanMapperSingletonWrapper;
-import ru.todoo.dao.PersistException;
-import ru.todoo.dao.generic.GenericDAO;
-import ru.todoo.dao.generic.Identifiable;
+import ru.todoo.dao.GenericDAO;
+import ru.todoo.domain.entity.IdentifiableEntity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,7 +16,7 @@ import java.util.List;
 /**
  * Created by Dmitriy Dzhevaga on 19.12.2015.
  */
-public abstract class HibernateGenericDAO<T extends Identifiable<PK>, PK extends Serializable> implements GenericDAO<T, PK> {
+public abstract class HibernateGenericDAO<T extends IdentifiableEntity, PK extends Serializable> implements GenericDAO<T, PK> {
     protected final Class<T> type;
 
     @PersistenceContext
@@ -28,30 +27,31 @@ public abstract class HibernateGenericDAO<T extends Identifiable<PK>, PK extends
     }
 
     @Override
-    public T create(T entity) throws PersistException {
+    public T create(T entity) {
         entityManager.persist(entity);
         return entity;
     }
 
     @Override
-    public T read(PK id) throws PersistException {
+    public T read(PK id) {
         return entityManager.find(type, id);
     }
 
     @Override
-    public void update(T updatedEntity) throws PersistException {
+    public void update(T updatedEntity) {
         T originEntity = entityManager.find(type, updatedEntity.getId());
+        // TODO: move it to service layer
         DozerBeanMapperSingletonWrapper.getInstance().map(updatedEntity, originEntity);
     }
 
     @Override
-    public void delete(PK id) throws PersistException {
+    public void delete(PK id) {
         T entity = entityManager.find(type, id);
         entityManager.remove(entity);
     }
 
     @Override
-    public List<T> readAll() throws PersistException {
+    public List<T> readAll() {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(type);
         Root<T> entity = criteriaQuery.from(type);

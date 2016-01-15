@@ -3,10 +3,8 @@ package ru.todoo.domain.entity;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.UpdateTimestamp;
-import ru.todoo.dao.generic.Identifiable;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -17,29 +15,30 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "USERS", schema = "APP", catalog = "")
-public class UserEntity implements Serializable, Identifiable<Integer> {
-    private Integer id;
+public class UserEntity extends IdentifiableEntity<Integer> {
+    @Basic
+    @Column(name = "LOGIN")
     private String login;
+
+    @Basic
+    @Column(name = "PASSWORD")
     private String password;
-    private Timestamp created;
-    private Timestamp modified;
-    private Set<String> roles = new HashSet<>();
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", insertable = false, updatable = false)
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     @Basic
     @Column(name = "CREATED", insertable = false, updatable = false)
     @Generated(GenerationTime.INSERT)
+    private Timestamp created;
+
+    @Basic
+    @UpdateTimestamp
+    @Column(name = "MODIFIED")
+    private Timestamp modified;
+
+    @ElementCollection
+    @CollectionTable(name = "ROLES", joinColumns = @JoinColumn(name = "LOGIN", referencedColumnName = "LOGIN"))
+    @Column(name = "ROLE")
+    private Set<String> roles = new HashSet<>();
+
     public Timestamp getCreated() {
         return created;
     }
@@ -48,9 +47,6 @@ public class UserEntity implements Serializable, Identifiable<Integer> {
         this.created = created;
     }
 
-    @Basic
-    @UpdateTimestamp
-    @Column(name = "MODIFIED")
     public Timestamp getModified() {
         return modified;
     }
@@ -59,13 +55,10 @@ public class UserEntity implements Serializable, Identifiable<Integer> {
         this.modified = modified;
     }
 
-    @PreUpdate
     private void updateModified() {
         this.modified = new Timestamp(Calendar.getInstance().getTime().getTime());
     }
 
-    @Basic
-    @Column(name = "LOGIN")
     public String getLogin() {
         return login;
     }
@@ -74,8 +67,6 @@ public class UserEntity implements Serializable, Identifiable<Integer> {
         this.login = login;
     }
 
-    @Basic
-    @Column(name = "PASSWORD")
     public String getPassword() {
         return password;
     }
@@ -84,9 +75,6 @@ public class UserEntity implements Serializable, Identifiable<Integer> {
         this.password = password;
     }
 
-    @ElementCollection
-    @CollectionTable(name = "ROLES", joinColumns = @JoinColumn(name = "LOGIN", referencedColumnName = "LOGIN"))
-    @Column(name = "ROLE")
     public Set<String> getRoles() {
         return roles;
     }

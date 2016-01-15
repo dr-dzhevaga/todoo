@@ -4,7 +4,6 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.todoo.dao.PersistException;
 import ru.todoo.dao.TemplateDAO;
 import ru.todoo.dao.UserDAO;
 import ru.todoo.domain.dto.TemplateDTO;
@@ -28,7 +27,7 @@ public class TemplateService {
     private Mapper mapper;
 
     @Transactional(readOnly = true)
-    public List<TemplateDTO> readAll() throws PersistException {
+    public List<TemplateDTO> readAll() {
         List<TemplateEntity> entities = templateDAO.readAllRoot();
         return entities.stream().
                 map(template -> mapper.map(template, TemplateDTO.class, "templateWithoutChildren")).
@@ -36,7 +35,7 @@ public class TemplateService {
     }
 
     @Transactional(readOnly = true)
-    public List<TemplateDTO> readByCategory(Integer categoryId) throws PersistException {
+    public List<TemplateDTO> readByCategory(Integer categoryId) {
         List<TemplateEntity> entities = templateDAO.readRootByCategory(categoryId);
         return entities.stream().
                 map(template -> mapper.map(template, TemplateDTO.class, "templateWithoutChildren")).
@@ -44,7 +43,7 @@ public class TemplateService {
     }
 
     @Transactional(readOnly = true)
-    public List<TemplateDTO> readPopular() throws PersistException {
+    public List<TemplateDTO> readPopular() {
         List<TemplateEntity> entities = templateDAO.readPopularRoot();
         return entities.stream().
                 map(template -> mapper.map(template, TemplateDTO.class, "templateWithoutChildren")).
@@ -52,19 +51,19 @@ public class TemplateService {
     }
 
     @Transactional(readOnly = true)
-    public TemplateDTO read(Integer id) throws PersistException {
+    public TemplateDTO read(Integer id) {
         TemplateEntity entity = templateDAO.read(id);
         return mapper.map(entity, TemplateDTO.class);
     }
 
     @Transactional
-    public TemplateDTO create(TemplateDTO dto) throws PersistException {
+    public TemplateDTO create(TemplateDTO dto) {
         TemplateEntity entity = mapper.map(dto, TemplateEntity.class);
         return mapper.map(templateDAO.create(entity), TemplateDTO.class);
     }
 
     @Transactional
-    public TemplateDTO createStepsFromText(String text, Integer templateId, Integer userId) throws PersistException {
+    public TemplateDTO createStepsFromText(String text, Integer templateId, Integer userId) {
         String[] steps = Arrays.stream(text.split("\\r?\\n")).filter(line -> !line.isEmpty()).toArray(String[]::new);
         UserEntity user = userDAO.read(userId);
         TemplateEntity rootTemplateEntity = templateDAO.read(templateId);
@@ -90,12 +89,12 @@ public class TemplateService {
     }
 
     @Transactional
-    public void delete(Integer id) throws PersistException {
+    public void delete(Integer id) {
         templateDAO.delete(id);
     }
 
     @Transactional
-    public void update(TemplateDTO dto) throws PersistException {
+    public void update(TemplateDTO dto) {
         TemplateEntity entity = mapper.map(dto, TemplateEntity.class);
         templateDAO.update(entity);
     }

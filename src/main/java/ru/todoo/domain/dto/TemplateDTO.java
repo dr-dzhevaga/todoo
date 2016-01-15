@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Dmitriy Dzhevaga on 20.12.2015.
  */
-public class TemplateDTO extends AbstractTaskDTO {
+public class TemplateDTO extends BaseTaskDTO {
     private Integer categoryId;
     private List<TemplateDTO> children;
 

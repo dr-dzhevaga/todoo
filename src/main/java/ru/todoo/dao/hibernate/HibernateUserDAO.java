@@ -3,7 +3,6 @@ package ru.todoo.dao.hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-import ru.todoo.dao.PersistException;
 import ru.todoo.dao.UserDAO;
 import ru.todoo.domain.entity.UserEntity;
 
@@ -18,7 +17,7 @@ public class HibernateUserDAO extends HibernateGenericDAO<UserEntity, Integer> i
 
     @Override
     @SuppressWarnings(value = "unchecked")
-    public UserEntity readByLogin(String login) throws PersistException {
+    public UserEntity readByLogin(String login) {
         return (UserEntity) entityManager.unwrap(Session.class).
                 createCriteria(UserEntity.class).add(Restrictions.eq("login", login)).list().
                 stream().findFirst().orElse(null);

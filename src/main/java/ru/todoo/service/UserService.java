@@ -5,11 +5,11 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.todoo.dao.PersistException;
 import ru.todoo.dao.UserDAO;
 import ru.todoo.domain.dto.UserDTO;
 import ru.todoo.domain.entity.UserEntity;
 
+import javax.persistence.PersistenceException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,12 +29,12 @@ public class UserService {
     private Mapper mapper;
 
     @Transactional
-    public void create(UserDTO dto) throws PersistException {
+    public void create(UserDTO dto) {
         if (StringUtils.isBlank(dto.getLogin()) || StringUtils.isBlank(dto.getPassword())) {
-            throw new PersistException(USERNAME_OR_PASSWORD_IS_EMPTY_ERROR);
+            throw new PersistenceException(USERNAME_OR_PASSWORD_IS_EMPTY_ERROR);
         }
         if (!isLoginUnique(dto.getLogin())) {
-            throw new PersistException(USERNAME_IS_NOT_UNIQUE_ERROR);
+            throw new PersistenceException(USERNAME_IS_NOT_UNIQUE_ERROR);
         }
         Set<String> roles = new HashSet<>();
         roles.add(DEFAULT_USER_ROLE);
@@ -44,18 +44,18 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserDTO readByLogin(String login) throws PersistException {
+    public UserDTO readByLogin(String login) {
         UserEntity entity = userDAO.readByLogin(login);
         return mapper.map(entity, UserDTO.class);
     }
 
     @Transactional
-    public void delete(Integer id) throws PersistException {
+    public void delete(Integer id) {
         userDAO.delete(id);
     }
 
     @Transactional(readOnly = true)
-    public boolean isLoginUnique(String login) throws PersistException {
+    public boolean isLoginUnique(String login) {
         UserEntity entity = userDAO.readByLogin(login);
         return entity == null;
     }

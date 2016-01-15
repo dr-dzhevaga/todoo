@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Dmitriy Dzhevaga on 20.12.2015.
  */
-public class TaskDTO extends AbstractTaskDTO {
+public class TaskDTO extends BaseTaskDTO {
     private Integer originId;
     private boolean isCompleted;
     private List<TaskDTO> children;

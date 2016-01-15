@@ -4,7 +4,6 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.todoo.dao.PersistException;
 import ru.todoo.dao.TaskDAO;
 import ru.todoo.dao.TemplateDAO;
 import ru.todoo.domain.dto.TaskDTO;
@@ -13,6 +12,7 @@ import ru.todoo.domain.entity.TaskEntity;
 import ru.todoo.domain.entity.TemplateEntity;
 import ru.todoo.domain.entity.UserEntity;
 
+import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,13 +37,13 @@ public class TaskService {
     private Mapper mapper;
 
     @Autowired
-    public TaskService(UserService userService) throws PersistException {
+    public TaskService(UserService userService) throws PersistenceException {
         // TODO: add user resolving
         userDTO = userService.readByLogin("admin");
     }
 
     @Transactional(readOnly = true)
-    public List<TaskDTO> readAll() throws PersistException {
+    public List<TaskDTO> readAll() throws PersistenceException {
         List<TaskEntity> entities = taskDAO.readRootByUser(userDTO.getId());
         return entities.stream().
                 map(task -> mapper.map(task, TaskDTO.class, "taskWithoutChildren")).
@@ -51,14 +51,14 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
-    public TaskDTO read(Integer id) throws PersistException {
+    public TaskDTO read(Integer id) throws PersistenceException {
         checkOwner(taskDAO, id);
         TaskEntity entity = taskDAO.read(id);
         return mapper.map(entity, TaskDTO.class);
     }
 
     @Transactional
-    public TaskDTO create(TaskDTO dto) throws PersistException {
+    public TaskDTO create(TaskDTO dto) throws PersistenceException {
         if (dto.getParentId() != null) {
             checkOwner(taskDAO, dto.getParentId());
         }
@@ -68,10 +68,10 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskDTO createFromTemplate(Integer id) throws PersistException {
+    public TaskDTO createFromTemplate(Integer id) throws PersistenceException {
         TemplateEntity templateEntity = templateDAO.read(id);
         if (templateEntity == null) {
-            throw new PersistException(String.format(TEMPLATE_S_IS_NOT_FOUND_ERROR, id));
+            throw new PersistenceException(String.format(TEMPLATE_S_IS_NOT_FOUND_ERROR, id));
         }
         TaskEntity taskEntity = createFromTemplate(templateEntity, mapper.map(userDTO, UserEntity.class));
         taskDAO.create(taskEntity);
@@ -91,18 +91,18 @@ public class TaskService {
     }
 
     @Transactional
-    public void delete(Integer id) throws PersistException {
+    public void delete(Integer id) throws PersistenceException {
         checkOwner(taskDAO, id);
         taskDAO.delete(id);
     }
 
     @Transactional
-    public void update(TaskDTO dto) throws PersistException {
+    public void update(TaskDTO dto) throws PersistenceException {
         TaskEntity entity = mapper.map(dto, TaskEntity.class);
         taskDAO.update(entity);
     }
 
-    private void checkOwner(TaskDAO dao, Integer id) throws PersistException {
+    private void checkOwner(TaskDAO dao, Integer id) throws PersistenceException {
         TaskEntity entity = dao.read(id);
         if (!Objects.equals(entity.getUser().getId(), userDTO.getId())) {
             throw new SecurityException(ACCESS_ERROR);

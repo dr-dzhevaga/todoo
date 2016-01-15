@@ -3,10 +3,10 @@ package ru.todoo.servlets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import ru.todoo.dao.PersistException;
 import ru.todoo.domain.dto.UserDTO;
 import ru.todoo.service.UserService;
 
+import javax.persistence.PersistenceException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -40,7 +40,7 @@ public class RegistrationServlet extends HttpServlet {
             userService.create(user);
             request.login(login, password);
             response.sendRedirect("/");
-        } catch (PersistException e) {
+        } catch (PersistenceException e) {
             request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("/registration.jsp").forward(request, response);
         }

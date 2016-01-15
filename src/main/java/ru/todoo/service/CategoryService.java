@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.todoo.dao.CategoryDAO;
-import ru.todoo.dao.PersistException;
 import ru.todoo.domain.dto.CategoryDTO;
 import ru.todoo.domain.entity.CategoryEntity;
 
@@ -24,19 +23,19 @@ public class CategoryService {
     private Mapper mapper;
 
     @Transactional
-    public CategoryDTO create(CategoryDTO dto) throws PersistException {
+    public CategoryDTO create(CategoryDTO dto) {
         CategoryEntity entity = categoryDAO.create(mapper.map(dto, CategoryEntity.class));
         return mapper.map(entity, CategoryDTO.class);
     }
 
     @Transactional(readOnly = true)
-    public CategoryDTO read(Integer id) throws PersistException {
+    public CategoryDTO read(Integer id) {
         CategoryEntity entity = categoryDAO.read(id);
         return mapper.map(entity, CategoryDTO.class);
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryDTO> readAll() throws PersistException {
+    public List<CategoryDTO> readAll() {
         List<CategoryEntity> entities = categoryDAO.readAll();
         return entities.stream().
                 map(categoryEntity -> mapper.map(categoryEntity, CategoryDTO.class)).
@@ -44,12 +43,12 @@ public class CategoryService {
     }
 
     @Transactional
-    public void delete(Integer id) throws PersistException {
+    public void delete(Integer id) {
         categoryDAO.delete(id);
     }
 
     @Transactional
-    public void update(CategoryDTO dto) throws PersistException {
+    public void update(CategoryDTO dto) {
         categoryDAO.update(mapper.map(dto, CategoryEntity.class));
     }
 }
