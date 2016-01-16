@@ -7,7 +7,7 @@ import java.io.Serializable;
  * Created by Dmitriy Dzhevaga on 15.01.2016.
  */
 @MappedSuperclass
-public class IdentifiableEntity<PK extends Serializable> implements Serializable {
+public abstract class IdentifiableEntity<PK extends Serializable> implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", insertable = false, updatable = false)
