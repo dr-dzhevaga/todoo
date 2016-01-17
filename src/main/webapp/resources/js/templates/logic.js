@@ -8,7 +8,7 @@ var onCategoryRichSelectSelectChange = function (id) {
 };
 
 var onCategoryRichSelectSelectLoad = function () {
-    $$("categoryRichSelect").setValue(1);
+    $$("categoryRichSelect").setValue($$("categoryRichSelect").getList().getFirstId());
 };
 
 var onTemplatesListSelectChange = function () {

@@ -1,4 +1,4 @@
-package ru.todoo.servlets;
+package ru.todoo.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;

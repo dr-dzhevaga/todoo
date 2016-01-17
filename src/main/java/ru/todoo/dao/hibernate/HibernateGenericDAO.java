@@ -1,6 +1,7 @@
 package ru.todoo.dao.hibernate;
 
-import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.todoo.dao.GenericDAO;
 import ru.todoo.domain.entity.IdentifiableEntity;
 
@@ -22,6 +23,9 @@ public abstract class HibernateGenericDAO<T extends IdentifiableEntity, PK exten
     @PersistenceContext
     protected EntityManager entityManager;
 
+    @Autowired
+    Mapper mapper;
+
     public HibernateGenericDAO(Class<T> type) {
         this.type = type;
     }
@@ -40,8 +44,8 @@ public abstract class HibernateGenericDAO<T extends IdentifiableEntity, PK exten
     @Override
     public void update(T updatedEntity) {
         T originEntity = entityManager.find(type, updatedEntity.getId());
-        // TODO: move it to service layer
-        DozerBeanMapperSingletonWrapper.getInstance().map(updatedEntity, originEntity);
+        // TODO: move it to service layer?
+        mapper.map(updatedEntity, originEntity);
     }
 
     @Override

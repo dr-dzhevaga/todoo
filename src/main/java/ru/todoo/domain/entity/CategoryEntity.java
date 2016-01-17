@@ -13,7 +13,11 @@ import javax.persistence.Table;
 public class CategoryEntity extends IdentifiableEntity<Integer> {
     @Basic
     @Column(name = "NAME")
-    protected String name;
+    private String name;
+
+    @Basic
+    @Column(name = "FILTER")
+    private String filter;
 
     public String getName() {
         return name;
@@ -21,5 +25,13 @@ public class CategoryEntity extends IdentifiableEntity<Integer> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 }

@@ -10,7 +10,6 @@
 
     <context:component-scan base-package="ru.todoo.service"/>
     <context:component-scan base-package="ru.todoo.dao.hibernate"/>
-    <context:component-scan base-package="ru.todoo.servlets"/>
 
     <context:property-placeholder location="classpath:spring/data-access.properties" system-properties-mode="OVERRIDE"/>
 
@@ -33,6 +32,12 @@
 
         <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
-        <bean id="mapper" class="org.dozer.DozerBeanMapperSingletonWrapper" factory-method="getInstance"/>
+        <bean id="mapper" class="org.dozer.DozerBeanMapper">
+            <property name="mappingFiles">
+                <list>
+                    <value>dozer/dozer-bean-mapping.xml</value>
+                </list>
+            </property>
+        </bean>
     </beans>
 </beans>

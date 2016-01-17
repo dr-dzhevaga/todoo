@@ -33,12 +33,13 @@ public class TaskService {
     @Autowired
     private TemplateDAO templateDAO;
 
+    // TODO: move all conversions to controller? Use json annotations for mapping? Apply Open Session in View pattern?
     @Autowired
     private Mapper mapper;
 
     @Autowired
     public TaskService(UserService userService) throws PersistenceException {
-        // TODO: add user resolving
+        // TODO: add user resolving from context
         userDTO = userService.readByLogin("admin");
     }
 
@@ -102,6 +103,7 @@ public class TaskService {
         taskDAO.update(entity);
     }
 
+    // TODO: apply AOP?
     private void checkOwner(TaskDAO dao, Integer id) throws PersistenceException {
         TaskEntity entity = dao.read(id);
         if (!Objects.equals(entity.getUser().getId(), userDTO.getId())) {
