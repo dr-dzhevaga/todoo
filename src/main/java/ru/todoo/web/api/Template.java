@@ -66,9 +66,4 @@ public class Template {
         templateService.update(template);
         return "{\"message\" : \"Template is updated\"}";
     }
-
-    @ExceptionHandler
-    public String handleException(Exception e) {
-        return "{\"message\" : \"" + e.getLocalizedMessage() + "\"}";
-    }
 }

@@ -1,7 +1,10 @@
 package ru.todoo.web.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import ru.todoo.domain.dto.CategoryDTO;
 import ru.todoo.service.CategoryService;
 
@@ -36,10 +39,5 @@ public class Category {
     public String update(CategoryDTO category) {
         categoryService.update(category);
         return "{\"message\" : \"Category is updated\"}";
-    }
-
-    @ExceptionHandler
-    public String handleException(Exception e) {
-        return "{\"message\" : \"" + e.getLocalizedMessage() + "\"}";
     }
 }

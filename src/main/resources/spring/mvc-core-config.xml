@@ -23,6 +23,6 @@
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
     <mvc:interceptors>
-        <bean class="ru.todoo.web.interceptors.ViewNameInModelInterceptor"/>
+        <bean class="ru.todoo.web.ViewNameInModelInterceptor"/>
     </mvc:interceptors>
 </beans>

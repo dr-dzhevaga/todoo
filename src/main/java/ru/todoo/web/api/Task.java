@@ -47,9 +47,4 @@ public class Task {
         taskService.update(task);
         return "{\"message\" : \"Task is updated\"}";
     }
-
-    @ExceptionHandler
-    public String handleException(Exception e) {
-        return "{\"message\" : \"" + e.getLocalizedMessage() + "\"}";
-    }
 }

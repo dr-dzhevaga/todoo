@@ -1,4 +1,4 @@
-package ru.todoo.web.interceptors;
+package ru.todoo.web;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
