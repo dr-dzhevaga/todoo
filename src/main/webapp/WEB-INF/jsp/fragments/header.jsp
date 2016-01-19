@@ -7,19 +7,21 @@
         <nav>
             <spring:url value="/templates" var="templates"/>
             <spring:url value="/tasks" var="tasks"/>
-            <a href="${templates}" ${requestScope.springViewName == 'templates' ? 'class="selected"' : ''}>Templates</a>
-            <a href="${tasks}" ${requestScope.springViewName == 'tasks' ? 'class="selected"' : ''}>My tasks</a>
+            <a href="${templates}" ${springViewName == 'templates' ? 'class="selected"' : ''}>Templates</a>
+            <a href="${tasks}" ${springViewName == 'tasks' ? 'class="selected"' : ''}>My tasks</a>
         </nav>
         <ul>
             <c:choose>
                 <c:when test="${pageContext.request.userPrincipal eq null}">
                     <li>
-                        <a href="${pageContext.request.contextPath}/login?from=${pageContext.request.requestURL}">Log-in</a>
+                        <spring:url value="/login" var="login"/>
+                        <a href="${login}">Log-in</a>
                     </li>
                 </c:when>
                 <c:otherwise>
                     <li class="user">You are welcome, ${pageContext.request.remoteUser}</li>
-                    <li><a href="${pageContext.request.contextPath}/logout">Log-out</a></li>
+                    <spring:url value="/logout" var="logout"/>
+                    <li><a href="${logout}">Log-out</a></li>
                 </c:otherwise>
             </c:choose>
         </ul>

@@ -7,6 +7,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <import resource="datasource-config.xml"/>
+    <import resource="security.xml"/>
 
     <context:component-scan base-package="ru.todoo.service"/>
     <context:component-scan base-package="ru.todoo.dao.hibernate"/>

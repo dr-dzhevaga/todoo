@@ -100,3 +100,9 @@ body {
     color: red;
     font-size: 12px;
 }
+
+.login-info {
+    padding-bottom: 10px;
+    color: green;
+    font-size: 12px;
+}

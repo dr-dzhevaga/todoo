@@ -12,11 +12,11 @@
     <spring:url value="/resources/js/templates/logic.js/" var="logic"/>
     <script src="${logic}"></script>
 
-    <c:if test="${pageContext.request.isUserInRole('admin')}">
+    <c:if test="${pageContext.request.isUserInRole('ADMIN')}">
         <spring:url value="/resources/js/templates/logic-admin.js/" var="logicAdmin"/>
         <script src="${logicAdmin}"></script>
 
-        <spring:url value="/resources/js/templates/logic-admin.js/" var="uiAdmin"/>
+        <spring:url value="/resources/js/templates/ui-admin.js/" var="uiAdmin"/>
         <script src="${uiAdmin}"></script>
     </c:if>
 </head>
@@ -25,11 +25,11 @@
 <jsp:include page="fragments/header.jsp"/>
 <script>
     webix.ready(function () {
-        <c:if test="${pageContext.request.isUserInRole('admin')}">
+        <c:if test="${pageContext.request.isUserInRole('ADMIN')}">
         admin_ui.init();
         </c:if>
         ui.init();
-        <c:if test="${pageContext.request.isUserInRole('admin')}">
+        <c:if test="${pageContext.request.isUserInRole('ADMIN')}">
         admin_logic.init();
         </c:if>
         logic.init();

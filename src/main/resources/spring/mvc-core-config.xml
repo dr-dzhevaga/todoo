@@ -19,6 +19,7 @@
     <mvc:view-controller path="/" view-name="templates"/>
     <mvc:view-controller path="/tasks" view-name="tasks"/>
     <mvc:view-controller path="/templates" view-name="templates"/>
+    <mvc:view-controller path="/login" view-name="login"/>
 
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
