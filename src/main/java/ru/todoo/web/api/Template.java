@@ -43,7 +43,7 @@ public class Template {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public TemplateDTO create(TemplateDTO template, Principal principal) {
+    public TemplateDTO create(@RequestBody TemplateDTO template, Principal principal) {
         UserDTO user = userService.readByLogin(principal.getName());
         template.setUserId(user.getId());
         return templateService.create(template);
@@ -62,7 +62,7 @@ public class Template {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public String update(TemplateDTO template) {
+    public String update(@RequestBody TemplateDTO template) {
         templateService.update(template);
         return "{\"message\" : \"Template is updated\"}";
     }

@@ -1,10 +1,7 @@
 package ru.todoo.web.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.todoo.domain.dto.CategoryDTO;
 import ru.todoo.service.CategoryService;
 
@@ -25,7 +22,7 @@ public class Category {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public CategoryDTO create(CategoryDTO category) {
+    public CategoryDTO create(@RequestBody CategoryDTO category) {
         return categoryService.create(category);
     }
 
@@ -36,7 +33,7 @@ public class Category {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public String update(CategoryDTO category) {
+    public String update(@RequestBody CategoryDTO category) {
         categoryService.update(category);
         return "{\"message\" : \"Category is updated\"}";
     }

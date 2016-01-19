@@ -27,7 +27,7 @@ public class Task {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public TaskDTO create(TaskDTO task) {
+    public TaskDTO create(@RequestBody TaskDTO task) {
         return taskService.create(task);
     }
 
@@ -43,7 +43,7 @@ public class Task {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public String update(TaskDTO task) {
+    public String update(@RequestBody TaskDTO task) {
         taskService.update(task);
         return "{\"message\" : \"Task is updated\"}";
     }
