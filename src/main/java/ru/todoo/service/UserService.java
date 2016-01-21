@@ -28,12 +28,18 @@ public class UserService {
     @Autowired
     private Mapper mapper;
 
+    @Transactional(readOnly = true)
+    public UserDTO readByLogin(String login) {
+        UserEntity entity = userDAO.readByLogin(login);
+        return mapper.map(entity, UserDTO.class);
+    }
+
     @Transactional
     public void create(UserDTO dto) {
-        if (StringUtils.isBlank(dto.getLogin()) || StringUtils.isBlank(dto.getPassword())) {
+        if (StringUtils.isBlank(dto.getUsername()) || StringUtils.isBlank(dto.getPassword())) {
             throw new PersistenceException(USERNAME_OR_PASSWORD_IS_EMPTY_ERROR);
         }
-        if (!isLoginUnique(dto.getLogin())) {
+        if (!isLoginUnique(dto.getUsername())) {
             throw new PersistenceException(USERNAME_IS_NOT_UNIQUE_ERROR);
         }
         Set<String> roles = new HashSet<>();
@@ -46,12 +52,6 @@ public class UserService {
     private boolean isLoginUnique(String login) {
         UserEntity entity = userDAO.readByLogin(login);
         return entity == null;
-    }
-
-    @Transactional(readOnly = true)
-    public UserDTO readByLogin(String login) {
-        UserEntity entity = userDAO.readByLogin(login);
-        return mapper.map(entity, UserDTO.class);
     }
 
     @Transactional

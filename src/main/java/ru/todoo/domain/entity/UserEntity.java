@@ -18,7 +18,7 @@ import java.util.Set;
 public class UserEntity extends IdentifiableEntity<Integer> {
     @Basic
     @Column(name = "LOGIN")
-    private String login;
+    private String username;
 
     @Basic
     @Column(name = "PASSWORD")
@@ -59,12 +59,12 @@ public class UserEntity extends IdentifiableEntity<Integer> {
         this.modified = new Timestamp(Calendar.getInstance().getTime().getTime());
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String login) {
+        this.username = login;
     }
 
     public String getPassword() {
@@ -93,7 +93,7 @@ public class UserEntity extends IdentifiableEntity<Integer> {
         if (id != that.id) return false;
         if (created != null ? !created.equals(that.created) : that.created != null) return false;
         if (modified != null ? !modified.equals(that.modified) : that.modified != null) return false;
-        if (login != null ? !login.equals(that.login) : that.login != null) return false;
+        if (username != null ? !username.equals(that.username) : that.username != null) return false;
         return !(password != null ? !password.equals(that.password) : that.password != null);
 
     }
@@ -103,7 +103,7 @@ public class UserEntity extends IdentifiableEntity<Integer> {
         int result = id;
         result = 31 * result + (created != null ? created.hashCode() : 0);
         result = 31 * result + (modified != null ? modified.hashCode() : 0);
-        result = 31 * result + (login != null ? login.hashCode() : 0);
+        result = 31 * result + (username != null ? username.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         return result;
     }

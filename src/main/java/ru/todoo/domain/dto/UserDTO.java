@@ -8,7 +8,7 @@ import java.util.Set;
  */
 public class UserDTO {
     private Integer id;
-    private String login;
+    private String username;
     private String password;
     private Set<String> roles = new HashSet<>();
 
@@ -28,12 +28,12 @@ public class UserDTO {
         this.id = id;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Set<String> getRoles() {

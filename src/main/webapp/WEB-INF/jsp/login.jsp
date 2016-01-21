@@ -16,11 +16,11 @@
     <h1>Log-in</h1>
 
     <c:if test="${param.error != null}">
-        <div class="login-error">The username or password you have entered is invalid</div>
+        <div class="error">The username or password you have entered is invalid</div>
     </c:if>
 
     <c:if test="${param.logout != null}">
-        <div class="login-info">You have been successfully logged out</div>
+        <div class="info">You have been successfully logged out</div>
     </c:if>
 
     <spring:url value="/login" var="login"/>
@@ -31,7 +31,8 @@
     </form>
 
     <div class="login-help">
-        <a href="registration.jsp">Register</a>
+        <spring:url value="/registration" var="registration"/>
+        <a href="${registration}">Register</a>
     </div>
 </div>
 </body>

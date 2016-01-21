@@ -19,7 +19,7 @@ public class HibernateUserDAO extends HibernateGenericDAO<UserEntity, Integer> i
     @SuppressWarnings(value = "unchecked")
     public UserEntity readByLogin(String login) {
         return (UserEntity) entityManager.unwrap(Session.class).
-                createCriteria(UserEntity.class).add(Restrictions.eq("login", login)).list().
+                createCriteria(UserEntity.class).add(Restrictions.eq("username", login)).list().
                 stream().findFirst().orElse(null);
     }
 }

@@ -95,13 +95,13 @@ body {
     font-size: 12px;
 }
 
-.login-error {
+.error {
     padding-bottom: 10px;
     color: red;
     font-size: 12px;
 }
 
-.login-info {
+.info {
     padding-bottom: 10px;
     color: green;
     font-size: 12px;
