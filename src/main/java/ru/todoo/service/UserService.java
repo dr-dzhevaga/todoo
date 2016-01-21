@@ -43,6 +43,11 @@ public class UserService {
         userDAO.create(entity);
     }
 
+    private boolean isLoginUnique(String login) {
+        UserEntity entity = userDAO.readByLogin(login);
+        return entity == null;
+    }
+
     @Transactional(readOnly = true)
     public UserDTO readByLogin(String login) {
         UserEntity entity = userDAO.readByLogin(login);
@@ -52,11 +57,5 @@ public class UserService {
     @Transactional
     public void delete(Integer id) {
         userDAO.delete(id);
-    }
-
-    @Transactional(readOnly = true)
-    public boolean isLoginUnique(String login) {
-        UserEntity entity = userDAO.readByLogin(login);
-        return entity == null;
     }
 }

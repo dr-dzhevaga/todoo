@@ -18,11 +18,7 @@
     </http>
 
     <authentication-manager>
-        <authentication-provider>
-            <user-service>
-                <user name="admin" password="admin" authorities="ROLE_USER,ROLE_ADMIN"/>
-                <user name="user" password="user" authorities="ROLE_USER"/>
-            </user-service>
-        </authentication-provider>
+        <authentication-provider user-service-ref="userDetailsServiceImpl"/>
     </authentication-manager>
+
 </beans:beans>
