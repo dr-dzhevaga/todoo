@@ -1,24 +1,19 @@
 package ru.todoo.domain.dto;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by Dmitriy Dzhevaga on 20.12.2015.
  */
-public class UserDTO {
+public class UserDTO implements UserDetails {
     private Integer id;
     private String username;
     private String password;
-    private Set<String> roles = new HashSet<>();
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    private Collection<SimpleGrantedAuthority> authorities = new HashSet<>();
 
     public Integer getId() {
         return id;
@@ -28,6 +23,7 @@ public class UserDTO {
         this.id = id;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -36,11 +32,41 @@ public class UserDTO {
         this.username = username;
     }
 
-    public Set<String> getRoles() {
-        return roles;
+    @Override
+    public String getPassword() {
+        return password;
     }
 
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public Collection<SimpleGrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Collection<SimpleGrantedAuthority> authorities) {
+        this.authorities = authorities;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

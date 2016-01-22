@@ -110,4 +110,23 @@
             <b>user</b>
         </field-exclude>
     </mapping>
+
+    <mapping>
+        <class-a>ru.todoo.domain.entity.UserEntity</class-a>
+        <class-b>ru.todoo.domain.dto.UserDTO</class-b>
+        <field>
+            <a>roles</a>
+            <b>authorities</b>
+        </field>
+    </mapping>
+
+    <mapping type="one-way">
+        <class-a>org.springframework.security.core.authority.SimpleGrantedAuthority</class-a>
+        <class-b>java.lang.String</class-b>
+        <field>
+            <a>role</a>
+            <b>this</b>
+        </field>
+    </mapping>
+
 </mappings>
