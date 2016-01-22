@@ -1,16 +1,16 @@
-package ru.todoo.security;
+package ru.todoo.service.security;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import ru.todoo.dao.TaskDAO;
-import ru.todoo.domain.dto.TaskDTO;
-import ru.todoo.domain.dto.UserDTO;
+import ru.todoo.domain.dto.Task;
+import ru.todoo.domain.dto.User;
 import ru.todoo.domain.entity.TaskEntity;
 
+import javax.annotation.Resource;
 import java.util.Objects;
 
 /**
@@ -22,11 +22,11 @@ import java.util.Objects;
 public class TaskServiceAccessControlAspect {
     private static final String ACCESS_ERROR = "Access denied";
 
-    @Autowired
+    @Resource
     private TaskDAO taskDAO;
 
-    @Autowired
-    private UserDTO userDTO;
+    @Resource(name = "authorizedUser")
+    private User authorizedUser;
 
     @Before("(" +
             "execution(* ru.todoo.service.TaskService.read(..)) || " +
@@ -40,7 +40,7 @@ public class TaskServiceAccessControlAspect {
             "execution(* ru.todoo.service.TaskService.create(..)) || " +
             "execution(* ru.todoo.service.TaskService.update(..))" +
             ") && args(task))")
-    public void checkAccess(TaskDTO task) {
+    public void checkAccess(Task task) {
         checkOwnerIsAuthorizedUser(task.getId());
         checkOwnerIsAuthorizedUser(task.getParentId());
     }
@@ -48,7 +48,7 @@ public class TaskServiceAccessControlAspect {
     private void checkOwnerIsAuthorizedUser(Integer id) {
         if (id != null) {
             TaskEntity entity = taskDAO.read(id);
-            if (!Objects.equals(entity.getUser().getId(), userDTO.getId())) {
+            if (!Objects.equals(entity.getUser().getId(), authorizedUser.getId())) {
                 throw new SecurityException(ACCESS_ERROR);
             }
         }

@@ -9,8 +9,12 @@
         <wildcard>true</wildcard>
     </configuration>
 
+    <!--
+        Template <-> TemplateEntity
+        exclude: null
+    -->
     <mapping map-null="false">
-        <class-a>ru.todoo.domain.dto.TemplateDTO</class-a>
+        <class-a>ru.todoo.domain.dto.Template</class-a>
         <class-b>ru.todoo.domain.entity.TemplateEntity</class-b>
         <field>
             <a>parentId</a>
@@ -26,8 +30,12 @@
         </field>
     </mapping>
 
+    <!--
+        Template <-> TemplateEntity
+        exclude: null and children
+    -->
     <mapping map-null="false" map-id="templateWithoutChildren">
-        <class-a>ru.todoo.domain.dto.TemplateDTO</class-a>
+        <class-a>ru.todoo.domain.dto.Template</class-a>
         <class-b>ru.todoo.domain.entity.TemplateEntity</class-b>
         <field>
             <a>parentId</a>
@@ -47,36 +55,11 @@
         </field-exclude>
     </mapping>
 
-    <mapping map-null="false">
-        <class-a>ru.todoo.domain.dto.TaskDTO</class-a>
-        <class-b>ru.todoo.domain.entity.TaskEntity</class-b>
-        <field>
-            <a>parentId</a>
-            <b>parent.id</b>
-        </field>
-        <field>
-            <a>userId</a>
-            <b>user.id</b>
-        </field>
-    </mapping>
-
-    <mapping map-null="false" map-id="taskWithoutChildren">
-        <class-a>ru.todoo.domain.dto.TaskDTO</class-a>
-        <class-b>ru.todoo.domain.entity.TaskEntity</class-b>
-        <field>
-            <a>parentId</a>
-            <b>parent.id</b>
-        </field>
-        <field>
-            <a>userId</a>
-            <b>user.id</b>
-        </field>
-        <field-exclude>
-            <a>children</a>
-            <b>children</b>
-        </field-exclude>
-    </mapping>
-
+    <!--
+        TemplateEntity -> TemplateEntity
+        exclude: null, parent, children, user
+        (used for update)
+    -->
     <mapping map-null="false">
         <class-a>ru.todoo.domain.entity.TemplateEntity</class-a>
         <class-b>ru.todoo.domain.entity.TemplateEntity</class-b>
@@ -94,6 +77,49 @@
         </field-exclude>
     </mapping>
 
+    <!--
+        Task <-> TaskEntity
+        exclude: null
+    -->
+    <mapping map-null="false">
+        <class-a>ru.todoo.domain.dto.Task</class-a>
+        <class-b>ru.todoo.domain.entity.TaskEntity</class-b>
+        <field>
+            <a>parentId</a>
+            <b>parent.id</b>
+        </field>
+        <field>
+            <a>userId</a>
+            <b>user.id</b>
+        </field>
+    </mapping>
+
+    <!--
+        Task <-> TaskEntity
+        exclude: null and children
+    -->
+    <mapping map-null="false" map-id="taskWithoutChildren">
+        <class-a>ru.todoo.domain.dto.Task</class-a>
+        <class-b>ru.todoo.domain.entity.TaskEntity</class-b>
+        <field>
+            <a>parentId</a>
+            <b>parent.id</b>
+        </field>
+        <field>
+            <a>userId</a>
+            <b>user.id</b>
+        </field>
+        <field-exclude>
+            <a>children</a>
+            <b>children</b>
+        </field-exclude>
+    </mapping>
+
+    <!--
+        TaskEntity -> TaskEntity
+        exclude: null, parent, children, user
+        (used for update)
+    -->
     <mapping map-null="false">
         <class-a>ru.todoo.domain.entity.TaskEntity</class-a>
         <class-b>ru.todoo.domain.entity.TaskEntity</class-b>
@@ -111,15 +137,22 @@
         </field-exclude>
     </mapping>
 
+    <!--
+        User <-> UserEntity
+    -->
     <mapping>
         <class-a>ru.todoo.domain.entity.UserEntity</class-a>
-        <class-b>ru.todoo.domain.dto.UserDTO</class-b>
+        <class-b>ru.todoo.domain.dto.User</class-b>
         <field>
             <a>roles</a>
             <b>authorities</b>
         </field>
     </mapping>
 
+    <!--
+        SimpleGrantedAuthority -> String
+        (used in User <-> UserEntity mapping)
+    -->
     <mapping type="one-way">
         <class-a>org.springframework.security.core.authority.SimpleGrantedAuthority</class-a>
         <class-b>java.lang.String</class-b>

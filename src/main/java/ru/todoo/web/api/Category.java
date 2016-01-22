@@ -1,10 +1,9 @@
 package ru.todoo.web.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.todoo.domain.dto.CategoryDTO;
 import ru.todoo.service.CategoryService;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -13,16 +12,16 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/categories")
 public class Category {
-    @Autowired
+    @Resource
     private CategoryService categoryService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<CategoryDTO> get() {
+    public List<ru.todoo.domain.dto.Category> get() {
         return categoryService.readAll();
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public CategoryDTO create(@RequestBody CategoryDTO category) {
+    public ru.todoo.domain.dto.Category create(@RequestBody ru.todoo.domain.dto.Category category) {
         return categoryService.create(category);
     }
 
@@ -33,7 +32,7 @@ public class Category {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public String update(@RequestBody CategoryDTO category) {
+    public String update(@RequestBody ru.todoo.domain.dto.Category category) {
         categoryService.update(category);
         return "{\"message\" : \"Category is updated\"}";
     }

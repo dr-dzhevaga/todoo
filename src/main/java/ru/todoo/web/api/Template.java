@@ -1,10 +1,9 @@
 package ru.todoo.web.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.todoo.domain.dto.TemplateDTO;
 import ru.todoo.service.TemplateService;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -13,36 +12,36 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/templates")
 public class Template {
-    @Autowired
+    @Resource
     private TemplateService templateService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<TemplateDTO> readAll() {
+    public List<ru.todoo.domain.dto.Template> readAll() {
         return templateService.readAllRoot();
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "filter=parent")
-    public List<TemplateDTO> readByParent(@RequestParam Integer id) {
+    public List<ru.todoo.domain.dto.Template> readByParent(@RequestParam Integer id) {
         return templateService.read(id).getChildren();
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "filter=category")
-    public List<TemplateDTO> readByCategory(@RequestParam Integer id) {
-        return templateService.readByCategory(id);
+    public List<ru.todoo.domain.dto.Template> readByCategory(@RequestParam Integer id) {
+        return templateService.readRootByCategory(id);
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "filter=popular")
-    public List<TemplateDTO> readPopular() {
-        return templateService.readPopular();
+    public List<ru.todoo.domain.dto.Template> readPopular() {
+        return templateService.readPopularRoot();
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public TemplateDTO create(@RequestBody TemplateDTO template) {
+    public ru.todoo.domain.dto.Template create(@RequestBody ru.todoo.domain.dto.Template template) {
         return templateService.create(template);
     }
 
     @RequestMapping(method = RequestMethod.POST, params = "sourceType=text")
-    public TemplateDTO create(@RequestParam Integer templateId, @RequestParam String text) {
+    public ru.todoo.domain.dto.Template create(@RequestParam Integer templateId, @RequestParam String text) {
         return templateService.createStepsFromText(text, templateId);
     }
 
@@ -53,7 +52,7 @@ public class Template {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public String update(@RequestBody TemplateDTO template) {
+    public String update(@RequestBody ru.todoo.domain.dto.Template template) {
         templateService.update(template);
         return "{\"message\" : \"Template is updated\"}";
     }

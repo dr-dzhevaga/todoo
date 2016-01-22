@@ -1,10 +1,9 @@
 package ru.todoo.web.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.todoo.domain.dto.TaskDTO;
 import ru.todoo.service.TaskService;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -13,26 +12,26 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tasks")
 public class Task {
-    @Autowired
+    @Resource
     private TaskService taskService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<TaskDTO> readAll() {
+    public List<ru.todoo.domain.dto.Task> readAll() {
         return taskService.readAllRoot();
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "filter=parent")
-    public List<TaskDTO> read(@RequestParam Integer id) {
+    public List<ru.todoo.domain.dto.Task> read(@RequestParam Integer id) {
         return taskService.read(id).getChildren();
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public TaskDTO create(@RequestBody TaskDTO task) {
+    public ru.todoo.domain.dto.Task create(@RequestBody ru.todoo.domain.dto.Task task) {
         return taskService.create(task);
     }
 
     @RequestMapping(method = RequestMethod.POST, params = "templateId")
-    public TaskDTO createFromTemplate(@RequestParam Integer templateId) {
+    public ru.todoo.domain.dto.Task createFromTemplate(@RequestParam Integer templateId) {
         return taskService.createFromTemplate(templateId);
     }
 
@@ -43,7 +42,7 @@ public class Task {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public String update(@RequestBody TaskDTO task) {
+    public String update(@RequestBody ru.todoo.domain.dto.Task task) {
         taskService.update(task);
         return "{\"message\" : \"Task is updated\"}";
     }

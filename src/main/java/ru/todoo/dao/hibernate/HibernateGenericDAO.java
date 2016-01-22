@@ -42,10 +42,9 @@ public abstract class HibernateGenericDAO<T extends IdentifiableEntity, PK exten
     }
 
     @Override
-    public void update(T updatedEntity) {
-        T originEntity = entityManager.find(type, updatedEntity.getId());
-        // TODO: move it to service layer?
-        mapper.map(updatedEntity, originEntity);
+    public void update(T entity) {
+        T originEntity = entityManager.find(type, entity.getId());
+        mapper.map(entity, originEntity);
     }
 
     @Override

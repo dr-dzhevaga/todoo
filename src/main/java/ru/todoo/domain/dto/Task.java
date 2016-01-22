@@ -5,10 +5,10 @@ import java.util.List;
 /**
  * Created by Dmitriy Dzhevaga on 20.12.2015.
  */
-public class TaskDTO extends BaseTaskDTO {
+public class Task extends BaseTask {
     private Integer originId;
     private boolean isCompleted;
-    private List<TaskDTO> children;
+    private List<Task> children;
 
     public boolean isCompleted() {
         return isCompleted;
@@ -26,11 +26,11 @@ public class TaskDTO extends BaseTaskDTO {
         this.originId = originId;
     }
 
-    public List<TaskDTO> getChildren() {
+    public List<Task> getChildren() {
         return children;
     }
 
-    public void setChildren(List<TaskDTO> children) {
+    public void setChildren(List<Task> children) {
         this.children = children;
     }
 }

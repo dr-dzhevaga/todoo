@@ -1,45 +1,48 @@
 package ru.todoo.service;
 
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.todoo.dao.CategoryDAO;
-import ru.todoo.domain.dto.CategoryDTO;
+import ru.todoo.domain.dto.Category;
 import ru.todoo.domain.entity.CategoryEntity;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Dmitriy Dzhevaga on 06.11.2015.
  */
 @Service
 public class CategoryService {
-    @Autowired
+    @Resource
     private CategoryDAO categoryDAO;
 
-    @Autowired
+    @Resource
     private Mapper mapper;
 
     @Transactional
-    public CategoryDTO create(CategoryDTO dto) {
-        CategoryEntity entity = categoryDAO.create(mapper.map(dto, CategoryEntity.class));
-        return mapper.map(entity, CategoryDTO.class);
+    public Category create(Category category) {
+        CategoryEntity categoryEntity = mapper.map(category, CategoryEntity.class);
+        categoryEntity = categoryDAO.create(categoryEntity);
+        category = mapper.map(categoryEntity, Category.class);
+        return category;
     }
 
     @Transactional(readOnly = true)
-    public CategoryDTO read(Integer id) {
-        CategoryEntity entity = categoryDAO.read(id);
-        return mapper.map(entity, CategoryDTO.class);
+    public Category read(Integer id) {
+        CategoryEntity categoryEntity = categoryDAO.read(id);
+        Category category = mapper.map(categoryEntity, Category.class);
+        return category;
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryDTO> readAll() {
-        List<CategoryEntity> entities = categoryDAO.readAll();
-        return entities.stream().
-                map(categoryEntity -> mapper.map(categoryEntity, CategoryDTO.class)).
-                collect(Collectors.toList());
+    public List<Category> readAll() {
+        List<CategoryEntity> categoryEntities = categoryDAO.readAll();
+        List<Category> categories = new ArrayList<>(categoryEntities.size());
+        mapper.map(categoryEntities, categories);
+        return categories;
     }
 
     @Transactional
@@ -48,7 +51,8 @@ public class CategoryService {
     }
 
     @Transactional
-    public void update(CategoryDTO dto) {
-        categoryDAO.update(mapper.map(dto, CategoryEntity.class));
+    public void update(Category category) {
+        CategoryEntity categoryEntity = mapper.map(category, CategoryEntity.class);
+        categoryDAO.update(categoryEntity);
     }
 }

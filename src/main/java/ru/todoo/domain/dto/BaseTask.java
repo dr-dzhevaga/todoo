@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 /**
  * Created by Dmitriy Dzhevaga on 20.12.2015.
  */
-public abstract class BaseTaskDTO {
+public abstract class BaseTask {
     private Integer id;
     private Integer order;
     private String name;

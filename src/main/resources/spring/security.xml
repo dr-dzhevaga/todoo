@@ -7,10 +7,7 @@
 		http://www.springframework.org/schema/security
 		http://www.springframework.org/schema/security/spring-security.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="ru.todoo.security"/>
-
-    <beans:bean id="authorizedUser" class="ru.todoo.security.SecurityUtils" factory-method="getAuthorizedUser"
-                scope="session"/>
+    <context:component-scan base-package="ru.todoo.service.security"/>
 
     <http>
         <intercept-url pattern="/tasks*" access="hasRole('USER')"/>
@@ -26,5 +23,7 @@
     <authentication-manager>
         <authentication-provider user-service-ref="userService"/>
     </authentication-manager>
+
+    <beans:bean id="authorizedUser" factory-bean="userService" factory-method="getAuthorizedUser" scope="session"/>
 
 </beans:beans>

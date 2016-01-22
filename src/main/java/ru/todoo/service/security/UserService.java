@@ -1,18 +1,21 @@
-package ru.todoo.service;
+package ru.todoo.service.security;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dozer.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.todoo.dao.UserDAO;
-import ru.todoo.domain.dto.UserDTO;
+import ru.todoo.domain.dto.User;
 import ru.todoo.domain.entity.UserEntity;
 
+import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,44 +30,50 @@ public class UserService implements UserDetailsService {
     private static final String USERNAME_IS_NOT_UNIQUE_ERROR = "Username is not unique";
     private static final String DEFAULT_USER_ROLE = "ROLE_USER";
 
-    @Autowired
+    @Resource
     UserDAO userDAO;
 
-    @Autowired
+    @Resource
     private Mapper mapper;
 
     @Override
     @Transactional(readOnly = true)
-    public UserDTO loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userDAO.readByUsername(username);
-        if (user == null) {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity userEntity = userDAO.readByUsername(username);
+        if (userEntity == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }
-        return mapper.map(user, UserDTO.class);
+
+        User user = mapper.map(userEntity, User.class);
+        return user;
     }
 
     @Transactional
-    public void create(UserDTO dto) {
-        if (StringUtils.isBlank(dto.getUsername()) || StringUtils.isBlank(dto.getPassword())) {
+    public void create(User user) {
+        if (StringUtils.isBlank(user.getUsername()) || StringUtils.isBlank(user.getPassword())) {
             throw new PersistenceException(USERNAME_OR_PASSWORD_IS_EMPTY_ERROR);
         }
-        if (!isLoginUnique(dto.getUsername())) {
+        if (!isLoginUnique(user.getUsername())) {
             throw new PersistenceException(USERNAME_IS_NOT_UNIQUE_ERROR);
         }
-        UserEntity entity = mapper.map(dto, UserEntity.class);
+        UserEntity userEntity = mapper.map(user, UserEntity.class);
         Set<String> roles = new HashSet<>();
         roles.add(DEFAULT_USER_ROLE);
-        entity.setRoles(roles);
-        userDAO.create(entity);
+        userEntity.setRoles(roles);
+        userDAO.create(userEntity);
     }
 
     private boolean isLoginUnique(String login) {
-        UserEntity entity = userDAO.readByUsername(login);
-        return entity == null;
+        UserEntity userEntity = userDAO.readByUsername(login);
+        return userEntity == null;
     }
 
-    @Transactional
-    public void delete(Integer id) {
-        userDAO.delete(id);
+    public User getAuthorizedUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    public void authorizeUser(User user) {
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

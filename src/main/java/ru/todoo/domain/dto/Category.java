@@ -3,15 +3,15 @@ package ru.todoo.domain.dto;
 /**
  * Created by Dmitriy Dzhevaga on 20.12.2015.
  */
-public class CategoryDTO {
+public class Category {
     private Integer id;
     private String name;
     private String filter;
 
-    public CategoryDTO() {
+    public Category() {
     }
 
-    public CategoryDTO(Integer id, String name) {
+    public Category(Integer id, String name) {
         this.id = id;
         this.name = name;
     }

@@ -9,7 +9,7 @@ import java.util.HashSet;
 /**
  * Created by Dmitriy Dzhevaga on 20.12.2015.
  */
-public class UserDTO implements UserDetails {
+public class User implements UserDetails {
     private Integer id;
     private String username;
     private String password;

@@ -5,9 +5,9 @@ import java.util.List;
 /**
  * Created by Dmitriy Dzhevaga on 20.12.2015.
  */
-public class TemplateDTO extends BaseTaskDTO {
+public class Template extends BaseTask {
     private Integer categoryId;
-    private List<TemplateDTO> children;
+    private List<Template> children;
 
     public Integer getCategoryId() {
         return categoryId;
@@ -17,11 +17,11 @@ public class TemplateDTO extends BaseTaskDTO {
         this.categoryId = categoryId;
     }
 
-    public List<TemplateDTO> getChildren() {
+    public List<Template> getChildren() {
         return children;
     }
 
-    public void setChildren(List<TemplateDTO> children) {
+    public void setChildren(List<Template> children) {
         this.children = children;
     }
 }
