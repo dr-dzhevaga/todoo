@@ -7,7 +7,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 import ru.todoo.domain.dto.UserDTO;
 import ru.todoo.service.UserService;
 
@@ -28,15 +30,15 @@ public class Registration {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String create(UserDTO user, RedirectAttributes redirectAttributes) {
+    public View create(UserDTO user, RedirectAttributes redirectAttributes) {
         try {
             userService.create(user);
             Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            return "redirect:/";
+            return new RedirectView("/");
         } catch (PersistenceException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/registration";
+            return new RedirectView("/registration");
         }
     }
 }
