@@ -30,7 +30,7 @@ public class TemplateService {
     private Mapper mapper;
 
     @Transactional(readOnly = true)
-    public List<TemplateDTO> readAll() {
+    public List<TemplateDTO> readAllRoot() {
         List<TemplateEntity> entities = templateDAO.readAllRoot();
         return entities.stream().
                 map(template -> mapper.map(template, TemplateDTO.class, "templateWithoutChildren")).

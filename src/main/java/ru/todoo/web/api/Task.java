@@ -18,7 +18,7 @@ public class Task {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<TaskDTO> readAll() {
-        return taskService.readAll();
+        return taskService.readAllRoot();
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "filter=parent")

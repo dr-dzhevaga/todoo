@@ -18,7 +18,7 @@ public class Template {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<TemplateDTO> readAll() {
-        return templateService.readAll();
+        return templateService.readAllRoot();
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "filter=parent")

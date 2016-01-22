@@ -28,22 +28,24 @@ public class TaskServiceAccessControlAspect {
     @Autowired
     private UserDTO userDTO;
 
-    @Before("(execution(* ru.todoo.service.TaskService.read(..)) || " +
-            "execution(* ru.todoo.service.TaskService.delete(..)))  " +
-            "&& args(id))")
+    @Before("(" +
+            "execution(* ru.todoo.service.TaskService.read(..)) || " +
+            "execution(* ru.todoo.service.TaskService.delete(..))" +
+            ") && args(id))")
     public void checkAccess(Integer id) {
-        checkOwnerById(id);
+        checkOwnerIsAuthorizedUser(id);
     }
 
-    @Before("(execution(* ru.todoo.service.TaskService.create(..)) || " +
-            "execution(* ru.todoo.service.TaskService.update(..)))  " +
-            "&& args(task))")
+    @Before("(" +
+            "execution(* ru.todoo.service.TaskService.create(..)) || " +
+            "execution(* ru.todoo.service.TaskService.update(..))" +
+            ") && args(task))")
     public void checkAccess(TaskDTO task) {
-        checkOwnerById(task.getId());
-        checkOwnerById(task.getParentId());
+        checkOwnerIsAuthorizedUser(task.getId());
+        checkOwnerIsAuthorizedUser(task.getParentId());
     }
 
-    private void checkOwnerById(Integer id) {
+    private void checkOwnerIsAuthorizedUser(Integer id) {
         if (id != null) {
             TaskEntity entity = taskDAO.read(id);
             if (!Objects.equals(entity.getUser().getId(), userDTO.getId())) {

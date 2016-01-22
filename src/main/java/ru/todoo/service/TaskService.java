@@ -41,7 +41,7 @@ public class TaskService {
     private Mapper mapper;
 
     @Transactional(readOnly = true)
-    public List<TaskDTO> readAll() throws PersistenceException {
+    public List<TaskDTO> readAllRoot() throws PersistenceException {
         List<TaskEntity> entities = taskDAO.readRootByUser(userDTO.getId());
         return entities.stream().
                 map(task -> mapper.map(task, TaskDTO.class, "taskWithoutChildren")).
