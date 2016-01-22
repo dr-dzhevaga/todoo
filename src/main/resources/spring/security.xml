@@ -21,4 +21,6 @@
         <authentication-provider user-service-ref="userService"/>
     </authentication-manager>
 
+    <beans:bean id="authorizedUser" class="ru.todoo.security.SecurityUtils" factory-method="getAuthorizedUser" scope="session"/>
+
 </beans:beans>

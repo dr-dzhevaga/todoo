@@ -2,6 +2,8 @@ package ru.todoo.service;
 
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.todoo.dao.TaskDAO;
@@ -21,11 +23,10 @@ import java.util.stream.Collectors;
  * Created by Dmitriy Dzhevaga on 06.11.2015.
  */
 @Service
+@Scope(scopeName = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TaskService {
     private static final String ACCESS_ERROR = "Access denied";
     private static final String TEMPLATE_S_IS_NOT_FOUND_ERROR = "Template %s is not found";
-
-    private final UserDTO userDTO;
 
     @Autowired
     private TaskDAO taskDAO;
@@ -33,15 +34,12 @@ public class TaskService {
     @Autowired
     private TemplateDAO templateDAO;
 
+    @Autowired
+    private UserDTO userDTO;
+
     // TODO: move all conversions to controller? Use json annotations for mapping? Apply Open Session in View pattern?
     @Autowired
     private Mapper mapper;
-
-    @Autowired
-    public TaskService(UserService userService) throws PersistenceException {
-        // TODO: add user resolving from context
-        userDTO = userService.loadUserByUsername("admin");
-    }
 
     @Transactional(readOnly = true)
     public List<TaskDTO> readAll() throws PersistenceException {

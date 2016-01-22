@@ -3,11 +3,8 @@ package ru.todoo.web.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.todoo.domain.dto.TemplateDTO;
-import ru.todoo.domain.dto.UserDTO;
 import ru.todoo.service.TemplateService;
-import ru.todoo.service.UserService;
 
-import java.security.Principal;
 import java.util.List;
 
 /**
@@ -18,9 +15,6 @@ import java.util.List;
 public class Template {
     @Autowired
     private TemplateService templateService;
-
-    @Autowired
-    private UserService userService;
 
     @RequestMapping(method = RequestMethod.GET)
     public List<TemplateDTO> readAll() {
@@ -43,16 +37,13 @@ public class Template {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public TemplateDTO create(@RequestBody TemplateDTO template, Principal principal) {
-        UserDTO user = userService.loadUserByUsername(principal.getName());
-        template.setUserId(user.getId());
+    public TemplateDTO create(@RequestBody TemplateDTO template) {
         return templateService.create(template);
     }
 
     @RequestMapping(method = RequestMethod.POST, params = "sourceType=text")
-    public TemplateDTO create(@RequestParam Integer templateId, @RequestParam String text, Principal principal) {
-        UserDTO user = userService.loadUserByUsername(principal.getName());
-        return templateService.createStepsFromText(text, templateId, user.getId());
+    public TemplateDTO create(@RequestParam Integer templateId, @RequestParam String text) {
+        return templateService.createStepsFromText(text, templateId);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")

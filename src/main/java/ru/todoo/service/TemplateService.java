@@ -2,11 +2,12 @@ package ru.todoo.service;
 
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.todoo.dao.TemplateDAO;
-import ru.todoo.dao.UserDAO;
 import ru.todoo.domain.dto.TemplateDTO;
+import ru.todoo.domain.dto.UserDTO;
 import ru.todoo.domain.entity.TemplateEntity;
 import ru.todoo.domain.entity.UserEntity;
 
@@ -20,9 +21,11 @@ import java.util.stream.Collectors;
 @Service
 public class TemplateService {
     @Autowired
-    UserDAO userDAO;
-    @Autowired
     private TemplateDAO templateDAO;
+
+    @Autowired
+    private ApplicationContext context;
+
     @Autowired
     private Mapper mapper;
 
@@ -59,13 +62,16 @@ public class TemplateService {
     @Transactional
     public TemplateDTO create(TemplateDTO dto) {
         TemplateEntity entity = mapper.map(dto, TemplateEntity.class);
+        UserDTO user = context.getBean("authorizedUser", UserDTO.class);
+        entity.setId(user.getId());
         return mapper.map(templateDAO.create(entity), TemplateDTO.class);
     }
 
     @Transactional
-    public TemplateDTO createStepsFromText(String text, Integer templateId, Integer userId) {
+    public TemplateDTO createStepsFromText(String text, Integer templateId) {
         String[] steps = Arrays.stream(text.split("\\r?\\n")).filter(line -> !line.isEmpty()).toArray(String[]::new);
-        UserEntity user = userDAO.read(userId);
+        UserDTO userDTO = context.getBean("authorizedUser", UserDTO.class);
+        UserEntity user = mapper.map(userDTO, UserEntity.class);
         TemplateEntity rootTemplateEntity = templateDAO.read(templateId);
         TemplateEntity nodeTemplateEntity = rootTemplateEntity;
         for (String step : steps) {
