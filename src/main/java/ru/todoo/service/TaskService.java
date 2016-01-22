@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Service
 @Scope(scopeName = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TaskService {
-    private static final String ACCESS_ERROR = "Access denied";
     private static final String TEMPLATE_S_IS_NOT_FOUND_ERROR = "Template %s is not found";
 
     @Autowired
@@ -51,16 +50,12 @@ public class TaskService {
 
     @Transactional(readOnly = true)
     public TaskDTO read(Integer id) throws PersistenceException {
-        checkOwner(taskDAO, id);
         TaskEntity entity = taskDAO.read(id);
         return mapper.map(entity, TaskDTO.class);
     }
 
     @Transactional
     public TaskDTO create(TaskDTO dto) throws PersistenceException {
-        if (dto.getParentId() != null) {
-            checkOwner(taskDAO, dto.getParentId());
-        }
         dto.setUserId(userDTO.getId());
         TaskEntity entity = taskDAO.create(mapper.map(dto, TaskEntity.class));
         return mapper.map(entity, TaskDTO.class);
@@ -91,7 +86,6 @@ public class TaskService {
 
     @Transactional
     public void delete(Integer id) throws PersistenceException {
-        checkOwner(taskDAO, id);
         taskDAO.delete(id);
     }
 
@@ -99,13 +93,5 @@ public class TaskService {
     public void update(TaskDTO dto) throws PersistenceException {
         TaskEntity entity = mapper.map(dto, TaskEntity.class);
         taskDAO.update(entity);
-    }
-
-    // TODO: apply AOP?
-    private void checkOwner(TaskDAO dao, Integer id) throws PersistenceException {
-        TaskEntity entity = dao.read(id);
-        if (!Objects.equals(entity.getUser().getId(), userDTO.getId())) {
-            throw new SecurityException(ACCESS_ERROR);
-        }
     }
 }
