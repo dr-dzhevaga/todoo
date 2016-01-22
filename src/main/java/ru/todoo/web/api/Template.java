@@ -44,14 +44,14 @@ public class Template {
 
     @RequestMapping(method = RequestMethod.POST)
     public TemplateDTO create(@RequestBody TemplateDTO template, Principal principal) {
-        UserDTO user = userService.readByLogin(principal.getName());
+        UserDTO user = userService.readByUsername(principal.getName());
         template.setUserId(user.getId());
         return templateService.create(template);
     }
 
     @RequestMapping(method = RequestMethod.POST, params = "sourceType=text")
     public TemplateDTO create(@RequestParam Integer templateId, @RequestParam String text, Principal principal) {
-        UserDTO user = userService.readByLogin(principal.getName());
+        UserDTO user = userService.readByUsername(principal.getName());
         return templateService.createStepsFromText(text, templateId, user.getId());
     }
 

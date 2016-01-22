@@ -40,7 +40,7 @@ public class TaskService {
     @Autowired
     public TaskService(UserService userService) throws PersistenceException {
         // TODO: add user resolving from context
-        userDTO = userService.readByLogin("admin");
+        userDTO = userService.readByUsername("admin");
     }
 
     @Transactional(readOnly = true)
