@@ -5,7 +5,7 @@ var onCreateTaskButtonClick = function () {
 var onCreateTaskConfirmButtonClick = function () {
     var task = popupHelper.getValue("createTaskPopup");
     if (task) {
-        ajax_util.postObject(TASK_API_ENDPOINT, task, function (data) {
+        ajax_util.postJson(TASK_API_ENDPOINT, task, function (data) {
             $$("taskList").add(data.json());
         });
     }
@@ -51,7 +51,7 @@ var onTaskListSelectChange = function () {
 var onTaskNameChange = function (name) {
     var task = $$("taskList").getSelectedItem();
     task.name = name;
-    ajax_util.putObject(TASK_API_ENDPOINT, task, function () {
+    ajax_util.putJson(TASK_API_ENDPOINT, task, function () {
         $$("taskList").refresh();
     });
 };
@@ -59,7 +59,7 @@ var onTaskNameChange = function (name) {
 var onTaskDescriptionChange = function (description) {
     var task = $$("taskList").getSelectedItem();
     task.description = description;
-    ajax_util.putObject(TASK_API_ENDPOINT, task, function () {
+    ajax_util.putJson(TASK_API_ENDPOINT, task, function () {
         $$("taskList").refresh();
     });
 };
@@ -79,7 +79,7 @@ var onCreateStepButtonClick = function () {
 var onCreateStepConfirmButtonClick = function () {
     var step = popupHelper.getValue("createStepPopup");
     if (step) {
-        ajax_util.postObject(TASK_API_ENDPOINT, step, function () {
+        ajax_util.postJson(TASK_API_ENDPOINT, step, function () {
             dataStoreHelper.reload("stepTree", {filter: "parent", id: step.taskId}, TASK_API_ENDPOINT);
         });
     }
@@ -111,7 +111,7 @@ var onStepTreeSelectChange = function () {
 var onStepTreeItemCheck = function (id, state) {
     var step = $$("stepTree").getItem(id);
     step.isCompleted = state;
-    ajax_util.putObject(TASK_API_ENDPOINT, step, function () {
+    ajax_util.putJson(TASK_API_ENDPOINT, step, function () {
         $$("stepTree").refresh();
     });
 };
@@ -129,7 +129,7 @@ var onStepTreeAfterDrop = function (context) {
     var target = this.getItem(context.target);
     source.order = target.order;
     source.parentId = target.parentId;
-    ajax_util.putObject(TASK_API_ENDPOINT, source, function () {
+    ajax_util.putJson(TASK_API_ENDPOINT, source, function () {
         var task = $$("taskList").getSelectedItem();
         dataStoreHelper.reload("stepTree", {filter: "parent", id: task.id}, TASK_API_ENDPOINT);
     });
@@ -138,7 +138,7 @@ var onStepTreeAfterDrop = function (context) {
 var onStepNameChange = function (name) {
     var step = $$("stepTree").getSelectedItem();
     step.name = name;
-    ajax_util.putObject(TASK_API_ENDPOINT, step, function () {
+    ajax_util.putJson(TASK_API_ENDPOINT, step, function () {
         $$("stepTree").refresh();
     });
 };
@@ -146,7 +146,7 @@ var onStepNameChange = function (name) {
 var onStepDescriptionChange = function (description) {
     var step = $$("stepTree").getSelectedItem();
     step.description = description;
-    ajax_util.putObject(TASK_API_ENDPOINT, step, function () {
+    ajax_util.putJson(TASK_API_ENDPOINT, step, function () {
         $$("stepTree").refresh();
     });
 };

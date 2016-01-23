@@ -1,6 +1,7 @@
 package ru.todoo.web.api;
 
 import org.springframework.web.bind.annotation.*;
+import ru.todoo.domain.dto.Template;
 import ru.todoo.service.TemplateService;
 
 import javax.annotation.Resource;
@@ -11,7 +12,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/templates")
-public class Template {
+public class TemplateController {
     @Resource
     private TemplateService templateService;
 
@@ -36,7 +37,7 @@ public class Template {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ru.todoo.domain.dto.Template create(@RequestBody ru.todoo.domain.dto.Template template) {
+    public ru.todoo.domain.dto.Template create(@RequestBody Template template) {
         return templateService.create(template);
     }
 

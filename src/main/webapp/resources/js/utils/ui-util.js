@@ -16,7 +16,7 @@ var popupHelper = {
 
 var dataStoreHelper = {
     reload: function (id, filter, url) {
-        ajax_util.getJson(url, filter, function (text) {
+        ajax_util.get(url, filter, function (text) {
             $$(id).clearAll();
             $$(id).parse(text);
         });

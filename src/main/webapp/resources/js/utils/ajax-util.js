@@ -1,6 +1,6 @@
 var ajax_util = {
-    getJson: function (url, queryParameters, onSuccess) {
-        webix.ajax(url, queryParameters, {
+    get: function (url, parameters, onSuccess) {
+        webix.ajax(url, parameters, {
             success: function (text) {
                 onSuccess(text);
             },
@@ -9,7 +9,18 @@ var ajax_util = {
             }
         });
     },
-    postObject: function (url, object, onSuccess) {
+    post: function (url, parameters, onSuccess) {
+        webix.ajax().
+        post(url, parameters, {
+            success: function (text, data) {
+                onSuccess(data);
+            },
+            error: function (text) {
+                ajax_util.showError(text);
+            }
+        })
+    },
+    postJson: function (url, object, onSuccess) {
         webix.ajax().
         header({
             "Content-Type": "application/json;charset=utf-8"
@@ -23,7 +34,7 @@ var ajax_util = {
             }
         })
     },
-    putObject: function (url, object, onSuccess) {
+    putJson: function (url, object, onSuccess) {
         webix.ajax().
         header({
             "Content-Type": "application/json;charset=utf-8"

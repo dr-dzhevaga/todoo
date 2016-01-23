@@ -5,7 +5,7 @@ var onCreateCategoryButtonClick = function () {
 var onCreateCategoryConfirmButtonClick = function () {
     var category = popupHelper.getValue("createCategoryPopup");
     if (category) {
-        ajax_util.postObject(CATEGORY_API_ENDPOINT, category, function (data) {
+        ajax_util.postJson(CATEGORY_API_ENDPOINT, category, function (data) {
             $$("categoryRichSelect").getList().add(data.json());
         });
     }
@@ -29,7 +29,7 @@ var onEditCategoryButtonClick = function () {
 
 var onEditCategoryConfirmButtonClick = function () {
     var category = popupHelper.getValue("editCategoryPopup");
-    ajax_util.putObject(CATEGORY_API_ENDPOINT, category, function () {
+    ajax_util.putJson(CATEGORY_API_ENDPOINT, category, function () {
         $$("categoryRichSelect").getList().updateItem(category.id, category);
         $$("categoryRichSelect").refresh();
     });
@@ -48,7 +48,7 @@ var onCreateTemplateButtonClick = function () {
 var onCreateTemplateConfirmButtonClick = function () {
     var template = popupHelper.getValue("createTaskPopup");
     if (template) {
-        ajax_util.postObject(TEMPLATE_API_ENDPOINT, template, function (data) {
+        ajax_util.postJson(TEMPLATE_API_ENDPOINT, template, function (data) {
             $$("templateList").add(data.json());
         });
     }
@@ -74,7 +74,7 @@ var onEditTemplateButtonClick = function () {
 
 var onEditTemplateConfirmButtonClick = function () {
     var template = popupHelper.getValue("editTemplatePopup");
-    ajax_util.putObject(TEMPLATE_API_ENDPOINT, template, function () {
+    ajax_util.putJson(TEMPLATE_API_ENDPOINT, template, function () {
         $$("templateList").updateItem(template.id, template);
         $$("templateList").refresh();
         $$("templateDescription").setValue(template.description);
@@ -96,8 +96,8 @@ var onCreateStepButtonClick = function () {
 var onCreateStepConfirmButtonClick = function () {
     var step = popupHelper.getValue("createStepPopup");
     if (step) {
-        ajax_util.postObject(TEMPLATE_API_ENDPOINT, step, function () {
-            ajax_util.getJson(TEMPLATE_API_ENDPOINT, {filter: "parent", id: step.templateId}, function (text) {
+        ajax_util.postJson(TEMPLATE_API_ENDPOINT, step, function () {
+            ajax_util.get(TEMPLATE_API_ENDPOINT, {filter: "parent", id: step.templateId}, function (text) {
                 $$("stepTree").clearAll();
                 $$("stepTree").parse(text);
             });
@@ -116,10 +116,10 @@ var onCreateStepsFromTextButtonClick = function () {
 };
 
 var onCreateStepFromTextConfirmButtonClick = function () {
-    var step = popupHelper.getValue("createStepsFromTextPopup");
-    if (step) {
-        ajax_util.postObject(TEMPLATE_API_ENDPOINT, step, function () {
-            ajax_util.getJson(TEMPLATE_API_ENDPOINT, {filter: "parent", id: step.templateId}, function (text) {
+    var parameters = popupHelper.getValue("createStepsFromTextPopup");
+    if (parameters) {
+        ajax_util.post(TEMPLATE_API_ENDPOINT, parameters, function () {
+            ajax_util.get(TEMPLATE_API_ENDPOINT, {filter: "parent", id: parameters.templateId}, function (text) {
                 $$("stepTree").clearAll();
                 $$("stepTree").parse(text);
             });
@@ -138,7 +138,7 @@ var onEditStepButtonClick = function () {
 
 var onEditStepConfirmButtonClick = function () {
     var step = popupHelper.getValue("editStepPopup");
-    ajax_util.putObject(TEMPLATE_API_ENDPOINT, step, function () {
+    ajax_util.putJson(TEMPLATE_API_ENDPOINT, step, function () {
         $$("stepTree").updateItem(step.id, step);
         $$("stepTree").refresh();
     });
@@ -158,7 +158,7 @@ var onStepTreeAfterDrop = function (context) {
     var target = this.getItem(context.target);
     source.order = target.order;
     source.parentId = target.parentId;
-    ajax_util.putObject(TEMPLATE_API_ENDPOINT, source, function () {
+    ajax_util.putJson(TEMPLATE_API_ENDPOINT, source, function () {
         var template = $$("templateList").getSelectedItem();
         dataStoreHelper.reload("stepTree", {filter: "parent", id: template.id}, TEMPLATE_API_ENDPOINT);
     });
