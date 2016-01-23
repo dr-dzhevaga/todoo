@@ -16,9 +16,9 @@ import ru.todoo.domain.entity.UserEntity;
 
 import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Created by Dmitriy Dzhevaga on 06.11.2015.
@@ -46,9 +46,9 @@ public class TaskService {
     }
 
     private List<Task> mapToTasksWithoutChildren(List<TaskEntity> taskEntities) {
-        List<Task> tasks = new ArrayList<>(taskEntities.size());
-        mapper.map(taskEntities, tasks, "taskWithoutChildren");
-        return tasks;
+        return taskEntities.stream().
+                map(taskEntity -> mapper.map(taskEntity, Task.class, "taskWithoutChildren")).
+                collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

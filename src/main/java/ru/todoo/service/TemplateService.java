@@ -11,9 +11,9 @@ import ru.todoo.domain.entity.TemplateEntity;
 import ru.todoo.domain.entity.UserEntity;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Dmitriy Dzhevaga on 29.11.2015.
@@ -45,9 +45,9 @@ public class TemplateService {
     }
 
     private List<Template> mapToTemplatesWithoutChildren(List<TemplateEntity> templateEntities) {
-        List<Template> templates = new ArrayList<>(templateEntities.size());
-        mapper.map(templateEntities, templates, "templateWithoutChildren");
-        return templates;
+        return templateEntities.stream().
+                map(templateEntity -> mapper.map(templateEntity, Template.class, "templateWithoutChildren")).
+                collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
