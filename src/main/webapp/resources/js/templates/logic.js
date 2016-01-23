@@ -25,7 +25,7 @@ var onUseTemplateButtonClick = function () {
     var template = $$("templateList").getSelectedItem();
     if (template) {
         ajax_util.postObject(TASK_API_ENDPOINT + "?templateId=" + template.id, {}, function () {
-            window.location = ("/mytasks.jsp");
+            window.location = TASKS_PAGE;
         });
     }
 };
