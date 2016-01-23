@@ -30,6 +30,7 @@ public class Registration {
     public View create(User user, RedirectAttributes redirectAttributes) {
         try {
             userService.create(user);
+            user = userService.loadUserByUsername(user.getUsername());
             userService.authorizeUser(user);
             return new RedirectView("/");
         } catch (PersistenceException e) {

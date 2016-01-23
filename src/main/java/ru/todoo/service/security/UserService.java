@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.todoo.dao.UserDAO;
@@ -34,6 +35,9 @@ public class UserService implements UserDetailsService {
     UserDAO userDAO;
 
     @Resource
+    PasswordEncoder passwordEncoder;
+
+    @Resource
     private Mapper mapper;
 
     @Override
@@ -43,7 +47,6 @@ public class UserService implements UserDetailsService {
         if (userEntity == null) {
             throw new UsernameNotFoundException("User not found: " + username);
         }
-
         User user = mapper.map(userEntity, User.class);
         return user;
     }
@@ -57,6 +60,8 @@ public class UserService implements UserDetailsService {
             throw new PersistenceException(USERNAME_IS_NOT_UNIQUE_ERROR);
         }
         UserEntity userEntity = mapper.map(user, UserEntity.class);
+        String encodedPassword = passwordEncoder.encode(userEntity.getPassword());
+        userEntity.setPassword(encodedPassword);
         Set<String> roles = new HashSet<>();
         roles.add(DEFAULT_USER_ROLE);
         userEntity.setRoles(roles);
