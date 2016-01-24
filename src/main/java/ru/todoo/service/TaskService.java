@@ -2,8 +2,6 @@ package ru.todoo.service;
 
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.todoo.dao.TaskDAO;
@@ -13,6 +11,7 @@ import ru.todoo.domain.dto.User;
 import ru.todoo.domain.entity.TaskEntity;
 import ru.todoo.domain.entity.TemplateEntity;
 import ru.todoo.domain.entity.UserEntity;
+import ru.todoo.service.security.UserService;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
  */
 @RolesAllowed("ROLE_USER")
 @Service
-@Scope(scopeName = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TaskService {
     private static final String TEMPLATE_S_IS_NOT_FOUND_ERROR = "Template %s is not found";
 
@@ -36,14 +34,15 @@ public class TaskService {
     @Resource
     private TemplateDAO templateDAO;
 
-    @Resource(name = "authorizedUser")
-    private User authorizedUser;
+    @Resource
+    private UserService userService;
 
     @Autowired
     private Mapper mapper;
 
     @Transactional(readOnly = true)
     public List<Task> readAllRoot() {
+        User authorizedUser = userService.getAuthorizedUser();
         return mapToTasksWithoutChildren(taskDAO.readRootByUser(authorizedUser.getId()));
     }
 
@@ -62,6 +61,7 @@ public class TaskService {
 
     @Transactional
     public Task create(Task task) {
+        User authorizedUser = userService.getAuthorizedUser();
         task.setUserId(authorizedUser.getId());
         TaskEntity taskEntity = mapper.map(task, TaskEntity.class);
         taskEntity = taskDAO.create(taskEntity);
@@ -75,8 +75,9 @@ public class TaskService {
         if (templateEntity == null) {
             throw new PersistenceException(String.format(TEMPLATE_S_IS_NOT_FOUND_ERROR, id));
         }
-        UserEntity userEntity = mapper.map(authorizedUser, UserEntity.class);
-        TaskEntity taskEntity = createTaskHierarchyFromTemplate(templateEntity, userEntity);
+        User authorizedUser = userService.getAuthorizedUser();
+        UserEntity authorizedUserEntity = mapper.map(authorizedUser, UserEntity.class);
+        TaskEntity taskEntity = createTaskHierarchyFromTemplate(templateEntity, authorizedUserEntity);
         taskEntity = taskDAO.create(taskEntity);
         Task task = mapper.map(taskEntity, Task.class);
         return task;

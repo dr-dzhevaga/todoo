@@ -12,11 +12,6 @@
     <http>
         <intercept-url pattern="/tasks**" access="hasRole('USER')"/>
 
-        <intercept-url pattern="/api/tasks**" access="hasRole('USER')"/>
-
-        <intercept-url pattern="/api/**" access="hasRole('ADMIN')" method="POST"/>
-        <intercept-url pattern="/api/**" access="hasRole('ADMIN')" method="PUT"/>
-        <intercept-url pattern="/api/**" access="hasRole('ADMIN')" method="DELETE"/>
         <form-login
                 login-page="/login"
                 authentication-failure-url="/login?error"
@@ -35,7 +30,5 @@
     <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
         <beans:constructor-arg name="strength" value="16"/>
     </beans:bean>
-
-    <beans:bean id="authorizedUser" factory-bean="userService" factory-method="getAuthorizedUser" scope="session"/>
 
 </beans:beans>

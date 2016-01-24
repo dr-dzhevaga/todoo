@@ -5,7 +5,7 @@ var onCreateCategoryButtonClick = function () {
 var onCreateCategoryConfirmButtonClick = function () {
     var category = popupHelper.getValue("createCategoryPopup");
     if (category) {
-        ajax_util.postJson(CATEGORY_API_ENDPOINT, category, function (data) {
+        ajax_util.postJson(CATEGORY_API_ENDPOINT, category, function (text, data) {
             $$("categoryRichSelect").getList().add(data.json());
         });
     }
@@ -50,7 +50,7 @@ var onCreateTemplateButtonClick = function () {
 var onCreateTemplateConfirmButtonClick = function () {
     var template = popupHelper.getValue("createTaskPopup");
     if (template) {
-        ajax_util.postJson(TEMPLATE_API_ENDPOINT, template, function (data) {
+        ajax_util.postJson(TEMPLATE_API_ENDPOINT, template, function (text, data) {
             $$("templateList").add(data.json());
         });
     }

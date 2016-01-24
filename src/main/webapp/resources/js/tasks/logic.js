@@ -5,7 +5,7 @@ var onCreateTaskButtonClick = function () {
 var onCreateTaskConfirmButtonClick = function () {
     var task = popupHelper.getValue("createTaskPopup");
     if (task) {
-        ajax_util.postJson(TASK_API_ENDPOINT, task, function (data) {
+        ajax_util.postJson(TASK_API_ENDPOINT, task, function (text, data) {
             $$("taskList").add(data.json());
         });
     }

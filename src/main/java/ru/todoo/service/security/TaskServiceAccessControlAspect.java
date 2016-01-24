@@ -2,8 +2,6 @@ package ru.todoo.service.security;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import ru.todoo.dao.TaskDAO;
 import ru.todoo.domain.dto.Task;
@@ -18,15 +16,14 @@ import java.util.Objects;
  */
 @Aspect
 @Component
-@Scope(scopeName = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TaskServiceAccessControlAspect {
     private static final String ACCESS_ERROR = "Access is denied";
 
     @Resource
     private TaskDAO taskDAO;
 
-    @Resource(name = "authorizedUser")
-    private User authorizedUser;
+    @Resource
+    private UserService userService;
 
     @Before("(" +
             "execution(* ru.todoo.service.TaskService.read(..)) || " +
@@ -48,6 +45,7 @@ public class TaskServiceAccessControlAspect {
     private void checkOwnerIsAuthorizedUser(Integer id) {
         if (id != null) {
             TaskEntity entity = taskDAO.read(id);
+            User authorizedUser = userService.getAuthorizedUser();
             if (!Objects.equals(entity.getUser().getId(), authorizedUser.getId())) {
                 throw new SecurityException(ACCESS_ERROR);
             }

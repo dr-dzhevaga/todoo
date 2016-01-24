@@ -24,9 +24,17 @@ var onTaskTreeLoad = function () {
 var onUseTemplateButtonClick = function () {
     var template = $$("templateList").getSelectedItem();
     if (template) {
-        ajax_util.post(TASK_API_ENDPOINT, {"templateId": template.id}, function () {
-            window.location = TASKS_PAGE;
-        });
+        ajax_util.post(TASK_API_ENDPOINT, {"templateId": template.id},
+            function () {
+                window.location = TASKS_PAGE;
+            },
+            function (text, data, ajax) {
+                if(ajax.status === 403) {
+                    window.location = LOGIN_PAGE;
+                    return true;
+                }
+            }
+        );
     }
 };
 

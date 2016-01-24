@@ -1,7 +1,6 @@
 package ru.todoo.service;
 
 import org.dozer.Mapper;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.todoo.dao.TemplateDAO;
@@ -9,6 +8,7 @@ import ru.todoo.domain.dto.Template;
 import ru.todoo.domain.dto.User;
 import ru.todoo.domain.entity.TemplateEntity;
 import ru.todoo.domain.entity.UserEntity;
+import ru.todoo.service.security.UserService;
 
 import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
@@ -25,7 +25,7 @@ public class TemplateService {
     private TemplateDAO templateDAO;
 
     @Resource
-    private ApplicationContext context;
+    private UserService userService;
 
     @Resource
     private Mapper mapper;
@@ -61,7 +61,7 @@ public class TemplateService {
     @RolesAllowed("ROLE_ADMIN")
     @Transactional
     public Template create(Template template) {
-        User user = context.getBean("authorizedUser", User.class);
+        User user = userService.getAuthorizedUser();
         template.setUserId(user.getId());
         TemplateEntity templateEntity = mapper.map(template, TemplateEntity.class);
         templateEntity = templateDAO.create(templateEntity);
@@ -72,7 +72,7 @@ public class TemplateService {
     @RolesAllowed("ROLE_ADMIN")
     @Transactional
     public Template createStepsFromText(String text, Integer templateId) {
-        User user = context.getBean("authorizedUser", User.class);
+        User user = userService.getAuthorizedUser();
         UserEntity userEntity = mapper.map(user, UserEntity.class);
         String[] steps = Arrays.stream(text.split("\\r?\\n")).filter(line -> !line.isEmpty()).toArray(String[]::new);
         TemplateEntity rootTemplateEntity = templateDAO.read(templateId);
