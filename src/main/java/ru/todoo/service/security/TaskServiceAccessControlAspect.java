@@ -20,7 +20,7 @@ import java.util.Objects;
 @Component
 @Scope(scopeName = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TaskServiceAccessControlAspect {
-    private static final String ACCESS_ERROR = "Access denied";
+    private static final String ACCESS_ERROR = "Access is denied";
 
     @Resource
     private TaskDAO taskDAO;

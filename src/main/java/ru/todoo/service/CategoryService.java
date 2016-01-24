@@ -8,6 +8,7 @@ import ru.todoo.domain.dto.Category;
 import ru.todoo.domain.entity.CategoryEntity;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class CategoryService {
     @Resource
     private Mapper mapper;
 
+    @RolesAllowed("ROLE_ADMIN")
     @Transactional
     public Category create(Category category) {
         CategoryEntity categoryEntity = mapper.map(category, CategoryEntity.class);
@@ -45,11 +47,13 @@ public class CategoryService {
         return categories;
     }
 
+    @RolesAllowed("ROLE_ADMIN")
     @Transactional
     public void delete(Integer id) {
         categoryDAO.delete(id);
     }
 
+    @RolesAllowed("ROLE_ADMIN")
     @Transactional
     public void update(Category category) {
         CategoryEntity categoryEntity = mapper.map(category, CategoryEntity.class);

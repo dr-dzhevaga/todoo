@@ -15,6 +15,7 @@ import ru.todoo.domain.entity.TemplateEntity;
 import ru.todoo.domain.entity.UserEntity;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Dmitriy Dzhevaga on 06.11.2015.
  */
+@RolesAllowed("ROLE_USER")
 @Service
 @Scope(scopeName = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TaskService {

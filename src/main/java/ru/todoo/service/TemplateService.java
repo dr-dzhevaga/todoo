@@ -11,6 +11,7 @@ import ru.todoo.domain.entity.TemplateEntity;
 import ru.todoo.domain.entity.UserEntity;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,16 +58,18 @@ public class TemplateService {
         return template;
     }
 
+    @RolesAllowed("ROLE_ADMIN")
     @Transactional
     public Template create(Template template) {
         User user = context.getBean("authorizedUser", User.class);
+        template.setUserId(user.getId());
         TemplateEntity templateEntity = mapper.map(template, TemplateEntity.class);
-        templateEntity.setId(user.getId());
         templateEntity = templateDAO.create(templateEntity);
         template = mapper.map(templateEntity, Template.class);
         return template;
     }
 
+    @RolesAllowed("ROLE_ADMIN")
     @Transactional
     public Template createStepsFromText(String text, Integer templateId) {
         User user = context.getBean("authorizedUser", User.class);
@@ -95,11 +98,13 @@ public class TemplateService {
         return template;
     }
 
+    @RolesAllowed("ROLE_ADMIN")
     @Transactional
     public void delete(Integer id) {
         templateDAO.delete(id);
     }
 
+    @RolesAllowed("ROLE_ADMIN")
     @Transactional
     public void update(Template template) {
         TemplateEntity entity = mapper.map(template, TemplateEntity.class);
