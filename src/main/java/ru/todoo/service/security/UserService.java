@@ -32,10 +32,10 @@ public class UserService implements UserDetailsService {
     private static final String DEFAULT_USER_ROLE = "ROLE_USER";
 
     @Resource
-    UserDAO userDAO;
+    private UserDAO userDAO;
 
     @Resource
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Resource
     private Mapper mapper;
@@ -66,6 +66,7 @@ public class UserService implements UserDetailsService {
         roles.add(DEFAULT_USER_ROLE);
         userEntity.setRoles(roles);
         userDAO.create(userEntity);
+        mapper.map(userEntity, user);
     }
 
     private boolean isLoginUnique(String login) {
@@ -78,7 +79,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void authorizeUser(User user) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
