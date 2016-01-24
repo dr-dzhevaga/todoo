@@ -1,5 +1,8 @@
 package ru.todoo.domain.entity;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +20,7 @@ public class CategoryEntity extends IdentifiableEntity<Integer> {
 
     @Basic
     @Column(name = "FILTER")
+    @Generated(GenerationTime.INSERT)
     private String filter;
 
     public String getName() {
