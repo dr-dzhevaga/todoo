@@ -29,10 +29,12 @@ var onEditCategoryButtonClick = function () {
 
 var onEditCategoryConfirmButtonClick = function () {
     var category = popupHelper.getValue("editCategoryPopup");
-    ajax_util.putJson(CATEGORY_API_ENDPOINT, category, function () {
-        $$("categoryRichSelect").getList().updateItem(category.id, category);
-        $$("categoryRichSelect").refresh();
-    });
+    if(category) {
+        ajax_util.putJson(CATEGORY_API_ENDPOINT, category, function () {
+            $$("categoryRichSelect").getList().updateItem(category.id, category);
+            $$("categoryRichSelect").refresh();
+        });
+    }
 };
 
 var onCreateTemplateButtonClick = function () {
@@ -74,11 +76,13 @@ var onEditTemplateButtonClick = function () {
 
 var onEditTemplateConfirmButtonClick = function () {
     var template = popupHelper.getValue("editTemplatePopup");
-    ajax_util.putJson(TEMPLATE_API_ENDPOINT, template, function () {
-        $$("templateList").updateItem(template.id, template);
-        $$("templateList").refresh();
-        $$("templateDescription").setValue(template.description);
-    });
+    if(template) {
+        ajax_util.putJson(TEMPLATE_API_ENDPOINT, template, function () {
+            $$("templateList").updateItem(template.id, template);
+            $$("templateList").refresh();
+            $$("templateDescription").setValue(template.description);
+        });
+    }
 };
 
 var onCreateStepButtonClick = function () {
@@ -138,10 +142,12 @@ var onEditStepButtonClick = function () {
 
 var onEditStepConfirmButtonClick = function () {
     var step = popupHelper.getValue("editStepPopup");
-    ajax_util.putJson(TEMPLATE_API_ENDPOINT, step, function () {
-        $$("stepTree").updateItem(step.id, step);
-        $$("stepTree").refresh();
-    });
+    if(step) {
+        ajax_util.putJson(TEMPLATE_API_ENDPOINT, step, function () {
+            $$("stepTree").updateItem(step.id, step);
+            $$("stepTree").refresh();
+        });
+    }
 };
 
 var onDeleteStepButtonClick = function () {

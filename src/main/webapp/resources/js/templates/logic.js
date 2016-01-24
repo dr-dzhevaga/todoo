@@ -7,7 +7,7 @@ var onCategoryRichSelectSelectChange = function (id) {
     }
 };
 
-var onCategoryRichSelectSelectLoad = function () {
+var onCategoryRichSelectLoad = function () {
     $$("categoryRichSelect").setValue($$("categoryRichSelect").getList().getFirstId());
 };
 
@@ -34,7 +34,7 @@ var logic = {
     init: function () {
         webix.DataDriver.json.child = "children";
         $$("categoryRichSelect").attachEvent("onChange", onCategoryRichSelectSelectChange);
-        $$("categoryRichSelect").getList().attachEvent("onAfterLoad", onCategoryRichSelectSelectLoad);
+        $$("categoryRichSelect").getList().attachEvent("onAfterLoad", onCategoryRichSelectLoad);
         $$("templateList").attachEvent("onSelectChange", onTemplatesListSelectChange);
         $$("stepTree").attachEvent("onAfterLoad", onTaskTreeLoad);
         $$("useTemplateButton").attachEvent("onItemClick", onUseTemplateButtonClick);

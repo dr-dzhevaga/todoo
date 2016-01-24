@@ -57,7 +57,7 @@
 
     <!--
         TemplateEntity -> TemplateEntity
-        exclude: null, parent, children, user
+        exclude: null, parent, children, user, category
         (used for update)
     -->
     <mapping map-null="false">
@@ -74,6 +74,10 @@
         <field-exclude>
             <a>user</a>
             <b>user</b>
+        </field-exclude>
+        <field-exclude>
+            <a>category</a>
+            <b>category</b>
         </field-exclude>
     </mapping>
 
@@ -117,7 +121,7 @@
 
     <!--
         TaskEntity -> TaskEntity
-        exclude: null, parent, children, user
+        exclude: null, parent, children, user, origin
         (used for update)
     -->
     <mapping map-null="false">
@@ -134,6 +138,10 @@
         <field-exclude>
             <a>user</a>
             <b>user</b>
+        </field-exclude>
+        <field-exclude>
+            <a>origin</a>
+            <b>origin</b>
         </field-exclude>
     </mapping>
 
