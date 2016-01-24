@@ -1,7 +1,7 @@
 var categoryRichSelect = {
     id: "categoryRichSelect",
     view: "richselect",
-    label: "Category:",
+    label: "Filter:",
     options: {
         template: "#name#",
         body: {
@@ -63,8 +63,8 @@ var scheme = {
         width: 250
     }, {
         rows: [
-            useTemplateButton,
             templateDescription,
+            useTemplateButton,
             stepTree
         ],
         width: "auto"

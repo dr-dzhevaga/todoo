@@ -54,6 +54,20 @@ deleteTemplateButton.id = "deleteTemplateButton";
 deleteTemplateButton.tooltip = "Delete template";
 deleteTemplateButton.icon = "remove";
 
+var templateToolbar = {
+    view: "toolbar",
+    cols: [
+        {
+            view: "label",
+            label: "Templates:",
+            width: "auto"
+        },
+        createTemplateButton,
+        deleteTemplateButton,
+        editTemplateButton
+    ]
+};
+
 var createStepButton = webix.copy(createTemplateButton);
 createStepButton.id = "createStepButton";
 createStepButton.tooltip = "Add step";
@@ -103,6 +117,21 @@ var deleteStepButton = webix.copy(deleteTemplateButton);
 deleteStepButton.id = "deleteStepButton";
 deleteStepButton.tooltip = "Delete step";
 
+var stepToolbar = {
+    view: "toolbar",
+    cols: [
+        {
+            view: "label",
+            label: "Steps:",
+            width: "auto"
+        },
+        createStepsFromTextButton,
+        createStepButton,
+        deleteStepButton,
+        editStepButton
+    ]
+};
+
 var createCategoryButton = webix.copy(createTemplateButton);
 createCategoryButton.id = "createCategoryButton";
 createCategoryButton.tooltip = "Add category";
@@ -132,50 +161,28 @@ var deleteCategoryButton = webix.copy(deleteTemplateButton);
 deleteCategoryButton.id = "deleteCategoryButton";
 deleteCategoryButton.tooltip = "Delete category";
 
-var categoryLabel = {
-    view: "label",
-    label: "Category:",
-    width: "auto"
-};
-
-var templateLabel = webix.copy(categoryLabel);
-templateLabel.label = "Template:";
-
-var stepLabel = webix.copy(categoryLabel);
-stepLabel.label = "Step:";
-
-var separatorLabel = webix.copy(categoryLabel);
-separatorLabel.label = "|";
-
-var adminToolBar = {
+var categoryToolbar = {
     view: "toolbar",
     cols: [
-        categoryLabel,
+        {
+            view: "label",
+            label: "Categories:",
+            width: "auto"
+        },
         createCategoryButton,
         deleteCategoryButton,
-        editCategoryButton,
-        separatorLabel,
-        templateLabel,
-        createTemplateButton,
-        deleteTemplateButton,
-        editTemplateButton,
-        separatorLabel,
-        stepLabel,
-        createStepButton,
-        createStepsFromTextButton,
-        deleteStepButton,
-        editStepButton
+        editCategoryButton
     ]
 };
 
 var admin_ui = {
     init: function () {
-        scheme = {
-            rows: [
-                adminToolBar,
-                scheme
-            ]
+        Array.prototype.insert = function (index, item) {
+            this.splice(index, 0, item);
         };
+        scheme.cols[0].rows.insert(0, categoryToolbar);
+        scheme.cols[0].rows.insert(2, templateToolbar);
+        scheme.cols[1].rows.insert(2, stepToolbar);
         stepTree.drag = true;
         stepTree.select = true;
         webix.ui(createTaskPopup);
