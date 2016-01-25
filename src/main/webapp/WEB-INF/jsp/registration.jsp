@@ -15,6 +15,7 @@
 <div class="login-card">
     <h1>Registration</h1>
 
+    <%--@elvariable id="error" type="java.lang.String"--%>
     <c:if test="${not empty error}">
         <div class="error">${error}</div>
     </c:if>
