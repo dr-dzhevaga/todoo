@@ -22,6 +22,11 @@
     </http>
 
     <authentication-manager>
+        <authentication-provider>
+            <user-service>
+                <user name="admin" password="$2a$04$Mms3FDK1o31ceNISlIJ68ex35DKbnDEaJ3llbSOWSR3VS/2C0Ej5G" authorities="ROLE_ADMIN"/>
+            </user-service>
+        </authentication-provider>
         <authentication-provider user-service-ref="userService">
             <password-encoder ref="passwordEncoder"/>
         </authentication-provider>
