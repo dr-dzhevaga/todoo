@@ -24,8 +24,9 @@
     <authentication-manager>
         <authentication-provider>
             <user-service>
-                <user name="admin" password="$2a$04$Mms3FDK1o31ceNISlIJ68ex35DKbnDEaJ3llbSOWSR3VS/2C0Ej5G" authorities="ROLE_ADMIN"/>
+                <user name="admin" password="$2a$04$QcAamOw6zjG/htn78YGS5e2rkGzq6qABKNBtk1lwa0ttqKaE.LBgC" authorities="ROLE_ADMIN"/>
             </user-service>
+            <password-encoder ref="passwordEncoder"/>
         </authentication-provider>
         <authentication-provider user-service-ref="userService">
             <password-encoder ref="passwordEncoder"/>
@@ -33,7 +34,7 @@
     </authentication-manager>
 
     <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
-        <beans:constructor-arg name="strength" value="16"/>
+        <beans:constructor-arg name="strength" value="4"/>
     </beans:bean>
 
 </beans:beans>
