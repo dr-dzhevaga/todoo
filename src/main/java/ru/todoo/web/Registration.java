@@ -31,10 +31,10 @@ public class Registration {
         try {
             userService.create(user);
             userService.authorizeUser(user);
-            return new RedirectView("/");
+            return new RedirectView("/", true);
         } catch (PersistenceException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return new RedirectView("/registration");
+            return new RedirectView("/registration", true);
         }
     }
 }
