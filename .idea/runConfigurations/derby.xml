@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="derby" type="docker-deploy" factoryName="docker-image" server-name="Docker">
+    <deployment type="docker-image">
+      <settings>
+        <option name="command" value="java -Dderby.stream.error.field=System.out org.apache.derby.drda.NetworkServerControl start -h 0.0.0.0 -noSecurityManager" />
+        <option name="containerName" value="derby" />
+        <option name="entrypoint" value="" />
+        <option name="imageTag" value="az82/docker-derby" />
+        <option name="commandLineOptions" value="--rm --network todoo --volume derby:/dbs" />
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>
