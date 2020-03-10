@@ -1,0 +1,25 @@
+version: "3.7"
+services:
+  webapp:
+    image: tomcat
+    ports:
+      - 8080:8080
+    networks:
+      - todoo
+    volumes:
+      - ./target/todoo.war:/usr/local/tomcat/webapps/todoo.war
+    environment:
+      jdbc.url: jdbc:derby://database:1527/dbs;create=true
+    depends_on:
+      - database
+  database:
+    image: az82/docker-derby
+    command: java -Dderby.stream.error.field=System.out org.apache.derby.drda.NetworkServerControl start -h 0.0.0.0 -noSecurityManager
+    networks:
+      - todoo
+    volumes:
+      - derby:/dbs
+volumes:
+  derby:
+networks:
+  todoo:
